@@ -66,7 +66,7 @@ end
 
 if game.PlaceId == 5490351219 then
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "VR7Hubs | Clicker Madness", HidePremium = false, IntroText = "by 2ivsl majed", SaveConfig = true, ConfigFolder = "OrionTest"})
+local Window = OrionLib:MakeWindow({Name = "RM7Hubs | Clicker Madness", HidePremium = false, IntroText = "by 2ivsl majed", SaveConfig = true, ConfigFolder = "OrionTest"})
 
 
 --tabs
