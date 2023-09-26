@@ -1,6 +1,6 @@
 local library = loadstring(game:HttpGet('https://pastebin.com/raw/HSMwHzEm'))()
 
-local Window = library:CreateWindow("VR7Hubs", "TPS STREET SOCCER", 10044538000)
+local Window = library:CreateWindow("RM7Hubs", "TPS STREET SOCCER", 10044538000)
 
 local Tab = Window:CreateTab("السكربتات")
 
