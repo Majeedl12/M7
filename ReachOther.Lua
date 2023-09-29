@@ -26,7 +26,7 @@ LP:addLabel("سكربت بسيط وحلو","استمتع")
 
 
 LP:addLabel("استمتع","قائمه اللاعب")
-LP:addSlider("السرعه",16,150,function(value)
+LP:addTextBox("السرعه","Number here",function(value)
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
 end)
 LP:addTextBox("النط","Number here",function(value)
