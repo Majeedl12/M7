@@ -13,7 +13,7 @@ Home:addButton("قتل من بعيد",function()
 end)
 
 Home:addTextBox("زياده الدم | الحد ١٠٠","Number here",function(value)
-    game.Players.LocalPlayer.Character.Humanoid.Health = 0
+    game.Players.LocalPlayer.Character.Humanoid.Health = Value
 end)
 
 -- Just an example of how you would actually use it i guess
