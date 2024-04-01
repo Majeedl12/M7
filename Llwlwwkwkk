@@ -1,0 +1,276 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "VR7 Hubs | MurderMystery", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+OrionLib:MakeNotification({
+	Name = "تم تشغيل سكربت",
+	Content = "شغال بنجاح",
+	Image = "rbxassetid://4483345998",
+	Time = 5
+})
+
+
+
+local Tab0 = Window:MakeTab({
+	Name = "القتل | Kill",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab0:AddSection({
+	Name = "VR7 ON TOP"
+})
+
+Tab0:AddButton({
+	Name = "قتل الكل",
+	Callback = function()
+      if game.Players.LocalPlayer.Backpack:FindFirstChild("Knife") ~= nil then -- Only works if you're the murderer
+
+		local Players = game:GetService("Players")	
+		for i, Victim in pairs(Players:GetPlayers()) do
+			if Victim.Name ~= game.Players.LocalPlayer.Name then
+
+				repeat wait()
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Victim.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+				until
+				Victim.Character.Humanoid.Health == 0
+
+			end
+		end
+
+	else
+OrionLib:MakeNotification({
+	Name = "حصل خطأ",
+	Content = "ما قتلت ولا شخص",
+	Image = "rbxassetid://4483345998",
+	Time = 3
+})
+		print("No victims killed")
+	end
+	end    
+})		
+  	end    
+})
+
+Tab0:AddButton({
+	Name = "اخذ المسدس ",
+	Callback = function()
+      		local currentX = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X
+	local currentY = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Y
+	local currentZ = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z	
+
+	if workspace:FindFirstChild("GunDrop") ~= nil then
+
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace:FindFirstChild("GunDrop").CFrame	
+		wait(1)	
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(currentX, currentY, currentZ)
+
+	else
+OrionLib:MakeNotification({
+	Name = "المسدس مو في الارض",
+	Content = "برو المسدس مب طايح",
+	Image = "rbxassetid://4483345998",
+	Time = 3
+})
+	end
+	end    
+})
+  	end    
+})
+
+
+
+local Tab2 = Window:MakeTab({
+	Name = "متنوعات | Misc",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+local Section = Tab2:AddSection({
+	Name = "VR7 ON TOP"
+})
+
+
+Tab2:AddButton({
+	Name = "سكين اكس بوكس مجاني",
+	Callback = function()
+      		local Event = game:GetService("ReplicatedStorage").Remotes.Extras.IsXbox
+	Event:FireServer(A_1)
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "سكربت اختفاء",
+	Callback = function()
+      		loadstring(game:HttpGet("https://gist.githubusercontent.com/skid123skidlol/cd0d2dce51b3f20ad1aac941da06a1a1/raw/f58b98cce7d51e53ade94e7bb460e4f24fb7e0ff/%257BFE%257D%2520Invisible%2520Tool%2520(can%2520hold%2520tools)",true))()
+  	end    
+})
+
+Tab2:AddButton({
+	Name = "طيران الكل",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/Majeedl12/M7/63cb1b5be00892302652e0e25a8b11c8617423ee/Fling.allMajed.Lua"))()
+  	end    
+})
+
+Tab2:AddToggle({
+	Name = "عدم الموت",
+	Default = false,
+	Callback = function(Value)
+		getgenv().God = (value)
+while getgenv().God == true do
+game.Players.LocalPlayer.Character.Humanoid:Remove()
+Instance.new('Humanoid', game.Players.LocalPlayer.Character)
+game:GetService("Workspace")[game.Players.LocalPlayer.Name]:FindFirstChildOfClass(
+'Humanoid').HipHeight = 2
+wait(10)
+end
+	end    
+})
+
+Tab2:AddToggle({
+	Name = "تجميع كوين Aura",
+	Default = false,
+	Callback = function(Value)
+		getgenv().God = (value)
+while getgenv().God == true do
+local Playeer = game:GetService('Players').LocalPlayer
+Playeer.Character.LeftLowerLeg.Size = Vector3.new(15, 2, 2)
+Playeer.Character.RightLowerLeg.Size = Vector3.new(15, 2, 2)
+Playeer.Character.LeftUpperLeg.Size = Vector3.new(15, 2, 2)
+Playeer.Character.RightUpperLeg.Size = Vector3.new(15, 2, 2)
+Playeer.Character.RightFoot.Size = Vector3.new(15, 2, 2)
+Playeer.Character.LeftFoot.Size = Vector3.new(15, 2, 2)
+Playeer.Character.LeftLowerLeg.CanCollide = true
+Playeer.Character.RightLowerLeg.CanCollide = true
+Playeer.Character.LeftUpperLeg.CanCollide = true
+Playeer.Character.RightUpperLeg.CanCollide = true
+Playeer.Character.RightFoot.CanCollide = true
+Playeer.Character.LeftFoot.CanCollide = true
+Playeer.Character.LeftLowerLeg.Transparency = 1
+Playeer.Character.RightLowerLeg.Transparency = 1
+Playeer.Character.LeftUpperLeg.Transparency = 1
+Playeer.Character.RightUpperLeg.Transparency = 1
+Playeer.Character.RightFoot.Transparency = 1
+Playeer.Character.LeftFoot.Transparency = 1
+wait(10)
+end
+	end    
+})
+
+local Tab9 = Window:MakeTab({
+	Name = "الفارم | Farm",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab9:AddToggle({
+	Name = "فارم كوينز",
+	Default = false,
+	Callback = function(Value)
+		getgenv().Farm = (value)
+while getgenv().Farm == true do
+			local place = workspace:GetChildren()	
+			local currentX = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X
+			local currentY = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Y
+			local currentZ = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z
+
+			for i,v in pairs(place) do	    
+			    local vChildren = v:GetChildren()
+			    for i,child in pairs(vChildren) do
+			        if child.Name == "CoinContainer" then
+
+						if child.Coin_Server:FindFirstChild("Coin") ~= nil then
+				            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = child.Coin_Server.Coin.CFrame
+						else
+							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(currentX, currentY, currentZ)
+						end
+
+			        end
+			    end	
+			end
+wait(2)
+end
+	end    
+})
+
+
+
+local Tab3 = Window:MakeTab({
+	Name = "الكشف | Esp",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab3:AddSection({
+	Name = "VR7 ON TOP"
+})
+
+Tab3:AddButton({
+	Name = "كشف اسم القاتل",
+	Callback = function()
+      		local players = game.Players:GetPlayers()
+
+for i,v in ipairs(players) do
+  if v.Backpack:FindFirstChild("Knife") or (v.Character and v.Character:FindFirstChild("Knife")) then
+  game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(v.Name .. " is the murderer!", "normalchat")
+break
+  end
+end
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "كشف اسم الشرف",
+	Callback = function()
+      		local players = game.Players:GetPlayers()
+
+for i,v in ipairs(players) do
+  if v.Backpack:FindFirstChild("Gun") or (v.Character and v.Character:FindFirstChild("Gun")) then
+  game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(v.Name .. " is the sheriff!", "normalchat")
+break
+  end
+end
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "كشف الكل",
+	Callback = function()
+      		loadstring(game:HttpGet("https://pastebin.com/raw/SH7SwQvy"))()
+  	end    
+})
+
+Tab3:AddButton({
+	Name = "كشف اماكن الناس ",
+	Callback = function()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/M7majed/ScriptsByM7/main/ESP_majedLocalend.LUA"))()
+  	end    
+})
+
+local Tab6 = Window:MakeTab({
+	Name = "الحقوق",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab6:AddSection({
+	Name = "صانع السكربت VR7"
+})
+Tab6:AddButton({
+    Name = "نسخ رابط سيرفر الديسكورد",
+    Callback = function()
+    setclipboard("https://discord.gg/vr7")
+            print("link copied to clipoard")
+      end
+})
+local Section = Tab6:AddSection({
+	Name = "شكرا عشانك استخدمت السكربت"
+})
+
+Tab6:AddButton({
+    Name = "نسخ اسمي بالديسكورد",
+    Callback = function()
+    setclipboard("v_r7")
+            print("link copied to clipoard")
+      end
+})
