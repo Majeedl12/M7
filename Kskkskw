@@ -1,0 +1,114 @@
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vff1bQ9F"))()
+local Window = Library.CreateLib("VR7 Hubs | MurderMystery", "BloodTheme")
+
+local Tab1 = Window:NewTab("القتل | Kill")
+
+local Tab2 = Window:NewTab("التنويع | Misc")
+
+local Section1 = Tab1:NewSection("VR7 ON TOP")
+
+Section1:NewButton("قتل الكل | لازم تكون قاتل", "ButtonInfo", function()
+    game.Players.LocalPlayer.Backpack:FindFirstChild("Knife") ~= nil then -- Only works if you're the murderer
+
+		local Players = game:GetService("Players")	
+		for i, Victim in pairs(Players:GetPlayers()) do
+			if Victim.Name ~= game.Players.LocalPlayer.Name then
+
+				repeat wait()
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Victim.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1)
+				until
+				Victim.Character.Humanoid.Health == 0
+
+			end
+		end
+end)
+
+Section1:NewButton("اخذ المسدس | لازم يكون طايح", "ButtonInfo", function()
+    local currentX = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.X
+            local currentY = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Y
+            local currentZ = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Z    
+            
+            if workspace:FindFirstChild("GunDrop") ~= nil then
+            
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace:FindFirstChild("GunDrop").CFrame    
+            wait(.25)    
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(currentX, currentY, currentZ)
+                
+            else
+                
+                game.StarterGui:SetCore("SendNotification", {
+        Title = "MM2 VR7  ";
+        Text = "انتظر حتى يموت الشرطي لتأخذ المسدس ";
+        Icon = "";
+        Duration = "2";
+    })
+                
+            end
+end)
+
+Section1:NewButton("قتل القاتل", "ButtonInfo", function()
+    local function GetMurderer()
+        local plrs = game:GetService("Players")
+        for i,v in pairs(plrs:GetPlayers()) do
+            if v.Character:FindFirstChild("Knife") or v.Backpack:FindFirstChild("Knife") then
+                return v
+            end
+        end
+    end
+
+    local Murderer = GetMurderer() --// Gets the userdata of the murderer
+        local pos = Murderer.Character.HumanoidRootPart.Position
+    repeat
+        if Murderer ~= nil then --// Checking if there actually is a murderer
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Murderer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 5)
+                workspace.CurrentCamera.CFrame = Murderer.Character.HumanoidRootPart.CFrame
+                
+            end
+        wait()
+        until Murderer.Character.Humanoid.Health == 0
+end)
+
+local Section2 = Tab2:NewSection("VR7 ON TOP")
+
+Section2:NewButton("طيران الكل", "ButtonInfo", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Majeedl12/M7/63cb1b5be00892302652e0e25a8b11c8617423ee/Fling.allMajed.Lua"))()
+end)
+
+local Section7 = Tab2:NewSection("Toggle | الاوتو")
+
+Section7:NewToggle("عدم الموت", "ToggleInfo", function(Value)
+getgenv().God = (value)
+while getgenv().God == true do
+game.Players.LocalPlayer.Character.Humanoid:Remove()
+Instance.new('Humanoid', game.Players.LocalPlayer.Character)
+game:GetService("Workspace")[game.Players.LocalPlayer.Name]:FindFirstChildOfClass(
+'Humanoid').HipHeight = 2
+wait(10)
+end
+end)
+
+Section7:NewToggle("تجميع كوينز Aura", "ToggleInfo", function(Value)
+    getgenv().God = (value)
+while getgenv().God == true do
+local Playeer = game:GetService('Players').LocalPlayer
+Playeer.Character.LeftLowerLeg.Size = Vector3.new(15, 2, 2)
+Playeer.Character.RightLowerLeg.Size = Vector3.new(15, 2, 2)
+Playeer.Character.LeftUpperLeg.Size = Vector3.new(15, 2, 2)
+Playeer.Character.RightUpperLeg.Size = Vector3.new(15, 2, 2)
+Playeer.Character.RightFoot.Size = Vector3.new(15, 2, 2)
+Playeer.Character.LeftFoot.Size = Vector3.new(15, 2, 2)
+Playeer.Character.LeftLowerLeg.CanCollide = true
+Playeer.Character.RightLowerLeg.CanCollide = true
+Playeer.Character.LeftUpperLeg.CanCollide = true
+Playeer.Character.RightUpperLeg.CanCollide = true
+Playeer.Character.RightFoot.CanCollide = true
+Playeer.Character.LeftFoot.CanCollide = true
+Playeer.Character.LeftLowerLeg.Transparency = 1
+Playeer.Character.RightLowerLeg.Transparency = 1
+Playeer.Character.LeftUpperLeg.Transparency = 1
+Playeer.Character.RightUpperLeg.Transparency = 1
+Playeer.Character.RightFoot.Transparency = 1
+Playeer.Character.LeftFoot.Transparency = 1
+wait(10)
+end
+end)
