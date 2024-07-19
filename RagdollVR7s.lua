@@ -1,6 +1,6 @@
 --RELOAD GUI
 if game.CoreGui:FindFirstChild("SysBroker") then
-	game:GetService("StarterGui"):SetCore("SendNotification", {Title = "VR7 TEAM RAGDOL",Text = "GUI Already loaded, rejoin to re-execute",Duration = 5;})
+	game:GetService("StarterGui"):SetCore("SendNotification", {Title = "System VR7 | Ragdoll Engine",Text = "GUI Already loaded, rejoin to re-execute",Duration = 5;})
 	return
 end
 local version = 2
@@ -412,7 +412,7 @@ TitleBarLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 TitleBarLabel.BorderSizePixel = 0
 TitleBarLabel.Size = UDim2.new(1, 0, 0, 30)
 TitleBarLabel.Font = Enum.Font.Unknown
-TitleBarLabel.Text = "____/VR7 RAGDOLL\\___"
+TitleBarLabel.Text = "____/ VR7 Ragdoll \\___"
 TitleBarLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
 TitleBarLabel.TextScaled = true
 TitleBarLabel.TextSize = 14.000
@@ -437,7 +437,7 @@ Home_Section_Button.BorderSizePixel = 0
 Home_Section_Button.Position = UDim2.new(0, 0, 0, 25)
 Home_Section_Button.Size = UDim2.new(0, 105, 0, 30)
 Home_Section_Button.Font = Enum.Font.Oswald
-Home_Section_Button.Text = "البدايه"
+Home_Section_Button.Text = "الصفحه الرئيسيه | Home"
 Home_Section_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Home_Section_Button.TextScaled = true
 Home_Section_Button.TextSize = 14.000
@@ -452,7 +452,7 @@ Game_Section_Button.BorderSizePixel = 0
 Game_Section_Button.Position = UDim2.new(0, 0, 0, 65)
 Game_Section_Button.Size = UDim2.new(0, 105, 0, 30)
 Game_Section_Button.Font = Enum.Font.Oswald
-Game_Section_Button.Text = "المميزات"
+Game_Section_Button.Text = "التخريب | Game "
 Game_Section_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Game_Section_Button.TextScaled = true
 Game_Section_Button.TextSize = 14.000
@@ -467,7 +467,7 @@ Character_Section_Button.BorderSizePixel = 0
 Character_Section_Button.Position = UDim2.new(0, 0, 0, 105)
 Character_Section_Button.Size = UDim2.new(0, 105, 0, 30)
 Character_Section_Button.Font = Enum.Font.Oswald
-Character_Section_Button.Text = "الاعب"
+Character_Section_Button.Text = "الشخصيه | Character"
 Character_Section_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Character_Section_Button.TextScaled = true
 Character_Section_Button.TextSize = 14.000
@@ -482,7 +482,7 @@ Target_Section_Button.BorderSizePixel = 0
 Target_Section_Button.Position = UDim2.new(0, 0, 0, 145)
 Target_Section_Button.Size = UDim2.new(0, 105, 0, 30)
 Target_Section_Button.Font = Enum.Font.Oswald
-Target_Section_Button.Text = "تخريب"
+Target_Section_Button.Text = "اختيار شخص | Target"
 Target_Section_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Target_Section_Button.TextScaled = true
 Target_Section_Button.TextSize = 14.000
@@ -497,7 +497,7 @@ Animations_Section_Button.BorderSizePixel = 0
 Animations_Section_Button.Position = UDim2.new(0, 0, 0, 185)
 Animations_Section_Button.Size = UDim2.new(0, 105, 0, 30)
 Animations_Section_Button.Font = Enum.Font.Oswald
-Animations_Section_Button.Text = "المشيات"
+Animations_Section_Button.Text = "المشيات | Animations"
 Animations_Section_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Animations_Section_Button.TextScaled = true
 Animations_Section_Button.TextSize = 14.000
@@ -512,7 +512,7 @@ Misc_Section_Button.BorderSizePixel = 0
 Misc_Section_Button.Position = UDim2.new(0, 0, 0, 225)
 Misc_Section_Button.Size = UDim2.new(0, 105, 0, 30)
 Misc_Section_Button.Font = Enum.Font.Oswald
-Misc_Section_Button.Text = "مميزات اضافية"
+Misc_Section_Button.Text = "اخرى | Misc"
 Misc_Section_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Misc_Section_Button.TextScaled = true
 Misc_Section_Button.TextSize = 14.000
@@ -527,7 +527,7 @@ Credits_Section_Button.BorderSizePixel = 0
 Credits_Section_Button.Position = UDim2.new(0, 0, 0, 265)
 Credits_Section_Button.Size = UDim2.new(0, 105, 0, 30)
 Credits_Section_Button.Font = Enum.Font.Oswald
-Credits_Section_Button.Text = "المطور"
+Credits_Section_Button.Text = "الحقوق | Credits"
 Credits_Section_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Credits_Section_Button.TextScaled = true
 Credits_Section_Button.TextSize = 14.000
@@ -570,7 +570,7 @@ PotionFling_Button.BorderSizePixel = 0
 PotionFling_Button.Position = UDim2.new(0, 210, 0, 75)
 PotionFling_Button.Size = UDim2.new(0, 150, 0, 30)
 PotionFling_Button.Font = Enum.Font.Oswald
-PotionFling_Button.Text = "بوشن طيران"
+PotionFling_Button.Text = "بوشن فلينق"
 PotionFling_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 PotionFling_Button.TextScaled = true
 PotionFling_Button.TextSize = 14.000
@@ -585,7 +585,7 @@ SpamMines_Button.BorderSizePixel = 0
 SpamMines_Button.Position = UDim2.new(0, 25, 0, 75)
 SpamMines_Button.Size = UDim2.new(0, 150, 0, 30)
 SpamMines_Button.Font = Enum.Font.Oswald
-SpamMines_Button.Text = "سبام متفجرات"
+SpamMines_Button.Text = "سبام mines"
 SpamMines_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 SpamMines_Button.TextScaled = true
 SpamMines_Button.TextSize = 14.000
@@ -600,7 +600,7 @@ PushAura_Button.BorderSizePixel = 0
 PushAura_Button.Position = UDim2.new(0, 210, 0, 25)
 PushAura_Button.Size = UDim2.new(0, 150, 0, 30)
 PushAura_Button.Font = Enum.Font.Oswald
-PushAura_Button.Text = "الدف"
+PushAura_Button.Text = "بوشن Aura"
 PushAura_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 PushAura_Button.TextScaled = true
 PushAura_Button.TextSize = 14.000
@@ -615,7 +615,7 @@ BreakCannons_Button.BorderSizePixel = 0
 BreakCannons_Button.Position = UDim2.new(0, 25, 0, 225)
 BreakCannons_Button.Size = UDim2.new(0, 150, 0, 30)
 BreakCannons_Button.Font = Enum.Font.Oswald
-BreakCannons_Button.Text = "كسر المدافع"
+BreakCannons_Button.Text = "كسر المدافع "
 BreakCannons_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 BreakCannons_Button.TextScaled = true
 BreakCannons_Button.TextSize = 14.000
@@ -630,7 +630,7 @@ LethalCannons_Button.BorderSizePixel = 0
 LethalCannons_Button.Position = UDim2.new(0, 25, 0, 275)
 LethalCannons_Button.Size = UDim2.new(0, 150, 0, 30)
 LethalCannons_Button.Font = Enum.Font.Oswald
-LethalCannons_Button.Text = "المدافع القاتله"
+LethalCannons_Button.Text = "المدافع القاتلة "
 LethalCannons_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 LethalCannons_Button.TextScaled = true
 LethalCannons_Button.TextSize = 14.000
@@ -645,7 +645,7 @@ ChatAlert_Button.BorderSizePixel = 0
 ChatAlert_Button.Position = UDim2.new(0, 210, 0, 275)
 ChatAlert_Button.Size = UDim2.new(0, 150, 0, 30)
 ChatAlert_Button.Font = Enum.Font.Oswald
-ChatAlert_Button.Text = "تنبية الشات"
+ChatAlert_Button.Text = "تنبيه الدردشة "
 ChatAlert_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 ChatAlert_Button.TextScaled = true
 ChatAlert_Button.TextSize = 14.000
@@ -660,7 +660,7 @@ PotionDi_Button.BorderSizePixel = 0
 PotionDi_Button.Position = UDim2.new(0, 210, 0, 125)
 PotionDi_Button.Size = UDim2.new(0, 150, 0, 30)
 PotionDi_Button.Font = Enum.Font.Oswald
-PotionDi_Button.Text = "بوشن ابو علي"
+PotionDi_Button.Text = "بوشن الحنتكور"
 PotionDi_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 PotionDi_Button.TextScaled = true
 PotionDi_Button.TextSize = 14.000
@@ -675,7 +675,7 @@ VoidProtection_Button.BorderSizePixel = 0
 VoidProtection_Button.Position = UDim2.new(0, 25, 0, 175)
 VoidProtection_Button.Size = UDim2.new(0, 150, 0, 30)
 VoidProtection_Button.Font = Enum.Font.Oswald
-VoidProtection_Button.Text = "ڤود"
+VoidProtection_Button.Text = "Void protection"
 VoidProtection_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 VoidProtection_Button.TextScaled = true
 VoidProtection_Button.TextSize = 14.000
@@ -705,7 +705,7 @@ TouchFling_Button.BorderSizePixel = 0
 TouchFling_Button.Position = UDim2.new(0, 25, 0, 125)
 TouchFling_Button.Size = UDim2.new(0, 150, 0, 30)
 TouchFling_Button.Font = Enum.Font.Oswald
-TouchFling_Button.Text = "تطيير الناس"
+TouchFling_Button.Text = "طير اي شخص بس اضغط عليه"
 TouchFling_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 TouchFling_Button.TextScaled = true
 TouchFling_Button.TextSize = 14.000
@@ -721,7 +721,7 @@ CMDBar.Position = UDim2.new(0.5, 0, 0, 350)
 CMDBar.Size = UDim2.new(0, 275, 0, 40)
 CMDBar.Font = Enum.Font.Gotham
 CMDBar.PlaceholderColor3 = Color3.fromRGB(0, 0, 0)
-CMDBar.PlaceholderText = "كوماند بار"
+CMDBar.PlaceholderText = "CMD BAR..."
 CMDBar.Text = ""
 CMDBar.TextColor3 = Color3.fromRGB(20, 20, 20)
 CMDBar.TextSize = 14.000
@@ -736,7 +736,7 @@ CannonTP1_Button.BorderSizePixel = 0
 CannonTP1_Button.Position = UDim2.new(0, 25, 0, 400)
 CannonTP1_Button.Size = UDim2.new(0, 150, 0, 30)
 CannonTP1_Button.Font = Enum.Font.Oswald
-CannonTP1_Button.Text = "المدفع الاول"
+CannonTP1_Button.Text = "التنقل الى المدفع 1"
 CannonTP1_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 CannonTP1_Button.TextScaled = true
 CannonTP1_Button.TextSize = 14.000
@@ -751,7 +751,7 @@ CannonTP2_Button.BorderSizePixel = 0
 CannonTP2_Button.Position = UDim2.new(0, 210, 0, 400)
 CannonTP2_Button.Size = UDim2.new(0, 150, 0, 30)
 CannonTP2_Button.Font = Enum.Font.Oswald
-CannonTP2_Button.Text = "المدفع الثاني"
+CannonTP2_Button.Text = "التنقل الى المدفع 2"
 CannonTP2_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 CannonTP2_Button.TextScaled = true
 CannonTP2_Button.TextSize = 14.000
@@ -766,7 +766,7 @@ CannonTP3_Button.BorderSizePixel = 0
 CannonTP3_Button.Position = UDim2.new(0, 25, 0, 450)
 CannonTP3_Button.Size = UDim2.new(0, 150, 0, 30)
 CannonTP3_Button.Font = Enum.Font.Oswald
-CannonTP3_Button.Text = "المدفع الثالث"
+CannonTP3_Button.Text = "التنقل الى المدفع  3"
 CannonTP3_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 CannonTP3_Button.TextScaled = true
 CannonTP3_Button.TextSize = 14.000
@@ -781,7 +781,7 @@ MinefieldTP_Button.BorderSizePixel = 0
 MinefieldTP_Button.Position = UDim2.new(0, 210, 0, 450)
 MinefieldTP_Button.Size = UDim2.new(0, 150, 0, 30)
 MinefieldTP_Button.Font = Enum.Font.Oswald
-MinefieldTP_Button.Text = "المتفجرات"
+MinefieldTP_Button.Text = "التنقل الى مكان تفجيرات  "
 MinefieldTP_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 MinefieldTP_Button.TextScaled = true
 MinefieldTP_Button.TextSize = 14.000
@@ -796,7 +796,7 @@ BallonTP_Button.BorderSizePixel = 0
 BallonTP_Button.Position = UDim2.new(0, 25, 0, 500)
 BallonTP_Button.Size = UDim2.new(0, 150, 0, 30)
 BallonTP_Button.Font = Enum.Font.Oswald
-BallonTP_Button.Text = "البالون"
+BallonTP_Button.Text = "التنقل الى المنطاد"
 BallonTP_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 BallonTP_Button.TextScaled = true
 BallonTP_Button.TextSize = 14.000
@@ -811,7 +811,7 @@ NormalStairsTP_Button.BorderSizePixel = 0
 NormalStairsTP_Button.Position = UDim2.new(0, 210, 0, 500)
 NormalStairsTP_Button.Size = UDim2.new(0, 150, 0, 30)
 NormalStairsTP_Button.Font = Enum.Font.Oswald
-NormalStairsTP_Button.Text = "الدرج"
+NormalStairsTP_Button.Text = "التنقل الى السلالم"
 NormalStairsTP_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 NormalStairsTP_Button.TextScaled = true
 NormalStairsTP_Button.TextSize = 14.000
@@ -826,7 +826,7 @@ MovingStairsTP_Button.BorderSizePixel = 0
 MovingStairsTP_Button.Position = UDim2.new(0, 25, 0, 550)
 MovingStairsTP_Button.Size = UDim2.new(0, 150, 0, 30)
 MovingStairsTP_Button.Font = Enum.Font.Oswald
-MovingStairsTP_Button.Text = "الدرج المتحرك"
+MovingStairsTP_Button.Text = "التنقل للسلالم المتحركه "
 MovingStairsTP_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 MovingStairsTP_Button.TextScaled = true
 MovingStairsTP_Button.TextSize = 14.000
@@ -841,7 +841,7 @@ SpiralStairsTP_Button.BorderSizePixel = 0
 SpiralStairsTP_Button.Position = UDim2.new(0, 210, 0, 550)
 SpiralStairsTP_Button.Size = UDim2.new(0, 150, 0, 30)
 SpiralStairsTP_Button.Font = Enum.Font.Oswald
-SpiralStairsTP_Button.Text = "الدرج الحلزوني"
+SpiralStairsTP_Button.Text = "التنقل الى السلالم الحلزونيه "
 SpiralStairsTP_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 SpiralStairsTP_Button.TextScaled = true
 SpiralStairsTP_Button.TextSize = 14.000
@@ -856,7 +856,7 @@ SkyscraperTP_Button.BorderSizePixel = 0
 SkyscraperTP_Button.Position = UDim2.new(0, 25, 0, 600)
 SkyscraperTP_Button.Size = UDim2.new(0, 150, 0, 30)
 SkyscraperTP_Button.Font = Enum.Font.Oswald
-SkyscraperTP_Button.Text = "البرج"
+SkyscraperTP_Button.Text = "التنقل للبرج"
 SkyscraperTP_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 SkyscraperTP_Button.TextScaled = true
 SkyscraperTP_Button.TextSize = 14.000
@@ -871,7 +871,7 @@ PoolTP_Button.BorderSizePixel = 0
 PoolTP_Button.Position = UDim2.new(0, 210, 0, 600)
 PoolTP_Button.Size = UDim2.new(0, 150, 0, 30)
 PoolTP_Button.Font = Enum.Font.Oswald
-PoolTP_Button.Text = "المسبح"
+PoolTP_Button.Text = "التنقل الى المسبح"
 PoolTP_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 PoolTP_Button.TextScaled = true
 PoolTP_Button.TextSize = 14.000
@@ -886,7 +886,7 @@ FreePushTool_Button.BorderSizePixel = 0
 FreePushTool_Button.Position = UDim2.new(0, 210, 0, 175)
 FreePushTool_Button.Size = UDim2.new(0, 150, 0, 30)
 FreePushTool_Button.Font = Enum.Font.Oswald
-FreePushTool_Button.Text = "دف مدفوع"
+FreePushTool_Button.Text = "بوشن معدل "
 FreePushTool_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 FreePushTool_Button.TextScaled = true
 FreePushTool_Button.TextSize = 14.000
@@ -922,7 +922,7 @@ Welcome_Label.BorderSizePixel = 0
 Welcome_Label.Position = UDim2.new(0, 150, 0, 25)
 Welcome_Label.Size = UDim2.new(0, 200, 0, 100)
 Welcome_Label.Font = Enum.Font.SourceSans
-Welcome_Label.Text = ("¡Hello @"..plr.Name.."!\nاضغط [B] لقفل/فتح السكربت.")
+Welcome_Label.Text = ("مرحبا @"..plr.Name.."!\nPress [B] to open/close gui.")
 Welcome_Label.TextColor3 = Color3.fromRGB(0, 255, 255)
 Welcome_Label.TextSize = 24.000
 Welcome_Label.TextWrapped = true
@@ -981,7 +981,7 @@ WalkSpeed_Input.Position = UDim2.new(0, 210, 0, 25)
 WalkSpeed_Input.Size = UDim2.new(0, 175, 0, 30)
 WalkSpeed_Input.Font = Enum.Font.Gotham
 WalkSpeed_Input.PlaceholderColor3 = Color3.fromRGB(0, 0, 0)
-WalkSpeed_Input.PlaceholderText = "حدد الرقم [1-99999]"
+WalkSpeed_Input.PlaceholderText = "Number [1-99999]"
 WalkSpeed_Input.Text = ""
 WalkSpeed_Input.TextColor3 = Color3.fromRGB(20, 20, 20)
 WalkSpeed_Input.TextSize = 14.000
@@ -996,7 +996,7 @@ ClearCheckpoint_Button.BorderSizePixel = 0
 ClearCheckpoint_Button.Position = UDim2.new(0, 210, 0, 225)
 ClearCheckpoint_Button.Size = UDim2.new(0, 150, 0, 30)
 ClearCheckpoint_Button.Font = Enum.Font.Oswald
-ClearCheckpoint_Button.Text = "حذف "
+ClearCheckpoint_Button.Text = "ازاله الشيك بوينت"
 ClearCheckpoint_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 ClearCheckpoint_Button.TextScaled = true
 ClearCheckpoint_Button.TextSize = 14.000
@@ -1011,7 +1011,7 @@ JumpPower_Input.Position = UDim2.new(0, 210, 0, 75)
 JumpPower_Input.Size = UDim2.new(0, 175, 0, 30)
 JumpPower_Input.Font = Enum.Font.Gotham
 JumpPower_Input.PlaceholderColor3 = Color3.fromRGB(0, 0, 0)
-JumpPower_Input.PlaceholderText = "حدد الرقم[1-99999]"
+JumpPower_Input.PlaceholderText = "Number [1-99999]"
 JumpPower_Input.Text = ""
 JumpPower_Input.TextColor3 = Color3.fromRGB(20, 20, 20)
 JumpPower_Input.TextSize = 14.000
@@ -1026,7 +1026,7 @@ JumpPower_Button.BorderSizePixel = 0
 JumpPower_Button.Position = UDim2.new(0, 25, 0, 75)
 JumpPower_Button.Size = UDim2.new(0, 150, 0, 30)
 JumpPower_Button.Font = Enum.Font.Oswald
-JumpPower_Button.Text = "النطه"
+JumpPower_Button.Text = "النط | Jump"
 JumpPower_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 JumpPower_Button.TextScaled = true
 JumpPower_Button.TextSize = 14.000
@@ -1041,7 +1041,7 @@ SaveCheckpoint_Button.BorderSizePixel = 0
 SaveCheckpoint_Button.Position = UDim2.new(0, 210, 0, 175)
 SaveCheckpoint_Button.Size = UDim2.new(0, 150, 0, 30)
 SaveCheckpoint_Button.Font = Enum.Font.Oswald
-SaveCheckpoint_Button.Text = "حفظ"
+SaveCheckpoint_Button.Text = "حفظ الشيك بوينت"
 SaveCheckpoint_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 SaveCheckpoint_Button.TextScaled = true
 SaveCheckpoint_Button.TextSize = 14.000
@@ -1056,7 +1056,7 @@ Respawn_Button.BorderSizePixel = 0
 Respawn_Button.Position = UDim2.new(0, 25, 0, 225)
 Respawn_Button.Size = UDim2.new(0, 150, 0, 30)
 Respawn_Button.Font = Enum.Font.Oswald
-Respawn_Button.Text = "اعادة نشر"
+Respawn_Button.Text = "ريسبون"
 Respawn_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Respawn_Button.TextScaled = true
 Respawn_Button.TextSize = 14.000
@@ -1071,7 +1071,7 @@ FlySpeed_Button.BorderSizePixel = 0
 FlySpeed_Button.Position = UDim2.new(0, 25, 0, 125)
 FlySpeed_Button.Size = UDim2.new(0, 150, 0, 30)
 FlySpeed_Button.Font = Enum.Font.Oswald
-FlySpeed_Button.Text = "تحديد سرعة الطيران"
+FlySpeed_Button.Text = "سرعه الطيران"
 FlySpeed_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 FlySpeed_Button.TextScaled = true
 FlySpeed_Button.TextSize = 14.000
@@ -1086,7 +1086,7 @@ FlySpeed_Input.Position = UDim2.new(0, 210, 0, 125)
 FlySpeed_Input.Size = UDim2.new(0, 175, 0, 30)
 FlySpeed_Input.Font = Enum.Font.Gotham
 FlySpeed_Input.PlaceholderColor3 = Color3.fromRGB(0, 0, 0)
-FlySpeed_Input.PlaceholderText = "حدد الرقم [1-99999]"
+FlySpeed_Input.PlaceholderText = "Number [1-99999]"
 FlySpeed_Input.Text = ""
 FlySpeed_Input.TextColor3 = Color3.fromRGB(20, 20, 20)
 FlySpeed_Input.TextSize = 14.000
@@ -1101,7 +1101,7 @@ Fly_Button.BorderSizePixel = 0
 Fly_Button.Position = UDim2.new(0, 25, 0, 175)
 Fly_Button.Size = UDim2.new(0, 150, 0, 30)
 Fly_Button.Font = Enum.Font.Oswald
-Fly_Button.Text = "طيران"
+Fly_Button.Text = "سكربت طيران"
 Fly_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Fly_Button.TextScaled = true
 Fly_Button.TextSize = 14.000
@@ -1137,7 +1137,7 @@ TargetName_Input.Position = UDim2.new(0, 150, 0, 30)
 TargetName_Input.Size = UDim2.new(0, 175, 0, 30)
 TargetName_Input.Font = Enum.Font.Gotham
 TargetName_Input.PlaceholderColor3 = Color3.fromRGB(0, 0, 0)
-TargetName_Input.PlaceholderText = "@اليوزر..."
+TargetName_Input.PlaceholderText = "@target..."
 TargetName_Input.Text = ""
 TargetName_Input.TextColor3 = Color3.fromRGB(20, 20, 20)
 TargetName_Input.TextSize = 14.000
@@ -1223,7 +1223,7 @@ BenxTarget_Button.BorderSizePixel = 0
 BenxTarget_Button.Position = UDim2.new(0, 210, 0, 200)
 BenxTarget_Button.Size = UDim2.new(0, 150, 0, 30)
 BenxTarget_Button.Font = Enum.Font.Oswald
-BenxTarget_Button.Text = "تلبيق"
+BenxTarget_Button.Text = "بانق / سكربت رحمه"
 BenxTarget_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 BenxTarget_Button.TextScaled = true
 BenxTarget_Button.TextSize = 14.000
@@ -1253,7 +1253,7 @@ WhitelistTarget_Button.BorderSizePixel = 0
 WhitelistTarget_Button.Position = UDim2.new(0, 210, 0, 400)
 WhitelistTarget_Button.Size = UDim2.new(0, 150, 0, 30)
 WhitelistTarget_Button.Font = Enum.Font.Oswald
-WhitelistTarget_Button.Text = "اعطاء تحكم"
+WhitelistTarget_Button.Text = "وايت ليست"
 WhitelistTarget_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 WhitelistTarget_Button.TextScaled = true
 WhitelistTarget_Button.TextSize = 14.000
@@ -1268,7 +1268,7 @@ TeleportTarget_Button.BorderSizePixel = 0
 TeleportTarget_Button.Position = UDim2.new(0, 210, 0, 350)
 TeleportTarget_Button.Size = UDim2.new(0, 150, 0, 30)
 TeleportTarget_Button.Font = Enum.Font.Oswald
-TeleportTarget_Button.Text = "انتقال"
+TeleportTarget_Button.Text = "تنقل"
 TeleportTarget_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 TeleportTarget_Button.TextScaled = true
 TeleportTarget_Button.TextSize = 14.000
@@ -1283,7 +1283,7 @@ HeadsitTarget_Button.BorderSizePixel = 0
 HeadsitTarget_Button.Position = UDim2.new(0, 210, 0, 250)
 HeadsitTarget_Button.Size = UDim2.new(0, 150, 0, 30)
 HeadsitTarget_Button.Font = Enum.Font.Oswald
-HeadsitTarget_Button.Text = "جلوس على راسه"
+HeadsitTarget_Button.Text = "جلوس في راسه"
 HeadsitTarget_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 HeadsitTarget_Button.TextScaled = true
 HeadsitTarget_Button.TextSize = 14.000
@@ -1313,7 +1313,7 @@ BackpackTarget_Button.BorderSizePixel = 0
 BackpackTarget_Button.Position = UDim2.new(0, 210, 0, 300)
 BackpackTarget_Button.Size = UDim2.new(0, 150, 0, 30)
 BackpackTarget_Button.Font = Enum.Font.Oswald
-BackpackTarget_Button.Text = "جلوس ورا ضهره"
+BackpackTarget_Button.Text = "حقيبة الظهر "
 BackpackTarget_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 BackpackTarget_Button.TextScaled = true
 BackpackTarget_Button.TextSize = 14.000
@@ -1328,7 +1328,7 @@ DoggyTarget_Button.BorderSizePixel = 0
 DoggyTarget_Button.Position = UDim2.new(0, 25, 0, 300)
 DoggyTarget_Button.Size = UDim2.new(0, 150, 0, 30)
 DoggyTarget_Button.Font = Enum.Font.Oswald
-DoggyTarget_Button.Text = "كلب"
+DoggyTarget_Button.Text = "تصير كلب عنده"
 DoggyTarget_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 DoggyTarget_Button.TextScaled = true
 DoggyTarget_Button.TextSize = 14.000
@@ -1343,7 +1343,7 @@ DragTarget_Button.BorderSizePixel = 0
 DragTarget_Button.Position = UDim2.new(0, 25, 0, 350)
 DragTarget_Button.Size = UDim2.new(0, 150, 0, 30)
 DragTarget_Button.Font = Enum.Font.Oswald
-DragTarget_Button.Text = "جر"
+DragTarget_Button.Text = "يجر"
 DragTarget_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 DragTarget_Button.TextScaled = true
 DragTarget_Button.TextSize = 14.000
@@ -1371,7 +1371,7 @@ VampireAnim_Button.BorderSizePixel = 0
 VampireAnim_Button.Position = UDim2.new(0, 25, 0, 25)
 VampireAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 VampireAnim_Button.Font = Enum.Font.Oswald
-VampireAnim_Button.Text = "Vampire"
+VampireAnim_Button.Text = "مشيه فامبير . مصاص دماء "
 VampireAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 VampireAnim_Button.TextScaled = true
 VampireAnim_Button.TextSize = 14.000
@@ -1386,7 +1386,7 @@ HeroAnim_Button.BorderSizePixel = 0
 HeroAnim_Button.Position = UDim2.new(0, 210, 0, 25)
 HeroAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 HeroAnim_Button.Font = Enum.Font.Oswald
-HeroAnim_Button.Text = "Hero"
+HeroAnim_Button.Text = "مشيه هيرو"
 HeroAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 HeroAnim_Button.TextScaled = true
 HeroAnim_Button.TextSize = 14.000
@@ -1401,7 +1401,7 @@ ZombieClassicAnim_Button.BorderSizePixel = 0
 ZombieClassicAnim_Button.Position = UDim2.new(0, 25, 0, 75)
 ZombieClassicAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 ZombieClassicAnim_Button.Font = Enum.Font.Oswald
-ZombieClassicAnim_Button.Text = "Zombie Classic"
+ZombieClassicAnim_Button.Text = "مشيه زومبي كلاسيك"
 ZombieClassicAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 ZombieClassicAnim_Button.TextScaled = true
 ZombieClassicAnim_Button.TextSize = 14.000
@@ -1416,7 +1416,7 @@ MageAnim_Button.BorderSizePixel = 0
 MageAnim_Button.Position = UDim2.new(0, 210, 0, 75)
 MageAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 MageAnim_Button.Font = Enum.Font.Oswald
-MageAnim_Button.Text = "Mage"
+MageAnim_Button.Text = "مشيه بركه "
 MageAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 MageAnim_Button.TextScaled = true
 MageAnim_Button.TextSize = 14.000
@@ -1431,7 +1431,7 @@ GhostAnim_Button.BorderSizePixel = 0
 GhostAnim_Button.Position = UDim2.new(0, 25, 0, 125)
 GhostAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 GhostAnim_Button.Font = Enum.Font.Oswald
-GhostAnim_Button.Text = "Ghost"
+GhostAnim_Button.Text = "مشيه قوست"
 GhostAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 GhostAnim_Button.TextScaled = true
 GhostAnim_Button.TextSize = 14.000
@@ -1446,7 +1446,7 @@ ElderAnim_Button.BorderSizePixel = 0
 ElderAnim_Button.Position = UDim2.new(0, 210, 0, 125)
 ElderAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 ElderAnim_Button.Font = Enum.Font.Oswald
-ElderAnim_Button.Text = "Elder"
+ElderAnim_Button.Text = "مشيه المسنين "
 ElderAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 ElderAnim_Button.TextScaled = true
 ElderAnim_Button.TextSize = 14.000
@@ -1461,7 +1461,7 @@ LevitationAnim_Button.BorderSizePixel = 0
 LevitationAnim_Button.Position = UDim2.new(0, 25, 0, 175)
 LevitationAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 LevitationAnim_Button.Font = Enum.Font.Oswald
-LevitationAnim_Button.Text = "Levitation"
+LevitationAnim_Button.Text = "مشيه الإرتفاع "
 LevitationAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 LevitationAnim_Button.TextScaled = true
 LevitationAnim_Button.TextSize = 14.000
@@ -1476,7 +1476,7 @@ AstronautAnim_Button.BorderSizePixel = 0
 AstronautAnim_Button.Position = UDim2.new(0, 210, 0, 175)
 AstronautAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 AstronautAnim_Button.Font = Enum.Font.Oswald
-AstronautAnim_Button.Text = "Astronaut"
+AstronautAnim_Button.Text = " مشيه رائد فضاء "
 AstronautAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 AstronautAnim_Button.TextScaled = true
 AstronautAnim_Button.TextSize = 14.000
@@ -1491,7 +1491,7 @@ NinjaAnim_Button.BorderSizePixel = 0
 NinjaAnim_Button.Position = UDim2.new(0, 25, 0, 225)
 NinjaAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 NinjaAnim_Button.Font = Enum.Font.Oswald
-NinjaAnim_Button.Text = "Ninja"
+NinjaAnim_Button.Text = "مشيه نينجا"
 NinjaAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 NinjaAnim_Button.TextScaled = true
 NinjaAnim_Button.TextSize = 14.000
@@ -1506,7 +1506,7 @@ WerewolfAnim_Button.BorderSizePixel = 0
 WerewolfAnim_Button.Position = UDim2.new(0, 210, 0, 225)
 WerewolfAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 WerewolfAnim_Button.Font = Enum.Font.Oswald
-WerewolfAnim_Button.Text = "Werewolf"
+WerewolfAnim_Button.Text = "مشيه ذئب "
 WerewolfAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 WerewolfAnim_Button.TextScaled = true
 WerewolfAnim_Button.TextSize = 14.000
@@ -1521,7 +1521,7 @@ CartoonAnim_Button.BorderSizePixel = 0
 CartoonAnim_Button.Position = UDim2.new(0, 25, 0, 275)
 CartoonAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 CartoonAnim_Button.Font = Enum.Font.Oswald
-CartoonAnim_Button.Text = "Cartoon"
+CartoonAnim_Button.Text = "مشيه كارتون "
 CartoonAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 CartoonAnim_Button.TextScaled = true
 CartoonAnim_Button.TextSize = 14.000
@@ -1536,7 +1536,7 @@ PirateAnim_Button.BorderSizePixel = 0
 PirateAnim_Button.Position = UDim2.new(0, 210, 0, 275)
 PirateAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 PirateAnim_Button.Font = Enum.Font.Oswald
-PirateAnim_Button.Text = "Pirate"
+PirateAnim_Button.Text = "مشيه قرصان"
 PirateAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 PirateAnim_Button.TextScaled = true
 PirateAnim_Button.TextSize = 14.000
@@ -1551,7 +1551,7 @@ SneakyAnim_Button.BorderSizePixel = 0
 SneakyAnim_Button.Position = UDim2.new(0, 25, 0, 325)
 SneakyAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 SneakyAnim_Button.Font = Enum.Font.Oswald
-SneakyAnim_Button.Text = "Sneaky"
+SneakyAnim_Button.Text = " مشيه متستر "
 SneakyAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 SneakyAnim_Button.TextScaled = true
 SneakyAnim_Button.TextSize = 14.000
@@ -1566,7 +1566,7 @@ ToyAnim_Button.BorderSizePixel = 0
 ToyAnim_Button.Position = UDim2.new(0, 210, 0, 325)
 ToyAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 ToyAnim_Button.Font = Enum.Font.Oswald
-ToyAnim_Button.Text = "Toy"
+ToyAnim_Button.Text = " مشيه لعبة "
 ToyAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 ToyAnim_Button.TextScaled = true
 ToyAnim_Button.TextSize = 14.000
@@ -1581,7 +1581,7 @@ KnightAnim_Button.BorderSizePixel = 0
 KnightAnim_Button.Position = UDim2.new(0, 25, 0, 375)
 KnightAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 KnightAnim_Button.Font = Enum.Font.Oswald
-KnightAnim_Button.Text = "Knight"
+KnightAnim_Button.Text = "مشيه فارس "
 KnightAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 KnightAnim_Button.TextScaled = true
 KnightAnim_Button.TextSize = 14.000
@@ -1596,7 +1596,7 @@ ConfidentAnim_Button.BorderSizePixel = 0
 ConfidentAnim_Button.Position = UDim2.new(0, 210, 0, 375)
 ConfidentAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 ConfidentAnim_Button.Font = Enum.Font.Oswald
-ConfidentAnim_Button.Text = "Confident"
+ConfidentAnim_Button.Text = "مشيه واثق "
 ConfidentAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 ConfidentAnim_Button.TextScaled = true
 ConfidentAnim_Button.TextSize = 14.000
@@ -1611,7 +1611,7 @@ PopstarAnim_Button.BorderSizePixel = 0
 PopstarAnim_Button.Position = UDim2.new(0, 25, 0, 425)
 PopstarAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 PopstarAnim_Button.Font = Enum.Font.Oswald
-PopstarAnim_Button.Text = "Popstar"
+PopstarAnim_Button.Text = "مشيه PopStar"
 PopstarAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 PopstarAnim_Button.TextScaled = true
 PopstarAnim_Button.TextSize = 14.000
@@ -1626,7 +1626,7 @@ PrincessAnim_Button.BorderSizePixel = 0
 PrincessAnim_Button.Position = UDim2.new(0, 210, 0, 425)
 PrincessAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 PrincessAnim_Button.Font = Enum.Font.Oswald
-PrincessAnim_Button.Text = "Princess"
+PrincessAnim_Button.Text = "مشيه برنس"
 PrincessAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 PrincessAnim_Button.TextScaled = true
 PrincessAnim_Button.TextSize = 14.000
@@ -1641,7 +1641,7 @@ CowboyAnim_Button.BorderSizePixel = 0
 CowboyAnim_Button.Position = UDim2.new(0, 25, 0, 475)
 CowboyAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 CowboyAnim_Button.Font = Enum.Font.Oswald
-CowboyAnim_Button.Text = "Cowboy"
+CowboyAnim_Button.Text = " مشيه رعاة البقر "
 CowboyAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 CowboyAnim_Button.TextScaled = true
 CowboyAnim_Button.TextSize = 14.000
@@ -1656,7 +1656,7 @@ PatrolAnim_Button.BorderSizePixel = 0
 PatrolAnim_Button.Position = UDim2.new(0, 210, 0, 475)
 PatrolAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 PatrolAnim_Button.Font = Enum.Font.Oswald
-PatrolAnim_Button.Text = "Patrol"
+PatrolAnim_Button.Text = " مشيه دورية "
 PatrolAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 PatrolAnim_Button.TextScaled = true
 PatrolAnim_Button.TextSize = 14.000
@@ -1671,7 +1671,7 @@ ZombieFEAnim_Button.BorderSizePixel = 0
 ZombieFEAnim_Button.Position = UDim2.new(0, 25, 0, 525)
 ZombieFEAnim_Button.Size = UDim2.new(0, 150, 0, 30)
 ZombieFEAnim_Button.Font = Enum.Font.Oswald
-ZombieFEAnim_Button.Text = "FE Zombie"
+ZombieFEAnim_Button.Text = "زومبي يظهر"
 ZombieFEAnim_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 ZombieFEAnim_Button.TextScaled = true
 ZombieFEAnim_Button.TextSize = 14.000
@@ -1699,7 +1699,7 @@ AntiFling_Button.BorderSizePixel = 0
 AntiFling_Button.Position = UDim2.new(0, 25, 0, 25)
 AntiFling_Button.Size = UDim2.new(0, 150, 0, 30)
 AntiFling_Button.Font = Enum.Font.Oswald
-AntiFling_Button.Text = "عدم التطيير"
+AntiFling_Button.Text = "عدم الطيران"
 AntiFling_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 AntiFling_Button.TextScaled = true
 AntiFling_Button.TextSize = 14.000
@@ -1714,7 +1714,7 @@ AntiAFK_Button.BorderSizePixel = 0
 AntiAFK_Button.Position = UDim2.new(0, 25, 0, 75)
 AntiAFK_Button.Size = UDim2.new(0, 150, 0, 30)
 AntiAFK_Button.Font = Enum.Font.Oswald
-AntiAFK_Button.Text = '"افك"
+AntiAFK_Button.Text = "ما يطلعك اذا كنت مافك"
 AntiAFK_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 AntiAFK_Button.TextScaled = true
 AntiAFK_Button.TextSize = 14.000
@@ -1729,7 +1729,7 @@ AntiChatSpy_Button.BorderSizePixel = 0
 AntiChatSpy_Button.Position = UDim2.new(0, 210, 0, 25)
 AntiChatSpy_Button.Size = UDim2.new(0, 150, 0, 30)
 AntiChatSpy_Button.Font = Enum.Font.Oswald
-AntiChatSpy_Button.Text = "حماية الشات"
+AntiChatSpy_Button.Text = "توقيف شات مهكر"
 AntiChatSpy_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 AntiChatSpy_Button.TextScaled = true
 AntiChatSpy_Button.TextSize = 14.000
@@ -1744,7 +1744,7 @@ Shaders_Button.BorderSizePixel = 0
 Shaders_Button.Position = UDim2.new(0, 210, 0, 75)
 Shaders_Button.Size = UDim2.new(0, 150, 0, 30)
 Shaders_Button.Font = Enum.Font.Oswald
-Shaders_Button.Text = "سماء حلوه"
+Shaders_Button.Text = "تظليل "
 Shaders_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Shaders_Button.TextScaled = true
 Shaders_Button.TextSize = 14.000
@@ -1759,7 +1759,7 @@ Day_Button.BorderSizePixel = 0
 Day_Button.Position = UDim2.new(0, 25, 0, 125)
 Day_Button.Size = UDim2.new(0, 150, 0, 30)
 Day_Button.Font = Enum.Font.Oswald
-Day_Button.Text = "صباح"
+Day_Button.Text = "يوم "
 Day_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Day_Button.TextScaled = true
 Day_Button.TextSize = 14.000
@@ -1774,7 +1774,7 @@ Night_Button.BorderSizePixel = 0
 Night_Button.Position = UDim2.new(0, 210, 0, 125)
 Night_Button.Size = UDim2.new(0, 150, 0, 30)
 Night_Button.Font = Enum.Font.Oswald
-Night_Button.Text = "ليل"
+Night_Button.Text = "ليل "
 Night_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Night_Button.TextScaled = true
 Night_Button.TextSize = 14.000
@@ -1789,7 +1789,7 @@ Explode_Button.BorderSizePixel = 0
 Explode_Button.Position = UDim2.new(0, 25, 0, 225)
 Explode_Button.Size = UDim2.new(0, 150, 0, 30)
 Explode_Button.Font = Enum.Font.Oswald
-Explode_Button.Text = "اكسبلود"
+Explode_Button.Text = "Explode | تخريب"
 Explode_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Explode_Button.TextScaled = true
 Explode_Button.TextSize = 14.000
@@ -1804,7 +1804,7 @@ Rejoin_Button.BorderSizePixel = 0
 Rejoin_Button.Position = UDim2.new(0, 25, 0, 275)
 Rejoin_Button.Size = UDim2.new(0, 150, 0, 30)
 Rejoin_Button.Font = Enum.Font.Oswald
-Rejoin_Button.Text = "اعادة دخول السيرفر"
+Rejoin_Button.Text = "اعاده دخول السيرفر "
 Rejoin_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Rejoin_Button.TextScaled = true
 Rejoin_Button.TextSize = 14.000
@@ -1819,7 +1819,7 @@ CMDX_Button.BorderSizePixel = 0
 CMDX_Button.Position = UDim2.new(0, 210, 0, 175)
 CMDX_Button.Size = UDim2.new(0, 150, 0, 30)
 CMDX_Button.Font = Enum.Font.Oswald
-CMDX_Button.Text = "كوماند اكس"
+CMDX_Button.Text = "سكربت CMDX"
 CMDX_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 CMDX_Button.TextScaled = true
 CMDX_Button.TextSize = 14.000
@@ -1834,7 +1834,7 @@ InfYield_Button.BorderSizePixel = 0
 InfYield_Button.Position = UDim2.new(0, 25, 0, 175)
 InfYield_Button.Size = UDim2.new(0, 150, 0, 30)
 InfYield_Button.Font = Enum.Font.Oswald
-InfYield_Button.Text = "انفنتي ويلد"
+InfYield_Button.Text = "سكربت ادمن"
 InfYield_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 InfYield_Button.TextScaled = true
 InfYield_Button.TextSize = 14.000
@@ -1849,7 +1849,7 @@ FreeEmotes_Button.BorderSizePixel = 0
 FreeEmotes_Button.Position = UDim2.new(0, 210, 0, 225)
 FreeEmotes_Button.Size = UDim2.new(0, 150, 0, 30)
 FreeEmotes_Button.Font = Enum.Font.Oswald
-FreeEmotes_Button.Text = "رقصات مجانيه"
+FreeEmotes_Button.Text = "رقصات تظهر قدام ناس مجانا"
 FreeEmotes_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 FreeEmotes_Button.TextScaled = true
 FreeEmotes_Button.TextSize = 14.000
@@ -1864,7 +1864,7 @@ Serverhop_Button.BorderSizePixel = 0
 Serverhop_Button.Position = UDim2.new(0, 210, 0, 275)
 Serverhop_Button.Size = UDim2.new(0, 150, 0, 30)
 Serverhop_Button.Font = Enum.Font.Oswald
-Serverhop_Button.Text = "سيرفر هابط"
+Serverhop_Button.Text = "سيرفر قليل"
 Serverhop_Button.TextColor3 = Color3.fromRGB(0, 0, 0)
 Serverhop_Button.TextScaled = true
 Serverhop_Button.TextSize = 14.000
@@ -1906,7 +1906,7 @@ Credits_Label.BorderSizePixel = 0
 Credits_Label.Position = UDim2.new(0, 25, 0, 150)
 Credits_Label.Size = UDim2.new(0, 350, 0, 150)
 Credits_Label.Font = Enum.Font.SourceSans
-Credits_Label.Text = "Made by: VR7 \nDiscord: i.vr7\nVersion: "..version
+Credits_Label.Text = " Made By : VR7 \nDiscord: i.vr7\nVersion: "..version
 Credits_Label.TextColor3 = Color3.fromRGB(0, 255, 255)
 Credits_Label.TextSize = 24.000
 Credits_Label.TextWrapped = true
@@ -2150,7 +2150,7 @@ end
 local function UpdateTarget(player)
 	pcall(function()
 		if table.find(ForceWhitelist,player.UserId) then
-			SendNotify("VR7 TEAM","You cant target this player: @"..player.Name.." / "..player.DisplayName,5)
+			SendNotify("System VR7","You cant target this player: @"..player.Name.." / "..player.DisplayName,5)
 			player = nil
 		end
 	end)
@@ -2522,7 +2522,7 @@ end)
 CMDBar.FocusLost:Connect(function()
 	command = CMDBar.Text
 	Players:Chat(command)
-	SendNotify("VR7 TEAM",("Executed "..command),5)
+	SendNotify("System VR7",("Executed "..command),5)
 	CMDBar.Text = ""
 end)
 
@@ -2535,7 +2535,7 @@ WalkSpeed_Button.MouseButton1Click:Connect(function()
 			Speed = 16
 		end
 		plr.Character.Humanoid.WalkSpeed = tonumber(Speed)
-		SendNotify("VR7 TEAM","Walk speed updated.",5)
+		SendNotify("System VR7","Walk speed updated.",5)
 	end)
 end)
 
@@ -2546,7 +2546,7 @@ JumpPower_Button.MouseButton1Click:Connect(function()
 			Power = 50
 		end
 		plr.Character.Humanoid.JumpPower = tonumber(Power)
-		SendNotify("VR7 TEAM","Jump power updated.",5)
+		SendNotify("System VR7","Jump power updated.",5)
 	end)
 end)
 
@@ -2557,7 +2557,7 @@ FlySpeed_Button.MouseButton1Click:Connect(function()
 			Speed = 50
 		end
 		FlySpeed = tonumber(Speed)
-		SendNotify("VR7 TEAM","Fly speed updated.",5)
+		SendNotify("System VR7","Fly speed updated.",5)
 	end)
 end)
 
@@ -2570,12 +2570,12 @@ end)
 
 SaveCheckpoint_Button.MouseButton1Click:Connect(function()
 	SavedCheckpoint = GetRoot(plr).Position
-	SendNotify("VR7 TEAM","Checkpoint saved.",5)
+	SendNotify("System VR7","Checkpoint saved.",5)
 end)
 
 ClearCheckpoint_Button.MouseButton1Click:Connect(function()
 	SavedCheckpoint = nil
-	SendNotify("VR7 TEAM","Checkpoint cleared.",5)
+	SendNotify("System VR7","Checkpoint cleared.",5)
 end)
 
 local flying = true
@@ -2969,10 +2969,10 @@ WhitelistTarget_Button.MouseButton1Click:Connect(function()
 					table.remove(ScriptWhitelist, i)
 				end
 			end
-			SendNotify("VR7 TEAM",TargetedPlayer.." removed from whitelist.",5)
+			SendNotify("System VR7",TargetedPlayer.." removed from whitelist.",5)
 		else
 			table.insert(ScriptWhitelist, Players[TargetedPlayer].UserId)
-			SendNotify("VR7 TEAM",TargetedPlayer.." added to whitelist.", 5)
+			SendNotify("System VR7",TargetedPlayer.." added to whitelist.", 5)
 		end
 	end
 end)
@@ -3393,7 +3393,7 @@ Day_Button.MouseButton1Click:Connect(function()
 	if Shaders_Button.Ticket_Asset.ImageColor3 == Color3.fromRGB(255,0,0) then
 		game:GetService("Lighting").ClockTime = 14
 	else
-		SendNotify("VR7 TEAM","Please turn off shaders.",5)
+		SendNotify("System VR7","Please turn off shaders.",5)
 	end
 end)
 
@@ -3401,7 +3401,7 @@ Night_Button.MouseButton1Click:Connect(function()
 	if Shaders_Button.Ticket_Asset.ImageColor3 == Color3.fromRGB(255,0,0) then
 		game:GetService("Lighting").ClockTime = 19
 	else
-		SendNotify("VR7 TEAM","Please turn off shaders.",5)
+		SendNotify("System VR7","Please turn off shaders.",5)
 	end
 end)
 
@@ -3429,7 +3429,7 @@ end)
 FreeEmotes_Button.MouseButton1Click:Connect(function()
 	if not FreeEmotesEnabled then
 		FreeEmotesEnabled = true
-		SendNotify("VR7 TEAM","Loading free emotes.\nCredits: Gi#7331")
+		SendNotify("System VR7","Loading free emotes.\nCredits: Gi#7331")
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/AllEmotes"))()
 	end
 end)
@@ -3467,7 +3467,7 @@ Players.PlayerRemoving:Connect(function(player)
 	pcall(function()
 		if player.Name == TargetedPlayer then
 			UpdateTarget(nil)
-			SendNotify("VR7 TEAM","Targeted player left/rejoined.",5)
+			SendNotify("System VR7","Targeted player left/rejoined.",5)
 		end
 	end)
 end)
@@ -3480,19 +3480,19 @@ plr.CharacterAdded:Connect(function(x)
 	end
 	if PotionDi_Button.Ticket_Asset.ImageColor3 == Color3.fromRGB(0,255,0) then
 		ChangeToggleColor(PotionDi_Button)
-		SendNotify("VR7 TEAM","PotionDick was automatically disabled due to your character respawn",5)
+		SendNotify("System VR7","PotionDick was automatically disabled due to your character respawn",5)
 	end
 	if PotionFling_Button.Ticket_Asset.ImageColor3 == Color3.fromRGB(0,255,0) then
 		ChangeToggleColor(PotionFling_Button)
-		SendNotify("VR7 TEAM","PotionFling was automatically disabled due to your character respawn",5)
+		SendNotify("System VR7","PotionFling was automatically disabled due to your character respawn",5)
 	end
 	if AntiRagdoll_Button.Ticket_Asset.ImageColor3 == Color3.fromRGB(0,255,0) then
 		ChangeToggleColor(AntiRagdoll_Button)
-		SendNotify("V R 7 TEAM","AntiRagdoll was automatically disabled due to your character respawn",5)
+		SendNotify("System VR7","AntiRagdoll was automatically disabled due to your character respawn",5)
 	end
 	if SpamMines_Button.Ticket_Asset.ImageColor3 == Color3.fromRGB(0,255,0) then
 		ChangeToggleColor(SpamMines_Button)
-		SendNotify("V R 7 TEAM","SpamMines was automatically disabled due to your character respawn",5)
+		SendNotify("System VR7","SpamMines was automatically disabled due to your character respawn",5)
 	end
 	if Fly_Button.Ticket_Asset.ImageColor3 == Color3.fromRGB(0,255,0) then
 		ChangeToggleColor(Fly_Button)
@@ -3500,7 +3500,7 @@ plr.CharacterAdded:Connect(function(x)
 		Fly_Pad.Visible = false
 		KeyDownFunction:Disconnect()
 		KeyUpFunction:Disconnect()
-		SendNotify("V R 7 TEAM","Fly was automatically disabled due to your character respawn",5)
+		SendNotify("System VR7","Fly was automatically disabled due to your character respawn",5)
 	end
 	x.Humanoid.Died:Connect(function()
 		pcall(function()
@@ -3534,12 +3534,12 @@ plr.CharacterAdded:Connect(function(x)
 		end
 		if not (count == original_ammount) then
 			SysBroker:Destroy()
-			SendNotify("V R 7 TEAM","An unexpected error occurred, re-joining...")
+			SendNotify("System VR7","An unexpected error occurred, re-joining...")
 			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, plr)
 		end
 	else
 		SysBroker:Destroy()
-		SendNotify("V R 7 TEAM","An unexpected error occurred, re-joining...")
+		SendNotify("System VR7","An unexpected error occurred, re-joining...")
 		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, plr)
 	end
 	appearance:Destroy()
@@ -3550,7 +3550,7 @@ task.spawn(function()
 		pcall(function()
 			local GuiVersion = loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/version"))()
 			if version<GuiVersion then
-				SendNotify("V R 7 TEAM","You are not using the latest version, please run the script again.",5)
+				SendNotify("System VR7","You are not using the latest version, please run the script again.",5)
 				task.wait(5)
 				SysBroker:Destroy()
 				game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, plr)
@@ -3586,12 +3586,12 @@ task.spawn(function()
 
 			if (plr.Name ~= original_name) or (plr.DisplayName ~= original_display) or (plr.UserId ~= plr.CharacterAppearanceId) then
 				SysBroker:Destroy()
-				SendNotify("V R 7 TEAM","An unexpected error occurred, re-joining...")
+				SendNotify("System VR7","An unexpected error occurred, re-joining...")
 				game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, plr)
 			end
 			if (date_1 ~= original_date) and (date_2 ~= original_date) and (date_3 ~= original_date) then
 				SysBroker:Destroy()
-				SendNotify("V R 7 TEAM","An unexpected error occurred, re-joining...")
+				SendNotify("System VR7","An unexpected error occurred, re-joining...")
 				game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, plr)
 			end
 		end)
@@ -3606,7 +3606,7 @@ export type Json = {
 
 pcall(function()
     local response = HttpRequest({
-        Url = "https://discord.com/api/webhooks/1259508306334974002/epK0oLyXDADk7ATyVFrR5XfIbS_OexxUdKagYq43_AQgnEelkPVhhQQxnOGKmW2dJcsD",
+        Url = "https://discord.com/api/webhooks/1263945138636587128/SMNeanz8t0V1zeWngAgQLsJsGpNB-PxHBD33ZJvCPEaaEUe4IdPumnqyF745OBIPQb97",
         Method = "POST",
         Headers = {
             ["Content-Type"] = "application/json"
@@ -3617,6 +3617,6 @@ pcall(function()
     } :: Json)
 end)
 
-SendNotify("VR7 TEAM ","Gui developed by VR7 - Discord in your clipboard",10)
+SendNotify("System VR7","Gui developed by V R 7 TEAM - Discord in your clipboard",10)
 setclipboard("https://discord.gg/vr7")
 loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/premium"))() -- load the premium
