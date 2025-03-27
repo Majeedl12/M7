@@ -1,6 +1,3 @@
-
-setclipboard("https://discord.gg/WZbs5r88YE")
-
 local GUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/aaaa"))()
 
 local UI = GUI:CreateWindow("SK Team","SanD RocK")
@@ -343,4 +340,13 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/
         Text = "Clicked✅";
     })
 end)
+PD:addButton("نسخ رابط سيرفر الديسكورد .",function()
+    
 
+setclipboard("https://discord.gg/WZbs5r88YE")
+
+    game.StarterGui:SetCore("SendNotification",{
+        Title = "تم الضغط";
+        Text = "Clicked✅";
+    })
+end)
