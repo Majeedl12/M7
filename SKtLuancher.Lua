@@ -1,3 +1,9 @@
+setclipboard("https://discord.gg/WZbs5r88YE")
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "تم نسخ رابط سيرفر الدسكورد";
+        Text = "قريبا تحديث جديد للسكربت";
+        Duration = 5;
+
 local GUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/aaaa"))()
 
 local UI = GUI:CreateWindow("SK Team","SanD RocK")
