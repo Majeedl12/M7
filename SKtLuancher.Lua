@@ -51,10 +51,7 @@ end)
 local PE = UI:addPage("Page 2 ",2,true,6)
 
 PE:addButton("ESP - all maps",function()
-       
-local Players = game:GetService("Players")
-
-local player = Players.LocalPlayer 
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/Majeedl12/ScriptsByM7/refs/heads/main/ESP_majedLocalend.LUA"))()
 
 game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
@@ -295,7 +292,7 @@ game.StarterGui:SetCore("SendNotification",{
 end)
 
 PE:addButton("سكربت العاده - JerkOff",function()
-     loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))
+     loadstring(game:HttpGet("https://pastebin.com/raw/YiSqWZ78"))()
     game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
         Text = "Clicked✅";
