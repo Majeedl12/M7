@@ -1,3 +1,10 @@
+setclipboard("https://discord.gg/WZbs5r88YE")
+
+game.StarterGui:SetCore("SendNotification",{
+        Title = "تم نسخ رابط سيرفر المطورين";
+        Text = "✅";
+    })
+
 local GUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/aaaa"))()
 
 local UI = GUI:CreateWindow("SK Team","SanD RocK")
@@ -20,32 +27,21 @@ Home:addToggle("جري | Sprint",function(value)
     if value == false then
         game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
     else
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 24
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 40
     end
 end)
 
--- Slider
+-- Textbox
 
-Home:addSlider("WalkSpeed - ",16,150,function(value)
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+Home:addTextBox("السرعه | Walkspeed","Number here",function(value)
+    
+game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
 end)
 
 -- Textbox
 
 Home:addTextBox("Jump Power | قوه النط","Number here",function(value)
     game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
-end)
-
--- Dropdown 
-
-local PLIST = {}
-
-for i,v in pairs(game:GetService("Players"):GetPlayers()) do
-    table.insert(PLIST,v.DisplayName)
-end
-
-Home:addDropdown("تنقل الى اللاعب",PLIST,4,function(value)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =  game.Players[value].Character.HumanoidRootPart.CFrame * CFrame.new(0,2,1)
 end)
 
 local PE = UI:addPage("Page 2 ",2,true,6)
@@ -308,7 +304,11 @@ PE:addButton("Script Fly - سكربت طيران",function()
     })
 end)
 
+    
+
 local PD = UI:addPage("Page 3 ",3,true,6)
+
+PD:addLabel("Script message","لو بتنتقل لشخص وضغطت على اسمه وما نقلك اعرف انه خرج من الماب")
 
 PD:addButton("Fling Touch",function()
     
@@ -327,23 +327,178 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/0Ben1/fe./main/Fling%
     })
 end)
 
-PD:addButton("Infinite Yeld",function()
+PD:addButton("Emotes Free",function()
     
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fe-Dance-23250"))()
 
     game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
         Text = "Clicked✅";
     })
 end)
-PD:addButton("نسخ رابط سيرفر الديسكورد .",function()
+
+local PLIST = {}
+
+for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+    table.insert(PLIST,v.DisplayName)
+end
+
+PD:addDropdown("تنقل الى اللاعب",PLIST,4,function(value)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =  game.Players[value].Character.HumanoidRootPart.CFrame * CFrame.new(0,2,1)
+end)
+  
+ local SK = UI:addPage("Page 4 ",4,true,6)
+
+SK:addButton("Anti Fling - مضاد فلنق",function()
     
 
-setclipboard("https://discord.gg/WZbs5r88YE")
+-- // Constants \\ --
+-- [ Services ] --
+local Services = setmetatable({}, {__index = function(Self, Index)
+local NewService = game.GetService(game, Index)
+if NewService then
+Self[Index] = NewService
+end
+return NewService
+end})
+
+-- [ LocalPlayer ] --
+local LocalPlayer = Services.Players.LocalPlayer
+
+-- // Functions \\ --
+local function PlayerAdded(Player)
+   local Detected = false
+   local Character;
+   local PrimaryPart;
+
+   local function CharacterAdded(NewCharacter)
+       Character = NewCharacter
+       repeat
+           wait()
+           PrimaryPart = NewCharacter:FindFirstChild("HumanoidRootPart")
+       until PrimaryPart
+       Detected = false
+   end
+
+   CharacterAdded(Player.Character or Player.CharacterAdded:Wait())
+   Player.CharacterAdded:Connect(CharacterAdded)
+   Services.RunService.Heartbeat:Connect(function()
+       if (Character and Character:IsDescendantOf(workspace)) and (PrimaryPart and PrimaryPart:IsDescendantOf(Character)) then
+           if PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 or PrimaryPart.AssemblyLinearVelocity.Magnitude > 100 then
+               if Detected == false then
+                   game.StarterGui:SetCore("ChatMakeSystemMessage", {
+                       Text = "Fling Exploit detected, Player: " .. tostring(Player);
+                       Color = Color3.fromRGB(255, 200, 0);
+                   })
+               end
+               Detected = true
+               for i,v in ipairs(Character:GetDescendants()) do
+                   if v:IsA("BasePart") then
+                       v.CanCollide = false
+                       v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                       v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                       v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                   end
+               end
+               PrimaryPart.CanCollide = false
+               PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+               PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+               PrimaryPart.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+           end
+       end
+   end)
+end
+
+-- // Event Listeners \\ --
+for i,v in ipairs(Services.Players:GetPlayers()) do
+   if v ~= LocalPlayer then
+       PlayerAdded(v)
+   end
+end
+Services.Players.PlayerAdded:Connect(PlayerAdded)
+
+local LastPosition = nil
+Services.RunService.Heartbeat:Connect(function()
+   pcall(function()
+       local PrimaryPart = LocalPlayer.Character.PrimaryPart
+       if PrimaryPart.AssemblyLinearVelocity.Magnitude > 250 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 250 then
+           PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+           PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+           PrimaryPart.CFrame = LastPosition
+
+           game.StarterGui:SetCore("ChatMakeSystemMessage", {
+               Text = "You were flung. Neutralizing velocity.";
+               Color = Color3.fromRGB(255, 0, 0);
+           })
+       elseif PrimaryPart.AssemblyLinearVelocity.Magnitude < 50 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 then
+           LastPosition = PrimaryPart.CFrame
+       end
+   end)
+end)
 
     game.StarterGui:SetCore("SendNotification",{
+        Title = "تم التفعيل";
+        Text = "Clicked✅";
+    })
+end)
+
+
+SK:addButton("Anti Bang | مضاد اغتص.اب",function()
+    
+
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-anti-bang-21721"))()
+
+    game.StarterGui:SetCore("SendNotification",{
+        Title = "احيانا المضاد يشتغل على حسب سكربتات الا.غتصاب";
+        Text = "Clicked✅";
+    })
+end)
+
+SK:addButton("Anti AFK | مضاد افك",function()
+    
+
+-- ANTI AFK made by Muscle_legends2021 [Gio]
+ 
+local VirtualUser = game:GetService('VirtualUser')
+ 
+game:GetService('Players').LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
+ 
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "AntiAFK loaded!",
+    Text = "Made by SK Team",
+    Button1 = "Team SanD RocK",
+    Duration = 5
+})
+    game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
+        Text = "Clicked✅";
+    })
+end)
+
+local LND = UI:addPage("Page 5 ",5,true,6)
+
+LND:addLabel("مطورين السكربت","m1jedx / https://discord.gg/WZbs5r88YE ")
+
+LND:addButton("نسخ رابط سيرفر الديسكورد ، فيه كل شي هناك اضغط للنسخ",function()
+
+    setclipboard("https://discord.gg/WZbs5r88YE")
+
+game.StarterGui:SetCore("SendNotification",{
+        Title = "تم نسخ رابط السيرفر بنجاح";
+        Text = "Clicked✅";
+    })
+end)
+    
+LND:addButton("اضغط لنسخ يوزر مطور السكربت",function()
+
+    setclipboard("m1jedx")
+
+game.StarterGui:SetCore("SendNotification",{
+        Title = "تم نسخ اليوزر بنجاح";
         Text = "Clicked✅";
     })
 end)
