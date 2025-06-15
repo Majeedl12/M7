@@ -256,7 +256,7 @@ local SkidFling = function(TargetPlayer)
     end
 end
 
-if not Welcome then Message("By Stitch", "", 6) end
+if not Welcome then Message("Made By RL Team", "", 6) end
 getgenv().Welcome = true
 if Targets[1] then for _,x in next, Targets do GetPlayer(x) end else return end
 
@@ -470,7 +470,7 @@ end)
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "AntiAFK loaded!",
     Text = "Made by RL Team",
-    Button1 = "Team SanD RocK",
+    Button1 = "RL Team",
     Duration = 5
 })
     game.StarterGui:SetCore("SendNotification",{
