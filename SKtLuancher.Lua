@@ -1,4 +1,4 @@
-setclipboard("https://discord.gg/WZbs5r88YE")
+setclipboard("https://discord.gg/aDexK56tau")
 
 game.StarterGui:SetCore("SendNotification",{
         Title = "تم نسخ رابط سيرفر المطورين";
@@ -7,7 +7,7 @@ game.StarterGui:SetCore("SendNotification",{
 
 local GUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/aaaa"))()
 
-local UI = GUI:CreateWindow("SK Team","SanD RocK")
+local UI = GUI:CreateWindow("RL Team","RedLine")
 
 local Home = UI:addPage("Page 1 ",1,true,6)
 
@@ -315,8 +315,8 @@ PD:addButton("Fling Touch",function()
 local AkaliNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/Dynissimo/main/Scripts/AkaliNotif.lua"))();
 local Notify = AkaliNotif.Notify;
 Notify({
-Description = "SK TEAM";
-Title = "Team SanD RocK :).";
+Description = "RL TEAM";
+Title = "Made By RL Team :).";
 Duration = 10;
 });
 loadstring(game:HttpGet("https://raw.githubusercontent.com/0Ben1/fe./main/Fling%20GUI"))()
@@ -330,7 +330,7 @@ end)
 PD:addButton("Emotes Free",function()
     
 
-loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fe-Dance-23250"))()
+loadstring(game:HttpGet("https://pastebin.com/raw/eCpipCTH"))()
 
     game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
@@ -469,7 +469,7 @@ end)
  
 game:GetService("StarterGui"):SetCore("SendNotification", {
     Title = "AntiAFK loaded!",
-    Text = "Made by SK Team",
+    Text = "Made by RL Team",
     Button1 = "Team SanD RocK",
     Duration = 5
 })
@@ -481,11 +481,11 @@ end)
 
 local LND = UI:addPage("Page 5 ",5,true,6)
 
-LND:addLabel("مطورين السكربت","m1jedx / https://discord.gg/WZbs5r88YE ")
+LND:addLabel("مطورين السكربت","Majed627 / https://discord.gg/aDexK56tau ")
 
 LND:addButton("نسخ رابط سيرفر الديسكورد ، فيه كل شي هناك اضغط للنسخ",function()
 
-    setclipboard("https://discord.gg/WZbs5r88YE")
+    setclipboard("https://discord.gg/aDexK56tau")
 
 game.StarterGui:SetCore("SendNotification",{
         Title = "تم نسخ رابط السيرفر بنجاح";
@@ -495,10 +495,11 @@ end)
     
 LND:addButton("اضغط لنسخ يوزر مطور السكربت",function()
 
-    setclipboard("m1jedx")
+    setclipboard("Majed627")
 
 game.StarterGui:SetCore("SendNotification",{
         Title = "تم نسخ اليوزر بنجاح";
         Text = "Clicked✅";
     })
 end)
+
