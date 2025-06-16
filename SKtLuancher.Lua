@@ -9,11 +9,11 @@ local GUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball
 
 local UI = GUI:CreateWindow("RL Team","RedLine")
 
-local Home = UI:addPage("Page 1 ",1,true,6)
+local Home = UI:addPage("Home",1,true,6)
 
 -- Label
 
-Home:addLabel("SCRIPT","Don't use in games with anti cheats")
+Home:addLabel("RL Team","Don't use in games with anti cheats")
 
 --- Button
 
@@ -44,20 +44,11 @@ Home:addTextBox("Jump Power | قوه النط","Number here",function(value)
     game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
 end)
 
-local PE = UI:addPage("Page 2 ",2,true,6)
+local PE = UI:addPage("Misc",2,true,6)
 
-PE:addButton("ESP - all maps",function()
-       loadstring(game:HttpGet("https://raw.githubusercontent.com/Majeedl12/ScriptsByM7/refs/heads/main/ESP_majedLocalend.LUA"))()
 
-game.StarterGui:SetCore("SendNotification",{
-        Title = "تم الضغط";
-        Text = "Clicked✅";
-    })
-end)
-
-PE:addButton("Fling all - طيران الكل",function()
-       
-local Targets = {"All"} -- "All", "Target Name", "arian_was_here"
+PE:addButton("fling all - طيران الكل",function()
+     local Targets = {"All"} -- "All", "Target Name", "arian_was_here"
 
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
@@ -280,206 +271,335 @@ for _,x in next, Targets do
         Message("error", "try again", 8)
     end
 end
-
-game.StarterGui:SetCore("SendNotification",{
+    game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
-        Text = "Clicked✅";
-    })
+        Text = "✅";
+    }) 
 end)
+
+
 
 PE:addButton("سكربت العاده - JerkOff",function()
      loadstring(game:HttpGet("https://pastebin.com/raw/YiSqWZ78"))()
+
     game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
-        Text = "Clicked✅";
+        Text = "✅";
     })
 end)
+
 
 PE:addButton("Script Fly - سكربت طيران",function()
      loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Universal-Fly-V3-16477"))()
 
     game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
-        Text = "Clicked✅";
+        Text = "✅";
     })
 end)
 
     
 
-local PD = UI:addPage("Page 3 ",3,true,6)
+local PD = UI:addPage("TargetInfo",3,true,6)
 
-PD:addLabel("Script message","لو بتنتقل لشخص وضغطت على اسمه وما نقلك اعرف انه خرج من الماب")
+PD:addLabel("Script message","Script Made By RL Team")
 
-PD:addButton("Fling Touch",function()
-    
-local AkaliNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/Dynissimo/main/Scripts/AkaliNotif.lua"))();
-local Notify = AkaliNotif.Notify;
-Notify({
-Description = "RL TEAM";
-Title = "Made By RL Team :).";
-Duration = 10;
-});
-loadstring(game:HttpGet("https://raw.githubusercontent.com/0Ben1/fe./main/Fling%20GUI"))()
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local selectedPlayerName = nil
+local dropdown = nil
 
-    game.StarterGui:SetCore("SendNotification",{
-        Title = "تم الضغط";
-        Text = "Clicked✅";
-    })
-end)
-
-PD:addButton("Emotes Free",function()
-    
-
-loadstring(game:HttpGet("https://pastebin.com/raw/eCpipCTH"))()
-
-    game.StarterGui:SetCore("SendNotification",{
-        Title = "تم الضغط";
-        Text = "Clicked✅";
-    })
-end)
-
-local PLIST = {}
-
-for i,v in pairs(game:GetService("Players"):GetPlayers()) do
-    table.insert(PLIST,v.DisplayName)
+-- دالة ترجع قائمة أسماء اللاعبين
+local function getPlayerList()
+	local list = {}
+	for _, player in pairs(Players:GetPlayers()) do
+		table.insert(list, player.Name)
+	end
+	return list
 end
 
-PD:addDropdown("تنقل الى اللاعب",PLIST,4,function(value)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =  game.Players[value].Character.HumanoidRootPart.CFrame * CFrame.new(0,2,1)
+-- إنشاء الدروب داون
+dropdown = PD:addDropdown("🎯 اختر اللاعب", getPlayerList(), 1, function(value)
+	selectedPlayerName = value
 end)
+
+-- تحديث القائمة تلقائيًا عند دخول/خروج لاعب
+local function refreshDropdown()
+	dropdown:Refresh(getPlayerList(), 1)
+end
+Players.PlayerAdded:Connect(refreshDropdown)
+Players.PlayerRemoving:Connect(refreshDropdown)
+
+-- دالة ترجع اللاعب المختار
+local function getTarget()
+	if selectedPlayerName then
+		return Players:FindFirstChild(selectedPlayerName)
+	end
+end
+
+-- 🚀 زر التنقل إلى اللاعب
+PD:addButton("🚀 تنقل إلى اللاعب", function()
+	local target = getTarget()
+	if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+		if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+			LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+		end
+	end
+end)
+
+-- 🌀 زر فلنق اللاعب
+PD:addButton("🌀 فلنق اللاعب", function()
+	local me = LocalPlayer
+	local target = getTarget()
+	if not (me and target and target.Character and me.Character) then return end
+
+	local myHRP = me.Character:FindFirstChild("HumanoidRootPart")
+	local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
+	if not (myHRP and targetHRP) then return end
+
+	myHRP.CFrame = targetHRP.CFrame + Vector3.new(0, 1, 0)
+
+	local fling = Instance.new("BodyAngularVelocity")
+	fling.AngularVelocity = Vector3.new(0, 999999, 0)
+	fling.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+	fling.P = 10000
+	fling.Name = "FlingForce"
+	fling.Parent = myHRP
+
+	task.delay(1.5, function()
+		if fling and fling.Parent then
+			fling:Destroy()
+		end
+	end)
+end)
+
+-- 👀 Toggle مشاهدة اللاعب
+local cameraLoop = false
+PD:addToggle("👁️ مشاهدة اللاعب", function(value)
+	cameraLoop = value
+	if value == false then
+		workspace.CurrentCamera.CameraSubject = LocalPlayer.Character:FindFirstChild("Humanoid") or LocalPlayer.Character
+	end
+end)
+
+-- تحديث الكاميرا تلقائيًا كل لحظة لو التوقل شغال
+task.spawn(function()
+	while true do
+		task.wait(0.1)
+		if cameraLoop then
+			local target = getTarget()
+			if target and target.Character and target.Character:FindFirstChild("Head") then
+				workspace.CurrentCamera.CameraSubject = target.Character:FindFirstChild("Head")
+			end
+		end
+	end
+end)
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+
+local espBillboards = {}
+local highlights = {}
+local connections = {}
+
+local function createESP(player)
+	if player == Players.LocalPlayer then return end
+	if not player.Character or not player.Character:FindFirstChild("Head") then return end
+	if espBillboards[player] then return end
+
+	-- اسم الحساب بالأحمر
+	local bb = Instance.new("BillboardGui")
+	bb.Name = "ESP_Billboard"
+	bb.Adornee = player.Character.Head
+	bb.Size = UDim2.new(0, 100, 0, 20)
+	bb.StudsOffset = Vector3.new(0, 2, 0)
+	bb.AlwaysOnTop = true
+
+	local label = Instance.new("TextLabel", bb)
+	label.Size = UDim2.new(1, 0, 1, 0)
+	label.BackgroundTransparency = 1
+	label.Text = player.Name
+	label.TextColor3 = Color3.new(1, 0, 0) -- أحمر
+	label.TextScaled = true
+	label.Font = Enum.Font.SourceSansBold
+
+	bb.Parent = player.Character.Head
+	espBillboards[player] = bb
+
+	-- Highlight لامع وواضح
+	local highlight = Instance.new("Highlight")
+	highlight.Name = "ESP_Highlight"
+	highlight.Adornee = player.Character
+	highlight.FillColor = Color3.fromRGB(255, 255, 255) -- أبيض لامع
+	highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- إطار أبيض
+	highlight.FillTransparency = 0.1 -- أقل شفافية = أكثر لمعان
+	highlight.OutlineTransparency = 0 -- الإطار واضح
+	highlight.Parent = player.Character
+
+	highlights[player] = highlight
+end
+
+-- إزالة كل الكشف
+local function removeAllESP()
+	for _, bb in pairs(espBillboards) do
+		if bb and bb.Parent then
+			bb:Destroy()
+		end
+	end
+	for _, h in pairs(highlights) do
+		if h and h.Parent then
+			h:Destroy()
+		end
+	end
+	espBillboards = {}
+	highlights = {}
+end
+
+-- تفعيل الكشف
+local function enableESP()
+	for _, player in pairs(Players:GetPlayers()) do
+		createESP(player)
+	end
+
+	table.insert(connections, Players.PlayerAdded:Connect(function(p)
+		p.CharacterAdded:Connect(function()
+			wait(1)
+			createESP(p)
+		end)
+	end))
+
+	table.insert(connections, Players.PlayerRemoving:Connect(function(p)
+		if espBillboards[p] then
+			espBillboards[p]:Destroy()
+			espBillboards[p] = nil
+		end
+		if highlights[p] then
+			highlights[p]:Destroy()
+			highlights[p] = nil
+		end
+	end))
+
+	table.insert(connections, RunService.RenderStepped:Connect(function()
+		for _, player in pairs(Players:GetPlayers()) do
+			createESP(player)
+		end
+	end))
+
+	StarterGui:SetCore("SendNotification", {
+		Title = "ESP",
+		Text = "✅ تم تفعيل الكشف"
+	})
+end
+
+-- تعطيل الكشف
+local function disableESP()
+	removeAllESP()
+	for _, conn in pairs(connections) do
+		conn:Disconnect()
+	end
+	connections = {}
+
+	StarterGui:SetCore("SendNotification", {
+		Title = "ESP",
+		Text = "❌ تم إيقاف الكشف"
+	})
+end
+
+-- Toggle في تاب PE
+PD:addToggle("🔍 كشف اللاعبين", function(value)
+	if value then
+		enableESP()
+	else
+		disableESP()
+	end
+end)
+
+
   
- local SK = UI:addPage("Page 4 ",4,true,6)
+ local SK = UI:addPage("Protection",4,true,6)
 
-SK:addButton("Anti Fling - مضاد فلنق",function()
-    
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local VirtualUser = game:GetService("VirtualUser")
+local LocalPlayer = Players.LocalPlayer
 
--- // Constants \\ --
--- [ Services ] --
-local Services = setmetatable({}, {__index = function(Self, Index)
-local NewService = game.GetService(game, Index)
-if NewService then
-Self[Index] = NewService
-end
-return NewService
-end})
+-- حالات التفعيل
+local AntiFlingEnabled = false
+local AntiRapeEnabled = false
+local AntiAFKEnabled = false
 
--- [ LocalPlayer ] --
-local LocalPlayer = Services.Players.LocalPlayer
+-- ⛔ مضاد Fling
+RunService.Heartbeat:Connect(function()
+    if not AntiFlingEnabled then return end
 
--- // Functions \\ --
-local function PlayerAdded(Player)
-   local Detected = false
-   local Character;
-   local PrimaryPart;
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            for _, obj in pairs(player.Character:GetDescendants()) do
+                if obj:IsA("BodyAngularVelocity") or obj:IsA("BodyVelocity") or obj:IsA("AngularVelocity") or obj:IsA("BodyGyro") then
+                    obj:Destroy()
+                end
+            end
+        end
+    end
+end)
 
-   local function CharacterAdded(NewCharacter)
-       Character = NewCharacter
-       repeat
-           wait()
-           PrimaryPart = NewCharacter:FindFirstChild("HumanoidRootPart")
-       until PrimaryPart
-       Detected = false
-   end
+-- 🔄 مضاد Rape (يلف شخصيتك إذا أحد قرب من وراك)
+RunService.Heartbeat:Connect(function()
+    if not AntiRapeEnabled then return end
 
-   CharacterAdded(Player.Character or Player.CharacterAdded:Wait())
-   Player.CharacterAdded:Connect(CharacterAdded)
-   Services.RunService.Heartbeat:Connect(function()
-       if (Character and Character:IsDescendantOf(workspace)) and (PrimaryPart and PrimaryPart:IsDescendantOf(Character)) then
-           if PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 or PrimaryPart.AssemblyLinearVelocity.Magnitude > 100 then
-               if Detected == false then
-                   game.StarterGui:SetCore("ChatMakeSystemMessage", {
-                       Text = "Fling Exploit detected, Player: " .. tostring(Player);
-                       Color = Color3.fromRGB(255, 200, 0);
-                   })
-               end
-               Detected = true
-               for i,v in ipairs(Character:GetDescendants()) do
-                   if v:IsA("BasePart") then
-                       v.CanCollide = false
-                       v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                       v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                       v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
-                   end
-               end
-               PrimaryPart.CanCollide = false
-               PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-               PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-               PrimaryPart.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
-           end
-       end
-   end)
+    local char = LocalPlayer.Character
+    if not (char and char:FindFirstChild("HumanoidRootPart")) then return end
+    local hrp = char.HumanoidRootPart
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local otherHRP = player.Character.HumanoidRootPart
+            local distance = (hrp.Position - otherHRP.Position).Magnitude
+            local behind = (hrp.CFrame.LookVector:Dot((otherHRP.Position - hrp.Position).Unit)) < -0.5
+            if distance < 5 and behind then
+                hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(180), 0)
+            end
+        end
+    end
+end)
+
+-- 💤 مضاد AFK
+local afkConnection
+local function enableAFK()
+    afkConnection = LocalPlayer.Idled:Connect(function()
+        VirtualUser:Button2Down(Vector2.new(), workspace.CurrentCamera.CFrame)
+        task.wait(1)
+        VirtualUser:Button2Up(Vector2.new(), workspace.CurrentCamera.CFrame)
+    end)
 end
 
--- // Event Listeners \\ --
-for i,v in ipairs(Services.Players:GetPlayers()) do
-   if v ~= LocalPlayer then
-       PlayerAdded(v)
-   end
+local function disableAFK()
+    if afkConnection then
+        afkConnection:Disconnect()
+        afkConnection = nil
+    end
 end
-Services.Players.PlayerAdded:Connect(PlayerAdded)
 
-local LastPosition = nil
-Services.RunService.Heartbeat:Connect(function()
-   pcall(function()
-       local PrimaryPart = LocalPlayer.Character.PrimaryPart
-       if PrimaryPart.AssemblyLinearVelocity.Magnitude > 250 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 250 then
-           PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-           PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-           PrimaryPart.CFrame = LastPosition
-
-           game.StarterGui:SetCore("ChatMakeSystemMessage", {
-               Text = "You were flung. Neutralizing velocity.";
-               Color = Color3.fromRGB(255, 0, 0);
-           })
-       elseif PrimaryPart.AssemblyLinearVelocity.Magnitude < 50 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 then
-           LastPosition = PrimaryPart.CFrame
-       end
-   end)
+-- ✅ أزرار التفعيل
+SK:addToggle("🌀 مضاد Fling", function(state)
+    AntiFlingEnabled = state
 end)
 
-    game.StarterGui:SetCore("SendNotification",{
-        Title = "تم التفعيل";
-        Text = "Clicked✅";
-    })
+SK:addToggle("🍑 مضاد Bang", function(state)
+    AntiRapeEnabled = state
 end)
 
-
-SK:addButton("Anti Bang | مضاد اغتص.اب",function()
-    
-
-loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-anti-bang-21721"))()
-
-    game.StarterGui:SetCore("SendNotification",{
-        Title = "احيانا المضاد يشتغل على حسب سكربتات الا.غتصاب";
-        Text = "Clicked✅";
-    })
+SK:addToggle("💤 مضاد AFK", function(state)
+    AntiAFKEnabled = state
+    if state then
+        enableAFK()
+    else
+        disableAFK()
+    end
 end)
 
-SK:addButton("Anti AFK | مضاد افك",function()
-    
-
--- ANTI AFK made by Muscle_legends2021 [Gio]
- 
-local VirtualUser = game:GetService('VirtualUser')
- 
-game:GetService('Players').LocalPlayer.Idled:Connect(function()
-    VirtualUser:CaptureController()
-    VirtualUser:ClickButton2(Vector2.new())
-end)
- 
-game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "AntiAFK loaded!",
-    Text = "Made by RL Team",
-    Button1 = "RL Team",
-    Duration = 5
-})
-    game.StarterGui:SetCore("SendNotification",{
-        Title = "تم الضغط";
-        Text = "Clicked✅";
-    })
-end)
-
-local LND = UI:addPage("Page 5 ",5,true,6)
+local LND = UI:addPage("Credits",5,true,6)
 
 LND:addLabel("مطورين السكربت","Majed627 / https://discord.gg/aDexK56tau ")
 
