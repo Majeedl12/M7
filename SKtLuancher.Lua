@@ -1,625 +1,237 @@
+
 setclipboard("https://discord.gg/aDexK56tau")
+game.StarterGui:SetCore("SendNotification", {
+    Title = "تم نسخ رابط سيرفر المطورين",
+    Text = "✅"
+})
 
-game.StarterGui:SetCore("SendNotification",{
-        Title = "تم نسخ رابط سيرفر المطورين";
-        Text = "✅";
-    })
-
+-- تحميل المكتبة
 local GUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/aaaa"))()
+local UI = GUI:CreateWindow("RL Team", "RedLine")
 
-local UI = GUI:CreateWindow("RL Team","RedLine")
-
-local Home = UI:addPage("Home",1,true,6)
-
--- Label
-
-Home:addLabel("RL Team","Don't use in games with anti cheats")
-
---- Button
-
-Home:addButton("RESET | ريسيت",function()
-    game.Players.LocalPlayer.Character.Humanoid.Health = 0
-end)
-
--- Toggle
-
-Home:addToggle("جري | Sprint",function(value)
-    if value == false then
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
-    else
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 40
-    end
-end)
-
--- Textbox
-
-Home:addTextBox("السرعه | Walkspeed","Number here",function(value)
-    
-game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
-end)
-
--- Textbox
-
-Home:addTextBox("Jump Power | قوه النط","Number here",function(value)
-    game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
-end)
-
-local PE = UI:addPage("Misc",2,true,6)
-
-
-PE:addButton("fling all - طيران الكل",function()
-     local Targets = {"All"} -- "All", "Target Name", "arian_was_here"
-
+-- تعريف الخدمات
 local Players = game:GetService("Players")
-local Player = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local StarterGui = game:GetService("StarterGui")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+local VirtualUser = game:GetService("VirtualUser")
 
-local AllBool = false
+local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HRP = character:WaitForChild("HumanoidRootPart")
 
-local GetPlayer = function(Name)
-    Name = Name:lower()
-    if Name == "all" or Name == "others" then
-        AllBool = true
-        return
-    elseif Name == "random" then
-        local GetPlayers = Players:GetPlayers()
-        if table.find(GetPlayers,Player) then table.remove(GetPlayers,table.find(GetPlayers,Player)) end
-        return GetPlayers[math.random(#GetPlayers)]
-    elseif Name ~= "random" and Name ~= "all" and Name ~= "others" then
-        for _,x in next, Players:GetPlayers() do
-            if x ~= Player then
-                if x.Name:lower():match("^"..Name) then
-                    return x;
-                elseif x.DisplayName:lower():match("^"..Name) then
-                    return x;
-                end
-            end
-        end
-    else
-        return
-    end
-end
+------------------------------
+-- 🏠 صفحة الهوم
+------------------------------
+local Home = UI:addPage("Home", 1, true, 6)
 
-local Message = function(_Title, _Text, Time)
-    game:GetService("StarterGui"):SetCore("SendNotification", {Title = _Title, Text = _Text, Duration = Time})
-end
+Home:addLabel("RL Team", "Don't use in games with anti cheats")
 
-local SkidFling = function(TargetPlayer)
-    local Character = Player.Character
-    local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
-    local RootPart = Humanoid and Humanoid.RootPart
+Home:addButton("RESET | ريسيت", function()
+    LocalPlayer.Character.Humanoid.Health = 0
+end)
 
-    local TCharacter = TargetPlayer.Character
-    local THumanoid
-    local TRootPart
-    local THead
-    local Accessory
-    local Handle
+Home:addToggle("جري | Sprint", function(value)
+    LocalPlayer.Character.Humanoid.WalkSpeed = value and 40 or 16
+end)
 
-    if TCharacter:FindFirstChildOfClass("Humanoid") then
-        THumanoid = TCharacter:FindFirstChildOfClass("Humanoid")
-    end
-    if THumanoid and THumanoid.RootPart then
-        TRootPart = THumanoid.RootPart
-    end
-    if TCharacter:FindFirstChild("Head") then
-        THead = TCharacter.Head
-    end
-    if TCharacter:FindFirstChildOfClass("Accessory") then
-        Accessory = TCharacter:FindFirstChildOfClass("Accessory")
-    end
-    if Accessoy and Accessory:FindFirstChild("Handle") then
-        Handle = Accessory.Handle
-    end
+Home:addTextBox("السرعه | Walkspeed", "Number here", function(val)
+    LocalPlayer.Character.Humanoid.WalkSpeed = tonumber(val)
+end)
 
-    if Character and Humanoid and RootPart then
-        if RootPart.Velocity.Magnitude < 50 then
-            getgenv().OldPos = RootPart.CFrame
-        end
-        if THumanoid and THumanoid.Sit and not AllBool then
-            return Message("Error Occurred", "Targeting is sitting", 5) -- u can remove dis part if u want lol
-        end
-        if THead then
-            workspace.CurrentCamera.CameraSubject = THead
-        elseif not THead and Handle then
-            workspace.CurrentCamera.CameraSubject = Handle
-        elseif THumanoid and TRootPart then
-            workspace.CurrentCamera.CameraSubject = THumanoid
-        end
-        if not TCharacter:FindFirstChildWhichIsA("BasePart") then
-            return
-        end
-        
-        local FPos = function(BasePart, Pos, Ang)
-            RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
-            Character:SetPrimaryPartCFrame(CFrame.new(BasePart.Position) * Pos * Ang)
-            RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
-            RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
-        end
-        
-        local SFBasePart = function(BasePart)
-            local TimeToWait = 2
-            local Time = tick()
-            local Angle = 0
+Home:addTextBox("Jump Power | قوه النط", "Number here", function(val)
+    LocalPlayer.Character.Humanoid.JumpPower = tonumber(val)
+end)
 
-            repeat
-                if RootPart and THumanoid then
-                    if BasePart.Velocity.Magnitude < 50 then
-                        Angle = Angle + 100
+------------------------------
+-- 🎮 صفحة Misc
+------------------------------
+local PE = UI:addPage("Misc", 2, true, 6)
 
-                        FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
-                        task.wait()
+ 
+PE:addButton("Fling Touch",function()
+    
+local AkaliNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/Dynissimo/main/Scripts/AkaliNotif.lua"))();
+local Notify = AkaliNotif.Notify;
+Notify({
+Description = "RL TEAM";
+Title = "RedLine :).";
+Duration = 10;
+});
+loadstring(game:HttpGet("https://raw.githubusercontent.com/0Ben1/fe./main/Fling%20GUI"))()
 
-                        FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(2.25, 1.5, -2.25) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(-2.25, -1.5, 2.25) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection,CFrame.Angles(math.rad(Angle), 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection,CFrame.Angles(math.rad(Angle), 0, 0))
-                        task.wait()
-                    else
-                        FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, -1.5, -THumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
-                        task.wait()
-                        
-                        FPos(BasePart, CFrame.new(0, 1.5, TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, -1.5, -TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(0, 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, 1.5, TRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, -1.5 ,0), CFrame.Angles(math.rad(-90), 0, 0))
-                        task.wait()
-
-                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
-                        task.wait()
-                    end
-                else
-                    break
-                end
-            until BasePart.Velocity.Magnitude > 500 or BasePart.Parent ~= TargetPlayer.Character or TargetPlayer.Parent ~= Players or not TargetPlayer.Character == TCharacter or THumanoid.Sit or Humanoid.Health <= 0 or tick() > Time + TimeToWait
-        end
-        
-        workspace.FallenPartsDestroyHeight = 0/0
-        
-        local BV = Instance.new("BodyVelocity")
-        BV.Name = "EpixVel"
-        BV.Parent = RootPart
-        BV.Velocity = Vector3.new(9e8, 9e8, 9e8)
-        BV.MaxForce = Vector3.new(1/0, 1/0, 1/0)
-        
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
-        
-        if TRootPart and THead then
-            if (TRootPart.CFrame.p - THead.CFrame.p).Magnitude > 5 then
-                SFBasePart(THead)
-            else
-                SFBasePart(TRootPart)
-            end
-        elseif TRootPart and not THead then
-            SFBasePart(TRootPart)
-        elseif not TRootPart and THead then
-            SFBasePart(THead)
-        elseif not TRootPart and not THead and Accessory and Handle then
-            SFBasePart(Handle)
-        else
-            return Message("Error Occurred", "Target is missing everything", 5)
-        end
-        
-        BV:Destroy()
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
-        workspace.CurrentCamera.CameraSubject = Humanoid
-        
-        repeat
-            RootPart.CFrame = getgenv().OldPos * CFrame.new(0, .5, 0)
-            Character:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0, .5, 0))
-            Humanoid:ChangeState("GettingUp")
-            table.foreach(Character:GetChildren(), function(_, x)
-                if x:IsA("BasePart") then
-                    x.Velocity, x.RotVelocity = Vector3.new(), Vector3.new()
-                end
-            end)
-            task.wait()
-        until (RootPart.Position - getgenv().OldPos.p).Magnitude < 25
-        workspace.FallenPartsDestroyHeight = getgenv().FPDH
-    else
-        return Message("Error Ocurrido", "El Script A Fallado", 5)
-    end
-end
-
-if not Welcome then Message("Made By RL Team", "", 6) end
-getgenv().Welcome = true
-if Targets[1] then for _,x in next, Targets do GetPlayer(x) end else return end
-
-if AllBool then
-    for _,x in next, Players:GetPlayers() do
-        SkidFling(x)
-    end
-end
-
-for _,x in next, Targets do
-    if GetPlayer(x) and GetPlayer(x) ~= Player then
-        if GetPlayer(x).UserId ~= 706785182 then
-            local TPlayer = GetPlayer(x)
-            if TPlayer then
-                SkidFling(TPlayer)
-            end
-        else
-            Message("error", "", 8)
-        end
-    elseif not GetPlayer(x) and not AllBool then
-        Message("error", "try again", 8)
-    end
-end
     game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
-        Text = "✅";
-    }) 
+        Text = "Clicked✅";
+    })
 end)
-
 
 
 PE:addButton("سكربت العاده - JerkOff",function()
      loadstring(game:HttpGet("https://pastebin.com/raw/YiSqWZ78"))()
-
     game.StarterGui:SetCore("SendNotification",{
         Title = "تم الضغط";
-        Text = "✅";
+        Text = "Clicked✅";
     })
 end)
 
+------------------------------
+-- 🎯 TargetInfo Page
+------------------------------
+local PD = UI:addPage("TargetInfo", 3, true, 6)
+PD:addLabel("Script message", "Script Made By RL Team")
 
-PE:addButton("Script Fly - سكربت طيران",function()
-     loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Universal-Fly-V3-16477"))()
-
-    game.StarterGui:SetCore("SendNotification",{
-        Title = "تم الضغط";
-        Text = "✅";
-    })
-end)
-
-    
-
-local PD = UI:addPage("TargetInfo",3,true,6)
-
-PD:addLabel("Script message","Script Made By RL Team")
-
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 local selectedPlayerName = nil
-local dropdown = nil
 
--- دالة ترجع قائمة أسماء اللاعبين
-local function getPlayerList()
-	local list = {}
-	for _, player in pairs(Players:GetPlayers()) do
-		table.insert(list, player.Name)
-	end
-	return list
-end
-
--- إنشاء الدروب داون
-dropdown = PD:addDropdown("🎯 اختر اللاعب", getPlayerList(), 1, function(value)
-	selectedPlayerName = value
+PD:addTextBox("اختيار اللاعب", "ادخل اول حرفين من الاسم", function(input)
+    input = input:lower()
+    selectedPlayerName = nil
+    for _, p in pairs(Players:GetPlayers()) do
+        if p.Name:lower():sub(1, #input) == input or p.DisplayName:lower():sub(1, #input) == input then
+            selectedPlayerName = p.Name
+            StarterGui:SetCore("SendNotification", {
+                Title = "تم اختيار اللاعب",
+                Text = "اللاعب: " .. p.Name,
+                Duration = 3
+            })
+            break
+        end
+    end
 end)
 
--- تحديث القائمة تلقائيًا عند دخول/خروج لاعب
-local function refreshDropdown()
-	dropdown:Refresh(getPlayerList(), 1)
-end
-Players.PlayerAdded:Connect(refreshDropdown)
-Players.PlayerRemoving:Connect(refreshDropdown)
-
--- دالة ترجع اللاعب المختار
-local function getTarget()
-	if selectedPlayerName then
-		return Players:FindFirstChild(selectedPlayerName)
-	end
-end
-
--- 🚀 زر التنقل إلى اللاعب
-PD:addButton("🚀 تنقل إلى اللاعب", function()
-	local target = getTarget()
-	if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-		if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-			LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
-		end
-	end
+-- Bang خلفي
+PD:addToggle("Bang | تغتصبه", function(state)
+    local target = Players:FindFirstChild(selectedPlayerName)
+    if not target then return end
+    _G["BackBangFlag"] = state
+    coroutine.wrap(function()
+        while _G["BackBangFlag"] and target.Character and HRP do
+            local offset = Vector3.new(0, -1.05, 0.58)
+            local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
+            if targetHRP then
+                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset)}):Play()
+                wait(0.12)
+                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset + Vector3.new(0, 0, 0.3))}):Play()
+                wait(0.12)
+            end
+        end
+    end)()
 end)
 
--- 🌀 زر فلنق اللاعب
-PD:addButton("🌀 فلنق اللاعب", function()
-	local me = LocalPlayer
-	local target = getTarget()
-	if not (me and target and target.Character and me.Character) then return end
-
-	local myHRP = me.Character:FindFirstChild("HumanoidRootPart")
-	local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
-	if not (myHRP and targetHRP) then return end
-
-	myHRP.CFrame = targetHRP.CFrame + Vector3.new(0, 1, 0)
-
-	local fling = Instance.new("BodyAngularVelocity")
-	fling.AngularVelocity = Vector3.new(0, 999999, 0)
-	fling.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
-	fling.P = 10000
-	fling.Name = "FlingForce"
-	fling.Parent = myHRP
-
-	task.delay(1.5, function()
-		if fling and fling.Parent then
-			fling:Destroy()
-		end
-	end)
+-- Bang أمامي
+PD:addToggle("GetBanged | يغتصبك", function(state)
+    local target = Players:FindFirstChild(selectedPlayerName)
+    if not target then return end
+    _G["FrontBangFlag"] = state
+    coroutine.wrap(function()
+        while _G["FrontBangFlag"] and target.Character and HRP do
+            local offset = Vector3.new(0, -1.05, -0.4)
+            local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
+            if targetHRP then
+                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset)}):Play()
+                wait(0.12)
+                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset + Vector3.new(0, 0, -0.3))}):Play()
+                wait(0.12)
+            end
+        end
+    end)()
 end)
 
--- 👀 Toggle مشاهدة اللاعب
-local cameraLoop = false
-PD:addToggle("👁️ مشاهدة اللاعب", function(value)
-	cameraLoop = value
-	if value == false then
-		workspace.CurrentCamera.CameraSubject = LocalPlayer.Character:FindFirstChild("Humanoid") or LocalPlayer.Character
-	end
+PD:addToggle("Spectate | مشاهدة", function(state)
+    local target = Players:FindFirstChild(selectedPlayerName)
+    if target and target.Character then
+        Camera.CameraSubject = state and target.Character:FindFirstChild("Humanoid") or LocalPlayer.Character:FindFirstChild("Humanoid")
+    end
 end)
 
--- تحديث الكاميرا تلقائيًا كل لحظة لو التوقل شغال
-task.spawn(function()
-	while true do
-		task.wait(0.1)
-		if cameraLoop then
-			local target = getTarget()
-			if target and target.Character and target.Character:FindFirstChild("Head") then
-				workspace.CurrentCamera.CameraSubject = target.Character:FindFirstChild("Head")
-			end
-		end
-	end
+PD:addToggle("ESP | كشف", function(state)
+    local target = Players:FindFirstChild(selectedPlayerName)
+    if not target or not target.Character then return end
+    if state then
+        local hl = Instance.new("Highlight", target.Character)
+        hl.Name = "ESP"
+        hl.FillColor = Color3.fromRGB(255, 0, 0)
+        hl.FillTransparency = 0.5
+        hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+    else
+        local esp = target.Character:FindFirstChild("ESP")
+        if esp then esp:Destroy() end
+    end
 end)
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local StarterGui = game:GetService("StarterGui")
-
-local espBillboards = {}
-local highlights = {}
-local connections = {}
-
-local function createESP(player)
-	if player == Players.LocalPlayer then return end
-	if not player.Character or not player.Character:FindFirstChild("Head") then return end
-	if espBillboards[player] then return end
-
-	-- اسم الحساب بالأحمر
-	local bb = Instance.new("BillboardGui")
-	bb.Name = "ESP_Billboard"
-	bb.Adornee = player.Character.Head
-	bb.Size = UDim2.new(0, 100, 0, 20)
-	bb.StudsOffset = Vector3.new(0, 2, 0)
-	bb.AlwaysOnTop = true
-
-	local label = Instance.new("TextLabel", bb)
-	label.Size = UDim2.new(1, 0, 1, 0)
-	label.BackgroundTransparency = 1
-	label.Text = player.Name
-	label.TextColor3 = Color3.new(1, 0, 0) -- أحمر
-	label.TextScaled = true
-	label.Font = Enum.Font.SourceSansBold
-
-	bb.Parent = player.Character.Head
-	espBillboards[player] = bb
-
-	-- Highlight لامع وواضح
-	local highlight = Instance.new("Highlight")
-	highlight.Name = "ESP_Highlight"
-	highlight.Adornee = player.Character
-	highlight.FillColor = Color3.fromRGB(255, 255, 255) -- أبيض لامع
-	highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- إطار أبيض
-	highlight.FillTransparency = 0.1 -- أقل شفافية = أكثر لمعان
-	highlight.OutlineTransparency = 0 -- الإطار واضح
-	highlight.Parent = player.Character
-
-	highlights[player] = highlight
-end
-
--- إزالة كل الكشف
-local function removeAllESP()
-	for _, bb in pairs(espBillboards) do
-		if bb and bb.Parent then
-			bb:Destroy()
-		end
-	end
-	for _, h in pairs(highlights) do
-		if h and h.Parent then
-			h:Destroy()
-		end
-	end
-	espBillboards = {}
-	highlights = {}
-end
-
--- تفعيل الكشف
-local function enableESP()
-	for _, player in pairs(Players:GetPlayers()) do
-		createESP(player)
-	end
-
-	table.insert(connections, Players.PlayerAdded:Connect(function(p)
-		p.CharacterAdded:Connect(function()
-			wait(1)
-			createESP(p)
-		end)
-	end))
-
-	table.insert(connections, Players.PlayerRemoving:Connect(function(p)
-		if espBillboards[p] then
-			espBillboards[p]:Destroy()
-			espBillboards[p] = nil
-		end
-		if highlights[p] then
-			highlights[p]:Destroy()
-			highlights[p] = nil
-		end
-	end))
-
-	table.insert(connections, RunService.RenderStepped:Connect(function()
-		for _, player in pairs(Players:GetPlayers()) do
-			createESP(player)
-		end
-	end))
-
-	StarterGui:SetCore("SendNotification", {
-		Title = "ESP",
-		Text = "✅ تم تفعيل الكشف"
-	})
-end
-
--- تعطيل الكشف
-local function disableESP()
-	removeAllESP()
-	for _, conn in pairs(connections) do
-		conn:Disconnect()
-	end
-	connections = {}
-
-	StarterGui:SetCore("SendNotification", {
-		Title = "ESP",
-		Text = "❌ تم إيقاف الكشف"
-	})
-end
-
--- Toggle في تاب PE
-PD:addToggle("🔍 كشف اللاعبين", function(value)
-	if value then
-		enableESP()
-	else
-		disableESP()
-	end
+PD:addButton("Teleport | تنقل عنده", function()
+    local target = Players:FindFirstChild(selectedPlayerName)
+    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character:MoveTo(target.Character.HumanoidRootPart.Position + Vector3.new(2, 0, 2))
+    end
 end)
 
+------------------------------
+-- 🛡️ صفحة الحماية
+------------------------------
+local SK = UI:addPage("Protection", 4, true, 6)
 
-  
- local SK = UI:addPage("Protection",4,true,6)
+local AntiFling = false
+local AntiRape = false
+local AntiAFK = false
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local VirtualUser = game:GetService("VirtualUser")
-local LocalPlayer = Players.LocalPlayer
-
--- حالات التفعيل
-local AntiFlingEnabled = false
-local AntiRapeEnabled = false
-local AntiAFKEnabled = false
-
--- ⛔ مضاد Fling
 RunService.Heartbeat:Connect(function()
-    if not AntiFlingEnabled then return end
-
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character then
-            for _, obj in pairs(player.Character:GetDescendants()) do
-                if obj:IsA("BodyAngularVelocity") or obj:IsA("BodyVelocity") or obj:IsA("AngularVelocity") or obj:IsA("BodyGyro") then
-                    obj:Destroy()
+    if AntiFling then
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character then
+                for _, obj in pairs(p.Character:GetDescendants()) do
+                    if obj:IsA("BodyVelocity") or obj:IsA("AngularVelocity") then
+                        obj:Destroy()
+                    end
                 end
             end
         end
     end
 end)
 
--- 🔄 مضاد Rape (يلف شخصيتك إذا أحد قرب من وراك)
 RunService.Heartbeat:Connect(function()
-    if not AntiRapeEnabled then return end
-
-    local char = LocalPlayer.Character
-    if not (char and char:FindFirstChild("HumanoidRootPart")) then return end
-    local hrp = char.HumanoidRootPart
-
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local otherHRP = player.Character.HumanoidRootPart
-            local distance = (hrp.Position - otherHRP.Position).Magnitude
-            local behind = (hrp.CFrame.LookVector:Dot((otherHRP.Position - hrp.Position).Unit)) < -0.5
-            if distance < 5 and behind then
-                hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(180), 0)
+    if AntiRape then
+        local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                local otherHRP = p.Character.HumanoidRootPart
+                if (hrp.Position - otherHRP.Position).Magnitude < 5 and hrp.CFrame.LookVector:Dot((otherHRP.Position - hrp.Position).Unit) < -0.5 then
+                    hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(180), 0)
+                end
             end
         end
     end
 end)
 
--- 💤 مضاد AFK
-local afkConnection
-local function enableAFK()
-    afkConnection = LocalPlayer.Idled:Connect(function()
-        VirtualUser:Button2Down(Vector2.new(), workspace.CurrentCamera.CFrame)
-        task.wait(1)
-        VirtualUser:Button2Up(Vector2.new(), workspace.CurrentCamera.CFrame)
-    end)
-end
-
-local function disableAFK()
-    if afkConnection then
-        afkConnection:Disconnect()
-        afkConnection = nil
-    end
-end
-
--- ✅ أزرار التفعيل
-SK:addToggle("🌀 مضاد Fling", function(state)
-    AntiFlingEnabled = state
-end)
-
-SK:addToggle("🍑 مضاد Bang", function(state)
-    AntiRapeEnabled = state
-end)
-
+SK:addToggle("🌀 مضاد Fling", function(state) AntiFling = state end)
+SK:addToggle("🍑 مضاد Bang", function(state) AntiRape = state end)
 SK:addToggle("💤 مضاد AFK", function(state)
-    AntiAFKEnabled = state
+    AntiAFK = state
     if state then
-        enableAFK()
-    else
-        disableAFK()
+        LocalPlayer.Idled:Connect(function()
+            VirtualUser:Button2Down(Vector2.new(), workspace.CurrentCamera.CFrame)
+            wait(1)
+            VirtualUser:Button2Up(Vector2.new(), workspace.CurrentCamera.CFrame)
+        end)
     end
 end)
 
-local LND = UI:addPage("Credits",5,true,6)
+------------------------------
+-- 🙌 صفحة الكريدت
+------------------------------
+local LND = UI:addPage("Credits", 5, true, 6)
 
-LND:addLabel("مطورين السكربت","Majed627 / https://discord.gg/aDexK56tau ")
+LND:addLabel("مطورين السكربت", "Majed627 / https://discord.gg/aDexK56tau")
 
-LND:addButton("نسخ رابط سيرفر الديسكورد ، فيه كل شي هناك اضغط للنسخ",function()
-
+LND:addButton("نسخ رابط السيرفر", function()
     setclipboard("https://discord.gg/aDexK56tau")
-
-game.StarterGui:SetCore("SendNotification",{
-        Title = "تم نسخ رابط السيرفر بنجاح";
-        Text = "Clicked✅";
-    })
+    StarterGui:SetCore("SendNotification", {Title = "تم نسخ الرابط", Text = "✅"})
 end)
-    
-LND:addButton("اضغط لنسخ يوزر مطور السكربت",function()
 
+LND:addButton("نسخ يوزر المطور", function()
     setclipboard("Majed627")
-
-game.StarterGui:SetCore("SendNotification",{
-        Title = "تم نسخ اليوزر بنجاح";
-        Text = "Clicked✅";
-    })
+    StarterGui:SetCore("SendNotification", {Title = "تم نسخ اليوزر", Text = "✅"})
 end)
 
