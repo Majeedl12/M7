@@ -1,4 +1,5 @@
 
+-- إشعار ونسخ رابط الديسكورد
 setclipboard("https://discord.gg/aDexK56tau")
 game.StarterGui:SetCore("SendNotification", {
     Title = "تم نسخ رابط سيرفر المطورين",
@@ -33,6 +34,14 @@ Home:addButton("RESET | ريسيت", function()
     LocalPlayer.Character.Humanoid.Health = 0
 end)
 
+Home:addButton("سكربت العاده - JerkOff",function()
+     loadstring(game:HttpGet("https://pastebin.com/raw/YiSqWZ78"))()
+    game.StarterGui:SetCore("SendNotification",{
+        Title = "تم الضغط";
+        Text = "Clicked✅";
+    })
+end)
+
 Home:addToggle("جري | Sprint", function(value)
     LocalPlayer.Character.Humanoid.WalkSpeed = value and 40 or 16
 end)
@@ -45,100 +54,163 @@ Home:addTextBox("Jump Power | قوه النط", "Number here", function(val)
     LocalPlayer.Character.Humanoid.JumpPower = tonumber(val)
 end)
 
-------------------------------
--- 🎮 صفحة Misc
-------------------------------
-local PE = UI:addPage("Misc", 2, true, 6)
-
- 
-PE:addButton("Fling Touch",function()
-    
-local AkaliNotif = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/Dynissimo/main/Scripts/AkaliNotif.lua"))();
-local Notify = AkaliNotif.Notify;
-Notify({
-Description = "RL TEAM";
-Title = "RedLine :).";
-Duration = 10;
-});
-loadstring(game:HttpGet("https://raw.githubusercontent.com/0Ben1/fe./main/Fling%20GUI"))()
-
-    game.StarterGui:SetCore("SendNotification",{
-        Title = "تم الضغط";
-        Text = "Clicked✅";
-    })
-end)
-
-
-PE:addButton("سكربت العاده - JerkOff",function()
-     loadstring(game:HttpGet("https://pastebin.com/raw/YiSqWZ78"))()
-    game.StarterGui:SetCore("SendNotification",{
-        Title = "تم الضغط";
-        Text = "Clicked✅";
-    })
-end)
 
 ------------------------------
 -- 🎯 TargetInfo Page
 ------------------------------
-local PD = UI:addPage("TargetInfo", 3, true, 6)
-PD:addLabel("Script message", "Script Made By RL Team")
+local PD = UI:addPage("TargetInfo", 2, true, 6)
+PD:addLabel("RL Team", "لمن تفعل طير المستهدف حاول تنتظر ثلاث ثواني عشان يطير")
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
 
 local selectedPlayerName = nil
+local selectedPlayerObject = nil
+local safePosition = nil
+local HRP = nil
+local FlingConnection = nil
+local ESPObject = nil
+local BackBangFlag = false
+local FrontBangFlag = false
 
+-- اختيار اللاعب
 PD:addTextBox("اختيار اللاعب", "ادخل اول حرفين من الاسم", function(input)
     input = input:lower()
     selectedPlayerName = nil
+    selectedPlayerObject = nil
+
     for _, p in pairs(Players:GetPlayers()) do
         if p.Name:lower():sub(1, #input) == input or p.DisplayName:lower():sub(1, #input) == input then
             selectedPlayerName = p.Name
+            selectedPlayerObject = p
+
             StarterGui:SetCore("SendNotification", {
-                Title = "تم اختيار اللاعب",
+                Title = "✅ تم اختيار اللاعب",
                 Text = "اللاعب: " .. p.Name,
                 Duration = 3
             })
+
+            -- إشعار عند الخروج
+            p.AncestryChanged:Connect(function()
+                if not p:IsDescendantOf(game) then
+                    StarterGui:SetCore("SendNotification", {
+                        Title = "🚫 اللاعب خرج",
+                        Text = p.Name .. " غادر السيرفر",
+                        Duration = 4
+                    })
+                    selectedPlayerName = nil
+                    selectedPlayerObject = nil
+                end
+            end)
             break
         end
     end
 end)
 
--- Bang خلفي
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local flingConnection
+local flingActive = false
+local savedPosition = nil
+
+PD:addToggle("Fling | طير المستهدف", function(state)
+    flingActive = state
+
+    local target = Players:FindFirstChild(selectedPlayerName)
+    local HRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+    if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") or not HRP then
+        return
+    end
+
+    local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
+
+    if flingConnection then
+        flingConnection:Disconnect()
+        flingConnection = nil
+    end
+
+    if state then
+        savedPosition = HRP.Position
+
+        flingConnection = RunService.Heartbeat:Connect(function()
+            if not flingActive or not targetHRP or not HRP then return end
+
+            -- الالتصاق بالمستهدف
+            HRP.CFrame = targetHRP.CFrame * CFrame.new(0, 0, 0)
+
+            -- قوة الفلنق (Touch fling)
+            local vel = HRP.Velocity
+            HRP.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
+            RunService.RenderStepped:Wait()
+            HRP.Velocity = vel
+            RunService.Stepped:Wait()
+            HRP.Velocity = vel + Vector3.new(0, 0.1, 0)
+        end)
+    else
+        if flingConnection then
+            flingConnection:Disconnect()
+            flingConnection = nil
+        end
+
+        -- يرجع اللاعب لمكانه الآمن
+        if savedPosition and HRP then
+            HRP.CFrame = CFrame.new(savedPosition + Vector3.new(0, 3, 0))
+        end
+    end
+end)
+
+-- Bang | تغتصبه (خلفي)
 PD:addToggle("Bang | تغتصبه", function(state)
     local target = Players:FindFirstChild(selectedPlayerName)
-    if not target then return end
-    _G["BackBangFlag"] = state
+    HRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not target or not HRP then return end
+
+    BackBangFlag = state
     coroutine.wrap(function()
-        while _G["BackBangFlag"] and target.Character and HRP do
-            local offset = Vector3.new(0, -1.05, 0.58)
+        while BackBangFlag and target.Character and HRP do
             local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
             if targetHRP then
-                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset)}):Play()
+                local offset1 = Vector3.new(0, -1.05, 0.58)
+                local offset2 = Vector3.new(0, -1.05, 0.88)
+                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset1)}):Play()
                 wait(0.12)
-                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset + Vector3.new(0, 0, 0.3))}):Play()
+                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset2)}):Play()
                 wait(0.12)
             end
         end
     end)()
 end)
 
--- Bang أمامي
+-- GetBanged | يغتصبك (أمامي)
 PD:addToggle("GetBanged | يغتصبك", function(state)
     local target = Players:FindFirstChild(selectedPlayerName)
-    if not target then return end
-    _G["FrontBangFlag"] = state
+    HRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not target or not HRP then return end
+
+    FrontBangFlag = state
     coroutine.wrap(function()
-        while _G["FrontBangFlag"] and target.Character and HRP do
-            local offset = Vector3.new(0, -1.05, -0.4)
+        while FrontBangFlag and target.Character and HRP do
             local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
             if targetHRP then
-                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset)}):Play()
+                local offset1 = Vector3.new(0, -1.05, -0.4)
+                local offset2 = Vector3.new(0, -1.05, -0.7)
+                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset1)}):Play()
                 wait(0.12)
-                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset + Vector3.new(0, 0, -0.3))}):Play()
+                TweenService:Create(HRP, TweenInfo.new(0.12), {CFrame = targetHRP.CFrame * CFrame.new(offset2)}):Play()
                 wait(0.12)
             end
         end
     end)()
 end)
 
+-- Spectate | مشاهدة
 PD:addToggle("Spectate | مشاهدة", function(state)
     local target = Players:FindFirstChild(selectedPlayerName)
     if target and target.Character then
@@ -146,21 +218,25 @@ PD:addToggle("Spectate | مشاهدة", function(state)
     end
 end)
 
+-- ESP | كشف
 PD:addToggle("ESP | كشف", function(state)
     local target = Players:FindFirstChild(selectedPlayerName)
     if not target or not target.Character then return end
+
     if state then
-        local hl = Instance.new("Highlight", target.Character)
-        hl.Name = "ESP"
-        hl.FillColor = Color3.fromRGB(255, 0, 0)
-        hl.FillTransparency = 0.5
-        hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+        if not target.Character:FindFirstChild("ESP") then
+            ESPObject = Instance.new("Highlight", target.Character)
+            ESPObject.Name = "ESP"
+            ESPObject.FillColor = Color3.fromRGB(255, 0, 0)
+            ESPObject.FillTransparency = 0.5
+            ESPObject.OutlineColor = Color3.fromRGB(255, 255, 255)
+        end
     else
-        local esp = target.Character:FindFirstChild("ESP")
-        if esp then esp:Destroy() end
+        if ESPObject then ESPObject:Destroy() end
     end
 end)
 
+-- Teleport | تنقل عنده
 PD:addButton("Teleport | تنقل عنده", function()
     local target = Players:FindFirstChild(selectedPlayerName)
     if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
@@ -171,7 +247,7 @@ end)
 ------------------------------
 -- 🛡️ صفحة الحماية
 ------------------------------
-local SK = UI:addPage("Protection", 4, true, 6)
+local SK = UI:addPage("Protection", 3, true, 6)
 
 local AntiFling = false
 local AntiRape = false
@@ -221,7 +297,7 @@ end)
 ------------------------------
 -- 🙌 صفحة الكريدت
 ------------------------------
-local LND = UI:addPage("Credits", 5, true, 6)
+local LND = UI:addPage("Credits", 4, true, 6)
 
 LND:addLabel("مطورين السكربت", "Majed627 / https://discord.gg/aDexK56tau")
 
