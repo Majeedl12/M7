@@ -1,18 +1,14 @@
 
--- RL Team GUI [كامل ومصحح - نسخة واحدة]
-
--- نسخ رابط الديسكورد
+-- 🧩 بدء RL Team GUI
 setclipboard("https://discord.gg/aDexK56tau")
 game.StarterGui:SetCore("SendNotification", {
     Title = "تم نسخ رابط سيرفر المطورين",
     Text = "✅"
 })
 
--- تحميل المكتبة
 local GUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/aaaa"))()
-local UI = GUI:CreateWindow("RL Team", "RedLine")
+local UI = GUI:CreateWindow("RL Team HUB | 1.2v ", "RedLine")
 
--- تعريف الخدمات
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
@@ -21,132 +17,23 @@ local StarterGui = game:GetService("StarterGui")
 local Camera = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
 local VirtualUser = game:GetService("VirtualUser")
-
 local HRP = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 HRP = HRP:WaitForChild("HumanoidRootPart")
 
--- 🏠 صفحة البداية
-local Home = UI:addPage("Menu | البدايه 🏠", 1, true, 6)
-Home:addLabel("تم نسخ رابط سيرفرنا دسكورد خش سيرفرنا عشان تشوف كل شي", "تم صنع السكربت بواسطه RL Team ")
-
--- كشف الكل
-local allESPActive = false
-local allESPList = {}
-
-local function AddESPToPlayer(player)
-    if player == LocalPlayer then return end
-    if not player.Character then return end
-
-    -- Highlight
-    if not player.Character:FindFirstChild("ESP_HL") then
-        local hl = Instance.new("Highlight")
-        hl.Name = "ESP_HL"
-        hl.FillColor = Color3.fromRGB(255, 255, 255) -- جسم أبيض
-        hl.OutlineColor = Color3.fromRGB(0, 0, 0) -- أطراف سوداء
-        hl.FillTransparency = 0.3
-        hl.OutlineTransparency = 0
-        hl.Parent = player.Character
-        allESPList[player] = hl
-    end
-
-    -- Billboard للاسم
-    if not player.Character:FindFirstChild("ESP_Name") then
-        local head = player.Character:FindFirstChild("Head")
-        if head then
-            local tag = Instance.new("BillboardGui")
-            tag.Name = "ESP_Name"
-            tag.Size = UDim2.new(0, 100, 0, 20)
-            tag.StudsOffset = Vector3.new(0, 2, 0)
-            tag.AlwaysOnTop = true
-            tag.Parent = head
-
-            local nameLabel = Instance.new("TextLabel")
-            nameLabel.Size = UDim2.new(1, 0, 1, 0)
-            nameLabel.BackgroundTransparency = 1
-            nameLabel.Text = player.Name
-            nameLabel.TextColor3 = Color3.fromRGB(0, 170, 255) -- أزرق
-            nameLabel.TextScaled = true
-            nameLabel.Font = Enum.Font.SourceSansSemibold
-            nameLabel.TextSize = 12
-            nameLabel.Parent = tag
-        end
-    end
-end
-
-local function RemoveESPFromPlayer(player)
-    if player.Character then
-        local hl = player.Character:FindFirstChild("ESP_HL")
-        local tag = player.Character:FindFirstChild("ESP_Name")
-        if hl then hl:Destroy() end
-        if tag then tag:Destroy() end
-    end
-    allESPList[player] = nil
-end
-
-Home:addToggle(" كشف الكل | ESP ALL", function(state)
-    allESPActive = state
-
-    if state then
-        -- إضافة ESP لجميع اللاعبين الحاليين
-        for _, p in ipairs(Players:GetPlayers()) do
-            if p ~= LocalPlayer then
-                AddESPToPlayer(p)
-            end
-        end
-
-        -- متابعة أي لاعب جديد يدخل
-        Players.PlayerAdded:Connect(function(p)
-            p.CharacterAdded:Connect(function()
-                wait(1) -- ننتظر ظهور الشخصية
-                if allESPActive then
-                    AddESPToPlayer(p)
-                end
-            end)
-        end)
-
-        -- متابعة اللاعبين الحاليين اللي يعيدون شخصياتهم
-        for _, p in ipairs(Players:GetPlayers()) do
-            p.CharacterAdded:Connect(function()
-                wait(1)
-                if allESPActive then
-                    AddESPToPlayer(p)
-                end
-            end)
-        end
-
-    else
-        -- إزالة كل ESP
-        for _, p in pairs(Players:GetPlayers()) do
-            RemoveESPFromPlayer(p)
-        end
-    end
-end)
-
--- إعادة الدخول
-Home:addButton("Rejoin | إعادة دخول", function()
-    game:GetService("TeleportService"):Teleport(game.PlaceId, LocalPlayer)
-end)
-
-
--- 🎯 صفحة TargetInfo | المستهدف
-local PD = UI:addPage("🎯 TargetInfo | المستهدف", 2, true, 6)
-
-local selectedPlayerName = nil
+-- 🎯 صفحة المستهدف
+local PD = UI:addPage(" TargetInfo | المستهدف", 2, true, 6)
 local selectedPlayerObject = nil
 local flingConnection = nil
 
--- اختيار اللاعب
-PD:addTextBox("اختيار اللاعب", "اكتب اول حرف من اسمه", function(input)
+PD:addTextBox("اختيار اللاعب | Select Player", "اكتب اول حرف من اسمه", function(input)
     for _, p in pairs(Players:GetPlayers()) do
         if p.Name:lower():sub(1, #input) == input:lower() then
-            selectedPlayerName = p.Name
             selectedPlayerObject = p
             StarterGui:SetCore("SendNotification", {
                 Title = "تم تحديد اللاعب",
-                Text = selectedPlayerName,
+                Text = p.Name,
                 Duration = 3
             })
-            -- رصد خروج اللاعب من السيرفر
             p.AncestryChanged:Connect(function()
                 if not p:IsDescendantOf(game) then
                     StarterGui:SetCore("SendNotification", {
@@ -154,9 +41,7 @@ PD:addTextBox("اختيار اللاعب", "اكتب اول حرف من اسمه
                         Text = p.Name .. " غادر السيرفر",
                         Duration = 4
                     })
-                    selectedPlayerName = nil
                     selectedPlayerObject = nil
-                    -- فصل الفلنق إذا كان شغال
                     if flingConnection then
                         flingConnection:Disconnect()
                         flingConnection = nil
@@ -170,195 +55,72 @@ PD:addTextBox("اختيار اللاعب", "اكتب اول حرف من اسمه
     end
 end)
 
--- زر تنقل للاعب
 PD:addButton("تنقل للمستهدف | TP To Target", function()
     if selectedPlayerObject and selectedPlayerObject.Character then
         local p = selectedPlayerObject.Character:FindFirstChild("HumanoidRootPart")
-        if p then 
-            LocalPlayer.Character:MoveTo(p.Position + Vector3.new(2,0,2))
-        end
+        if p then LocalPlayer.Character:MoveTo(p.Position + Vector3.new(2,0,2)) end
     end
 end)
 
--- فلنق toggle
 PD:addToggle("طير المستهدف | Fling Target", function(state)
     if flingConnection then flingConnection:Disconnect() flingConnection = nil end
     if not selectedPlayerObject or not selectedPlayerObject.Character then return end
     local targetHRP = selectedPlayerObject.Character:FindFirstChild("HumanoidRootPart")
     local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
     if not targetHRP or not myHRP then return end
-
     if state then
         flingConnection = RunService.Heartbeat:Connect(function()
-            if not targetHRP or not myHRP then return end
             myHRP.CFrame = targetHRP.CFrame
             myHRP.Velocity = Vector3.new(1e5, 1e5, 1e5)
         end)
-    else
-        if flingConnection then flingConnection:Disconnect() flingConnection = nil end
     end
 end)
 
--- متغيرات تحكم يغتصب اللاعب (Bang)
-local BangActive = false
-local BangConnection = nil
-
--- GetBanged Variables
-local GetBangedActive = false
-local GetBangedConnection = nil
+-- Bang/GetBanged
+local BangActive, GetBangedActive = false, false
+local BangConnection, GetBangedConnection = nil, nil
 
 local function StartBang()
     if not selectedPlayerObject or not selectedPlayerObject.Character then return end
     local targetHRP = selectedPlayerObject.Character:FindFirstChild("HumanoidRootPart")
-    local myChar = LocalPlayer.Character
-    if not targetHRP or not myChar then return end
-    local myHRP = myChar:FindFirstChild("HumanoidRootPart")
-    local myHumanoid = myChar:FindFirstChildOfClass("Humanoid")
-    if not myHRP or not myHumanoid then return end
-
+    local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local myHumanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if not targetHRP or not myHRP or not myHumanoid then return end
     BangActive = true
-    local forward = true
-    local lastSwitch = tick()
-
+    local forward, lastSwitch = true, tick()
     BangConnection = RunService.Heartbeat:Connect(function()
         if not BangActive then return end
-        if not targetHRP or not targetHRP.Parent then return end
-
         myHumanoid.Sit = true
-
-        if tick() - lastSwitch >= 0.10 then
-            forward = not forward
-            lastSwitch = tick()
-        end
-
+        if tick() - lastSwitch >= 0.05 then forward = not forward lastSwitch = tick() end
         local offset = forward and CFrame.new(0, 0, 1.2) or CFrame.new(0, 0, 2)
         myHRP.CFrame = targetHRP.CFrame * offset
     end)
 end
-
-local function StopBang()
-    BangActive = false
-    if BangConnection then
-        BangConnection:Disconnect()
-        BangConnection = nil
-    end
-    local myHumanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-    if myHumanoid then
-        myHumanoid.Sit = false
-    end
-end
+local function StopBang() BangActive = false if BangConnection then BangConnection:Disconnect() BangConnection = nil end end
 
 local function StartGetBanged()
     if not selectedPlayerObject or not selectedPlayerObject.Character then return end
-    local myChar = LocalPlayer.Character
-    local targetChar = selectedPlayerObject.Character
-    if not myChar or not targetChar then return end
-
-    local myHRP = myChar:FindFirstChild("HumanoidRootPart")
-    local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
+    local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local targetHRP = selectedPlayerObject.Character:FindFirstChild("HumanoidRootPart")
     if not myHRP or not targetHRP then return end
-
     GetBangedActive = true
-    local forward = true
-    local lastSwitch = tick()
-
+    local forward, lastSwitch = true, tick()
     GetBangedConnection = RunService.Heartbeat:Connect(function()
         if not GetBangedActive then return end
-        if not myHRP or not myHRP.Parent then return end
-
-        if tick() - lastSwitch >= 0.07 then
-            forward = not forward
-            lastSwitch = tick()
-        end
-
+        if tick() - lastSwitch >= 0.05 then forward = not forward lastSwitch = tick() end
         local offset = forward and CFrame.new(0, 0, -1.5) or CFrame.new(0, 0, -2.2)
         myHRP.CFrame = targetHRP.CFrame * offset
     end)
 end
+local function StopGetBanged() GetBangedActive = false if GetBangedConnection then GetBangedConnection:Disconnect() GetBangedConnection = nil end end
 
-local function StopGetBanged()
-    GetBangedActive = false
-    if GetBangedConnection then
-        GetBangedConnection:Disconnect()
-        GetBangedConnection = nil
-    end
-end
-
--- Toggles في القائمة
-PD:addToggle("يغتصب اللاعب | Bang", function(state)
-    if not selectedPlayerObject then
-        StarterGui:SetCore("SendNotification", {Title = "خطأ", Text = "لم يتم اختيار لاعب", Duration = 3})
-        return false
-    end
-    if state then
-        StartBang()
-    else
-        StopBang()
-    end
-end)
-
-PD:addToggle("يغتصبك | GetBanged", function(state)
-    if not selectedPlayerObject then
-        StarterGui:SetCore("SendNotification", {Title = "خطأ", Text = "لم يتم اختيار لاعب", Duration = 3})
-        return false
-    end
-    if state then
-        StartGetBanged()
-    else
-        StopGetBanged()
-    end
-end)
-
-local HeadBangActive = false
-local HeadBangConnection = nil
-
-local moveDistance = 0.07 -- مدى التقديم والترجيع
-local moveSpeed = 2
-local forward = true
-local currentOffset = 0
-
-local function StartHeadBang()
-    if not selectedPlayerObject or not selectedPlayerObject.Character then return end
-    local targetHead = selectedPlayerObject.Character:FindFirstChild("Head")
-    local myChar = LocalPlayer.Character
-    if not targetHead or not myChar then return end
-
-    local myHRP = myChar:FindFirstChild("HumanoidRootPart")
-    if not myHRP then return end
-
-    HeadBangActive = true
-    forward = true
-    currentOffset = 0
-
-    HeadBangConnection = RunService.Heartbeat:Connect(function(dt)
-        if not HeadBangActive then return end
-        if not targetHead or not targetHead.Parent then return end
-
-        -- تحديث مقدار الحركة
-        if forward then
-            currentOffset += moveSpeed * dt
-            if currentOffset >= moveDistance then
-                currentOffset = moveDistance
-                forward = false
-            end
-        else
-            currentOffset -= moveSpeed * dt
-            if currentOffset <= 0 then
-                currentOffset = 0
-                forward = true
-            end
-        end
-    end)
-end
-
--- مشاهدة اللاعب
+PD:addToggle("يغتصب اللاعب | Bang", function(state) if selectedPlayerObject then if state then StartBang() else StopBang() end end end)
+PD:addToggle("يغتصبك | GetBanged", function(state) if selectedPlayerObject then if state then StartGetBanged() else StopGetBanged() end end end)
 PD:addToggle("مشاهده المستهدف | View", function(state)
     if selectedPlayerObject and selectedPlayerObject.Character then
         Camera.CameraSubject = state and selectedPlayerObject.Character:FindFirstChild("Humanoid") or LocalPlayer.Character:FindFirstChild("Humanoid")
     end
 end)
-
--- كشف اللاعب ESP
 PD:addToggle("كشف المستهدف | ESP", function(state)
     if selectedPlayerObject and selectedPlayerObject.Character then
         local old = selectedPlayerObject.Character:FindFirstChild("ESP")
@@ -368,76 +130,219 @@ PD:addToggle("كشف المستهدف | ESP", function(state)
             esp.FillColor = Color3.fromRGB(255, 0, 0)
             esp.FillTransparency = 0.5
             esp.OutlineColor = Color3.fromRGB(255, 255, 255)
-        elseif not state and old then
-            old:Destroy()
-        end
+        elseif not state and old then old:Destroy() end
     end
 end)
 
--- زر RESET (ريست الشخصية)
-PD:addButton("RESET | ريسيت", function()
-    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
-        LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Health = 0
+-- كشف الكل (ESP) مع الألوان والتنسيق حسب الطلب
+local allESPActive = false
+local allESPList = {}
+
+local function AddESPToPlayer(player)
+    if player == LocalPlayer or not player.Character then return end
+
+    -- Highlight
+    if not player.Character:FindFirstChild("ESP_HL") then
+        local hl = Instance.new("Highlight")
+        hl.Name = "ESP_HL"
+        hl.FillColor = Color3.fromRGB(255, 255, 255) -- أبيض
+        hl.OutlineColor = Color3.fromRGB(0, 0, 0) -- أسود
+        hl.FillTransparency = 0.3
+        hl.OutlineTransparency = 0
+        hl.Parent = player.Character
+        allESPList[player] = hl
     end
-end)
 
+    -- اسم اللاعب فوق الرأس
+    if not player.Character:FindFirstChild("ESP_Name") then
+        local head = player.Character:FindFirstChild("Head")
+        if head then
+            local tag = Instance.new("BillboardGui", head)
+            tag.Name = "ESP_Name"
+            tag.Size = UDim2.new(0, 100, 0, 20)
+            tag.StudsOffset = Vector3.new(0, 2.5, 0)
+            tag.AlwaysOnTop = true
 
--- 🛡️ الحماية
-local SK = UI:addPage(" الحمايه | Protection 🛡️", 3, true, 6)
-local anti = {
-    fling = false, afk = false, sit = false, delete = false,
-    anchor = false, jump = false, speed = false, velocity = false,
-}
-RunService.Heartbeat:Connect(function()
-    local char = LocalPlayer.Character
-    if not char then return end
-
-    if anti.fling or anti.velocity then
-        for _, obj in pairs(char:GetDescendants()) do
-            if obj:IsA("BodyVelocity") or obj:IsA("BodyAngularVelocity") then obj:Destroy() end
+            local nameLabel = Instance.new("TextLabel", tag)
+            nameLabel.Size = UDim2.new(1, 0, 1, 0)
+            nameLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- خلفية سوداء
+            nameLabel.BackgroundTransparency = 0.4
+            nameLabel.BorderSizePixel = 0
+            nameLabel.Text = player.Name
+            nameLabel.TextColor3 = Color3.fromRGB(255, 0, 0) -- أحمر
+            nameLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0) -- حدود سوداء
+            nameLabel.TextStrokeTransparency = 0
+            nameLabel.TextScaled = true
+            nameLabel.Font = Enum.Font.SourceSansBold
         end
     end
-    if anti.anchor then
-        for _, part in pairs(char:GetDescendants()) do
-            if part:IsA("BasePart") and part.Anchored then part.Anchored = false end
+end
+
+local function RemoveESPFromPlayer(player)
+    if player.Character then
+        for _, obj in pairs(player.Character:GetDescendants()) do
+            if obj:IsA("Highlight") and obj.Name == "ESP_HL" then
+                obj:Destroy()
+            elseif obj:IsA("BillboardGui") and obj.Name == "ESP_Name" then
+                obj:Destroy()
+            end
         end
     end
-    if anti.jump then
-        local h = char:FindFirstChildWhichIsA("Humanoid")
-        if h and h.JumpPower > 50 then h.JumpPower = 50 end
-    end
-    if anti.speed then
-        local h = char:FindFirstChildWhichIsA("Humanoid")
-        if h and h.WalkSpeed > 16 then h.WalkSpeed = 16 end
-    end
-end)
+    allESPList[player] = nil
+end
 
-SK:addToggle("🌀 مضاد Fling", function(v) anti.fling = v end)
-SK:addToggle("💤 مضاد AFK", function(v)
-    anti.afk = v
-    if v then
-        LocalPlayer.Idled:Connect(function()
-            VirtualUser:Button2Down(Vector2.new())
-            wait(1)
-            VirtualUser:Button2Up(Vector2.new())
+PD:addToggle("كشف الكل | ESP ALL", function(state)
+    allESPActive = state
+    if state then
+        for _, p in ipairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer then AddESPToPlayer(p) end
+        end
+
+        -- تحديث مستقبلي
+        Players.PlayerAdded:Connect(function(p)
+            p.CharacterAdded:Connect(function()
+                wait(1)
+                if allESPActive then AddESPToPlayer(p) end
+            end)
         end)
+
+        for _, p in ipairs(Players:GetPlayers()) do
+            p.CharacterAdded:Connect(function()
+                wait(1)
+                if allESPActive then AddESPToPlayer(p) end
+            end)
+        end
+    else
+        for _, p in pairs(Players:GetPlayers()) do
+            RemoveESPFromPlayer(p)
+        end
     end
 end)
-SK:addToggle("🪑 مضاد Sit", function(v) anti.sit = v end)
-SK:addToggle("🧱 مضاد Anchor", function(v) anti.anchor = v end)
-SK:addToggle("🦘 مضاد JumpPower", function(v) anti.jump = v end)
-SK:addToggle("🏃‍♂️ مضاد Speed", function(v) anti.speed = v end)
-SK:addToggle("🌪️ مضاد Velocity", function(v) anti.velocity = v end)
 
--- 🙌 الكريدت
-local LND = UI:addPage("Credits | الحقوق 👾", 6, true, 5)
-LND:addLabel("مطور السكربت", "Majed627")
-LND:addButton("نسخ رابط سيرفر الدسكورد تحصل كل شي هناك", function()
+PD:addButton("RESET | ريسيت", function()
+    if LocalPlayer.Character then
+        local h = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if h then h.Health = 0 end
+    end
+end)
+
+-- 🛡️ صفحة الحماية-- صفحة الحماية | Protection (معدلة حسب طلبك فقط بدون رموز)
+local SK = UI:addPage("الحمايه | Protection", 2, true, 6)
+
+local protection = {
+    Bang = false,
+    Fling = false,
+    AFK = false,
+    Sit = false,
+    BangV2 = false,
+}
+
+local function Notify(txt)
+    StarterGui:SetCore("SendNotification", {
+        Title = "مضاد الحماية",
+        Text = txt,
+        Duration = 3
+    })
+end
+
+-- Bang V1 مضاد اغتصاب
+RunService.Heartbeat:Connect(function()
+    if protection.Bang then
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum and hum.Sit then
+            hum.Sit = false
+        end
+    end
+end)
+
+-- Fling مضاد فلنق
+RunService.Heartbeat:Connect(function()
+    if protection.Fling then
+        local char = LocalPlayer.Character
+        if char then
+            for _, obj in pairs(char:GetDescendants()) do
+                if obj:IsA("BodyVelocity") or obj:IsA("BodyAngularVelocity") then
+                    obj:Destroy()
+                end
+            end
+        end
+    end
+end)
+
+-- AFK مضاد افك
+LocalPlayer.Idled:Connect(function()
+    if protection.AFK then
+        VirtualUser:Button2Down(Vector2.new(0,0))
+        wait(1)
+        VirtualUser:Button2Up(Vector2.new(0,0))
+    end
+end)
+
+-- Sit مضاد جلوس
+RunService.Heartbeat:Connect(function()
+    if protection.Sit then
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum and hum.Sit then
+            hum.Sit = false
+        end
+    end
+end)
+
+-- Bang V2 مضاد اغتصاب أقوى
+RunService.Heartbeat:Connect(function()
+    if protection.BangV2 and selectedPlayerObject and selectedPlayerObject.Character then
+        local targetHRP = selectedPlayerObject.Character:FindFirstChild("HumanoidRootPart")
+        local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if targetHRP and myHRP then
+            local distance = (targetHRP.Position - myHRP.Position).Magnitude
+            if distance < 4 then
+                myHRP.CFrame = myHRP.CFrame + Vector3.new(0, 10, 0)
+            end
+        end
+    end
+end)
+
+-- التوقلات
+
+SK:addToggle("مضاد اغتصاب | Bang", function(v)
+    protection.Bang = v
+    Notify(v and "تم تفعيل مضاد الاغتصاب" or "تم إيقاف مضاد الاغتصاب")
+end)
+
+SK:addToggle("مضاد فلنق | Fling", function(v)
+    protection.Fling = v
+    Notify(v and "تم تفعيل مضاد الفلنق" or "تم إيقاف مضاد الفلنق")
+end)
+
+SK:addToggle("مضاد افك | AFK", function(v)
+    protection.AFK = v
+    Notify(v and "تم تفعيل مضاد AFK" or "تم إيقاف مضاد AFK")
+end)
+
+SK:addToggle("مضاد جلوس | Sit", function(v)
+    protection.Sit = v
+    Notify(v and "تم تفعيل مضاد الجلوس" or "تم إيقاف مضاد الجلوس")
+end)
+
+SK:addToggle("مضاد اغتصاب V2 | Rape", function(v)
+    protection.BangV2 = v
+    Notify(v and "تم تفعيل مضاد الاغتصاب الأقوى" or "تم إيقاف مضاد الاغتصاب الأقوى")
+end)
+
+
+-- 👾 صفحة الكريدت
+local LND = UI:addPage("Credits | الحقوق ", 6, true, 3)
+LND:addLabel("مطور السكربت | Developer Script ", "Majed627")
+LND:addButton("نسخ رابط سيرفر الدسكورد | Discord Link Copy ", function()
     setclipboard("https://discord.gg/aDexK56tau")
     StarterGui:SetCore("SendNotification", {Title = "تم النسخ", Text = "✅"})
 end)
-LND:addButton("نسخ يوزر المطرر", function()
+LND:addButton("نسخ يوزر المطور دسكورد | Credits", function()
     setclipboard("Majed627")
     StarterGui:SetCore("SendNotification", {Title = "تم النسخ", Text = "✅"})
+end)
+
+LND:addButton("Rejoin | إعادة دخول السيرفر", function()
+    game:GetService("TeleportService"):Teleport(game.PlaceId, LocalPlayer)
 end)
 
