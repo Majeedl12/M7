@@ -288,20 +288,6 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- Bang V2 مضاد اغتصاب أقوى
-RunService.Heartbeat:Connect(function()
-    if protection.BangV2 and selectedPlayerObject and selectedPlayerObject.Character then
-        local targetHRP = selectedPlayerObject.Character:FindFirstChild("HumanoidRootPart")
-        local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if targetHRP and myHRP then
-            local distance = (targetHRP.Position - myHRP.Position).Magnitude
-            if distance < 4 then
-                myHRP.CFrame = myHRP.CFrame + Vector3.new(0, 10, 0)
-            end
-        end
-    end
-end)
-
 -- التوقلات
 
 SK:addToggle("مضاد اغتصاب | Bang", function(v)
@@ -324,21 +310,15 @@ SK:addToggle("مضاد جلوس | Sit", function(v)
     Notify(v and "تم تفعيل مضاد الجلوس" or "تم إيقاف مضاد الجلوس")
 end)
 
-SK:addToggle("مضاد اغتصاب V2 | Rape", function(v)
-    protection.BangV2 = v
-    Notify(v and "تم تفعيل مضاد الاغتصاب الأقوى" or "تم إيقاف مضاد الاغتصاب الأقوى")
-end)
-
-
 -- 👾 صفحة الكريدت
 local LND = UI:addPage("Credits | الحقوق ", 6, true, 3)
-LND:addLabel("مطور السكربت | Developer Script ", "Majed627")
+LND:addLabel("مطور السكربت | Developer Script ", "isxwp")
 LND:addButton("نسخ رابط سيرفر الدسكورد | Discord Link Copy ", function()
-    setclipboard("https://discord.gg/aDexK56tau")
+    setclipboard("https://discord.gg/cJUqwf2SFs")
     StarterGui:SetCore("SendNotification", {Title = "تم النسخ", Text = "✅"})
 end)
 LND:addButton("نسخ يوزر المطور دسكورد | Credits", function()
-    setclipboard("Majed627")
+    setclipboard("isxwp")
     StarterGui:SetCore("SendNotification", {Title = "تم النسخ", Text = "✅"})
 end)
 
