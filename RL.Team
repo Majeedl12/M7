@@ -252,6 +252,572 @@ local CloseButton = Instance.new("TextButton")
 
 ScreenGui.Parent = game.CoreGui 
 ScreenGui.Name = "Main_Menu_GUI"
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling 
+
+-- 💡 دالة لحساب عمر الحساب بالسنوات والأشهر والأيام
+local function GetAccountAgeString(accountAgeInDays)
+    local years = math.floor(accountAgeInDays / 365.25) -- تقريبي
+    local daysLeft = accountAgeInDays % 365.25
+    local months = math.floor(daysLeft / 30.44) -- تقريبي
+    local days = math.floor(daysLeft % 30.44)
+    
+    return string.format("%d سنة، %d شهر، %d يوم", years, months, days)
+end
+
+-- 💡 دالة لتحويل الثواني إلى H:M:S
+local function GetUptimeString(seconds)
+    local hours = math.floor(seconds / 3600)
+    local minutes = math.floor((seconds % 3600) / 60)
+    local secs = math.floor(seconds % 60)
+    return string.format("%02d:%02d:%02d", hours, minutes, secs)
+end
+
+-- إعدادات main Frame
+local NEW_HEIGHT = 280 
+main.Name = "main"
+main.Parent = ScreenGui
+main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+main.Position = UDim2.new(0.35, 0, 0.3, 0) 
+main.Size = UDim2.new(0, 280, 0, NEW_HEIGHT) 
+main.Active = true
+main.Draggable = true
+main.ZIndex = 10 
+
+-- ===============================================
+-- 👤 معلومات المستخدم (دمج في إطار main) - 🚫 تم حذف الصورة واسم الماب
+-- ===============================================
+
+local UserInfoBackground = Instance.new("Frame")
+UserInfoBackground.Name = "User_Info_Background"
+UserInfoBackground.Parent = main
+UserInfoBackground.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+UserInfoBackground.Position = UDim2.new(0, 0, 0.07, 0) 
+local INFO_FRAME_HEIGHT = 100 -- ارتفاع مناسب لـ 5 أسطر
+UserInfoBackground.Size = UDim2.new(1, 0, 0, INFO_FRAME_HEIGHT) 
+
+-- 📝 المعلومات النصية (المعربة)
+local LineHeight = 1/5 -- 5 أسطر معلومات الآن
+local InfoOffset = 0.02 -- بدء النصوص من أقصى اليسار
+local InfoWidth = 0.96 
+
+-- 1. اللقب/اسم العرض (السطر الأول)
+local DisplayNameLabel = Instance.new("TextLabel")
+DisplayNameLabel.Parent = UserInfoBackground
+DisplayNameLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+DisplayNameLabel.Position = UDim2.new(InfoOffset, 0, 0, 0)
+DisplayNameLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0) 
+DisplayNameLabel.Text = "اللقب: " .. LocalPlayer.DisplayName
+DisplayNameLabel.TextColor3 = Color3.fromRGB(255, 255, 0) 
+DisplayNameLabel.TextXAlignment = Enum.TextXAlignment.Right
+DisplayNameLabel.TextSize = 13 
+
+-- 2. اسم المستخدم (@الاسم) (السطر الثاني)
+local NameLabel = Instance.new("TextLabel")
+NameLabel.Parent = UserInfoBackground
+NameLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+NameLabel.Position = UDim2.new(InfoOffset, 0, LineHeight, 0)
+NameLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0) 
+NameLabel.Text = "الاسم: @" .. LocalPlayer.Name
+NameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+NameLabel.TextXAlignment = Enum.TextXAlignment.Right
+NameLabel.TextSize = 13 
+
+-- 3. عمر الحساب (السطر الثالث)
+local AgeLabel = Instance.new("TextLabel")
+AgeLabel.Parent = UserInfoBackground
+AgeLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+AgeLabel.Position = UDim2.new(InfoOffset, 0, LineHeight * 2, 0)
+AgeLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0)
+AgeLabel.Text = "عمر الحساب: " .. GetAccountAgeString(AccountCreationDate)
+AgeLabel.TextColor3 = Color3.fromRGB(150, 255, 150)
+AgeLabel.TextXAlignment = Enum.TextXAlignment.Right
+AgeLabel.TextSize = 13 
+
+-- 4. الحساب ID (السطر الرابع)
+local IDLabel = Instance.new("TextLabel")
+IDLabel.Parent = UserInfoBackground
+IDLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+IDLabel.Position = UDim2.new(InfoOffset, 0, LineHeight * 3, 0)
+IDLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0)
+IDLabel.Text = "الحساب ID: " .. LocalPlayer.UserId
+IDLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+IDLabel.TextXAlignment = Enum.TextXAlignment.Right
+IDLabel.TextSize = 13
+
+-- 5. عداد تشغيل السكريبت (Uptime) (السطر الخامس) - يتم تحديثه
+local UptimeLabel = Instance.new("TextLabel")
+UptimeLabel.Name = "Uptime_Counter"
+UptimeLabel.Parent = UserInfoBackground
+UptimeLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+UptimeLabel.Position = UDim2.new(InfoOffset, 0, LineHeight * 4, 0)
+UptimeLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0)
+UptimeLabel.Text = "السكربت شغال له: 00:00:00"
+UptimeLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
+UptimeLabel.TextXAlignment = Enum.TextXAlignment.Right
+UptimeLabel.TextSize = 13 
+
+
+-- حلقة لتحديث عداد التشغيل كل ثانية
+coroutine.wrap(function()
+    while task.wait(1) do
+        if main.Visible then
+            local elapsed = tick() - ScriptStartTime
+            UptimeLabel.Text = "السكربت شغال له: " .. GetUptimeString(elapsed)
+        end
+    end
+end)()
+
+-- إعدادات label (شريط العنوان - بقي مكانه في الأعلى 0,0)
+label.Name = "label"
+label.Parent = main
+label.BackgroundColor3 = Color3.fromRGB(0,0,0)
+label.Size = UDim2.new(1, 0, 0, 20)
+local ORIGINAL_LABEL_TEXT = "Nw Team - Made by Rew" 
+label.Text = ORIGINAL_LABEL_TEXT 
+label.TextColor3 = Color3.fromRGB(255, 0, 0)
+label.TextScaled = true
+label.ZIndex = 11
+
+-- زر إغلاق (X) في الزاوية
+CloseButton.Name = "Close_Button"
+CloseButton.Parent = main
+CloseButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+CloseButton.Position = UDim2.new(1, -20, 0, 0)
+CloseButton.Size = UDim2.new(0, 20, 0, 20)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.TextSize = 16
+CloseButton.ZIndex = 12
+
+-- زر Open الصغير لفتح الـGUI
+local OpenGUI = Instance.new("TextButton")
+OpenGUI.Name = "Open_Button"
+OpenGUI.Parent = ScreenGui 
+OpenGUI.Size = UDim2.new(0, 50, 0, 50) 
+-- الموقع في الزاوية العلوية اليسرى وبعيداً قليلاً عن الحافة (3% أفقيًا، 5% عموديًا)
+OpenGUI.Position = UDim2.new(0.03, 0, 0.05, 0) 
+OpenGUI.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+OpenGUI.TextColor3 = Color3.fromRGB(255, 0, 0)
+OpenGUI.Text = "افتح\nالسكربت" 
+OpenGUI.Font = Enum.Font.SourceSansBold
+OpenGUI.TextSize = 14
+OpenGUI.Visible = false 
+OpenGUI.TextWrapped = true 
+OpenGUI.ZIndex = 20 
+pcall(function() OpenGUI.AlwaysOnTop = true end) 
+
+OpenGUI.MouseButton1Down:Connect(function()
+    main.Visible = true
+    OpenGUI.Visible = false
+end)
+
+CloseButton.MouseButton1Down:Connect(function()
+    main.Visible = false
+    OpenGUI.Visible = true 
+end)
+
+
+-- ===============================================
+-- 🟢 العمود الأول (اليمين) - Hitbox و Discord
+-- ===============================================
+
+local START_POS = (20 + INFO_FRAME_HEIGHT + 10) / NEW_HEIGHT -- تحديد نقطة البداية أسفل لوحة المعلومات
+
+-- 1. Hitbox - تفعيل
+Hitbox_Enable.Name = "تفعيل محسن الايم"
+Hitbox_Enable.Parent = main
+Hitbox_Enable.BackgroundColor3 = Color3.fromRGB(0, 255, 0) 
+Hitbox_Enable.Position = UDim2.new(0.015, 0, START_POS, 0)
+Hitbox_Enable.Size = UDim2.new(0, 136, 0, 30)
+Hitbox_Enable.Text = " تفعيل Hitbox "
+Hitbox_Enable.TextColor3 = Color3.fromRGB(0, 0, 0)
+Hitbox_Enable.TextScaled = true
+
+Hitbox_Enable.MouseButton1Down:connect(function()
+	_G.Disabled = true 
+	Hitbox_Enable.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+	Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+end)
+
+-- 2. Hitbox - تعطيل
+Hitbox_Disable.Name = "تعطيل محسن الايم"
+Hitbox_Disable.Parent = main
+Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+Hitbox_Disable.Position = UDim2.new(0.015, 0, START_POS + 0.12, 0) 
+Hitbox_Disable.Size = UDim2.new(0, 136, 0, 30)
+Hitbox_Disable.Text = " تعطيل Hitbox "
+Hitbox_Disable.TextColor3 = Color3.fromRGB(0, 0, 0)
+Hitbox_Disable.TextScaled = true
+
+Hitbox_Disable.MouseButton1Down:connect(function()
+	_G.Disabled = false 
+    for _, v in next, Players:GetPlayers() do
+        if v.Name ~= LocalPlayer.Name and v.Character then
+            -- 🛠️ الإصلاح: نتحقق من وجود الجزء (hrp) قبل محاولة تغيير الخصائص
+            local hrp = v.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then 
+                pcall(function()
+                    hrp.Size = DEFAULT_SIZE
+                    hrp.Transparency = 0
+                    hrp.BrickColor = DEFAULT_BRICKCOLOR
+                    hrp.Material = DEFAULT_MATERIAL
+                    hrp.CanCollide = true
+                end)
+            end
+        end
+    end
+
+	Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+	Hitbox_Enable.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+end)
+
+-- 3. Discord - نسخ الرابط
+Discord_Button.Name = "رابط_ديسكورد"
+Discord_Button.Parent = main
+Discord_Button.BackgroundColor3 = DISCORD_COLOR
+Discord_Button.Position = UDim2.new(0.015, 0, START_POS + 0.24, 0) 
+Discord_Button.Size = UDim2.new(0, 136, 0, 30)
+Discord_Button.Text = " سيرفر الديسكورد "
+Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Discord_Button.TextScaled = true
+
+local ORIGINAL_DISCORD_TEXT = " سيرفر الديسكورد " 
+Discord_Button.MouseButton1Down:connect(function()
+    label.Text = DISCORD_INVITE_URL
+    label.TextColor3 = DISCORD_COLOR
+    pcall(function() if setclipboard then setclipboard(DISCORD_INVITE_URL) end end)
+    Discord_Button.Text = "تم نسخ رابط سيرفر الدسكورد!" 
+    Discord_Button.TextColor3 = Color3.fromRGB(0, 255, 0)
+    wait(3) 
+    label.Text = ORIGINAL_LABEL_TEXT
+    label.TextColor3 = Color3.fromRGB(255, 0, 0)
+    Discord_Button.Text = ORIGINAL_DISCORD_TEXT
+    Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+end)
+
+-- ===============================================
+-- 🟣 العمود الثاني (اليسار) - Noclip و Fling All 
+-- ===============================================
+
+local NC_ACTIVE_COLOR = Color3.fromRGB(0, 170, 255) -- أزرق سماوي للتفعيل
+local NC_INACTIVE_COLOR = Color3.fromRGB(50, 50, 50) -- رمادي للتعطيل
+
+-- 4. Noclip - زر التوغل 
+Noclip_Toggle.Name = "Noclip_Toggle"
+Noclip_Toggle.Parent = main
+Noclip_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR
+Noclip_Toggle.Position = UDim2.new(0.5, 0, START_POS, 0) 
+Noclip_Toggle.Size = UDim2.new(0, 136, 0, 30)
+Noclip_Toggle.Text = " اختراق الجدران (Off) "
+Noclip_Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+Noclip_Toggle.TextScaled = true
+
+Noclip_Toggle.MouseButton1Down:connect(function()
+    NoclipEnabled = not NoclipEnabled
+
+    if NoclipEnabled then
+        Noclip_Toggle.Text = " اختراق الجدران (On) "
+        Noclip_Toggle.BackgroundColor3 = NC_ACTIVE_COLOR
+        
+        toggleNoclip(true)
+    else
+        Noclip_Toggle.Text = " اختراق الجدران (Off) "
+        Noclip_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR
+        
+        toggleNoclip(false)
+    end
+end)
+
+
+-- 5. Fling All - زر التوغل 
+
+Fling_Toggle.Name = "فلنق_الكل"
+Fling_Toggle.Parent = main
+Fling_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR -- تم استخدام لون Noclip
+Fling_Toggle.Position = UDim2.new(0.5, 0, START_POS + 0.12, 0) 
+Fling_Toggle.Size = UDim2.new(0, 136, 0, 30)
+Fling_Toggle.Text = " فلنق الكل (Off) "
+Fling_Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+Fling_Toggle.TextScaled = true
+
+Fling_Toggle.MouseButton1Down:connect(function()
+    _G.FlingEnabled = not _G.FlingEnabled
+
+    if _G.FlingEnabled then
+        Fling_Toggle.Text = " فلنق الكل (On) "
+        Fling_Toggle.BackgroundColor3 = NC_ACTIVE_COLOR -- تم استخدام لون Noclip
+        
+        coroutine.wrap(function()
+            while _G.FlingEnabled do
+                FlingLoop()
+                if not _G.FlingEnabled then break end
+                task.wait(0.1) 
+            end
+        end)()
+    else
+        Fling_Toggle.Text = " فلنق الكل (OFF) "
+        Fling_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR -- تم استخدام لون Noclip
+    end
+end)
+
+-- 6. Placeholder Button
+local Placeholder = Instance.new("TextButton")
+Placeholder.Name = "Placeholder_Button"
+Placeholder.Parent = main
+Placeholder.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Placeholder.Position = UDim2.new(0.5, 0, START_POS + 0.24, 0) 
+Placeholder.Size = UDim2.new(0, 136, 0, 30)
+Placeholder.Text = " " 
+Placeholder.TextColor3 = Color3.fromRGB(255, 255, 255)
+Placeholder.TextScaled = true
+
+
+-- ===============================================
+-- 🔄 حلقة التشغيل RunService (لـHitbox فقط)
+-- ===============================================
+
+RunService.RenderStepped:connect(function()
+	if _G.Disabled then
+		for _, v in next, Players:GetPlayers() do
+            -- 🛠️ إصلاح إضافي: تحقق دائمًا من وجود HumanoidRootPart قبل تغيير الخصائص
+            local hrp = v.Character and v.Character:FindFirstChild("HumanoidRootPart")
+			if v.Name ~= LocalPlayer.Name and hrp then
+				pcall(function()
+					hrp.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+					hrp.Transparency = 0.7
+					hrp.BrickColor = BrickColor.new("Really black")
+					hrp.Material = "Neon"
+					hrp.CanCollide = false
+				end)
+			end
+		end
+	end
+end)
+
+-- ===============================================
+-- 🚀 تأكيد حالة الـGUI عند التحميل 
+-- ===============================================
+main.Visible = true    
+OpenGUI.Visible = false
+
+local function NoclipLoop()
+    -- تفعيل Noclip: تعطيل التصادم لجميع أجزاء الشخصية
+    if LocalPlayer.Character then
+        local connection
+        connection = RunService.Stepped:Connect(function()
+            if not NoclipEnabled or not LocalPlayer.Character then
+                connection:Disconnect()
+                NoclipConnection = nil
+                return
+            end
+            for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end)
+        NoclipConnection = connection
+    end
+end
+
+local function toggleNoclip(Value)
+    NoclipEnabled = Value
+    if Value then
+        -- التأكد من إعادة تفعيل النوكليب عند إعادة تحميل الشخصية
+        LocalPlayer.CharacterAdded:Once(function()
+             if NoclipEnabled then
+                task.wait(0.5) -- الانتظار حتى يتم تحميل الأجزاء
+                NoclipLoop()
+             end
+        end)
+        NoclipLoop()
+    else
+        -- تعطيل Noclip: إعادة تفعيل التصادم
+        if NoclipConnection then
+            NoclipConnection:Disconnect()
+            NoclipConnection = nil
+        end
+        if LocalPlayer.Character then
+             for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = true -- لإعادة تفعيل التصادم
+                end
+            end
+        end
+    end
+end
+
+-- ===============================================
+-- 🚀 وظائف الفلنج (Fling Functions) 
+-- ===============================================
+
+local Message = function(_Title, _Text, Time)
+    game:GetService("StarterGui"):SetCore("SendNotification", {Title = _Title, Text = _Text, Duration = Time})
+end
+
+local GetPlayer = function(Name)
+    Name = Name:lower()
+    if Name == "all" or Name == "others" then
+        AllBool = true
+        return
+    elseif Name ~= "all" and Name ~= "others" then
+        for _,x in next, Players:GetPlayers() do
+            if x ~= LocalPlayer then
+                if x.Name:lower():match("^"..Name) then
+                    return x;
+                elseif x.DisplayName:lower():match("^"..Name) then
+                    return x;
+                end
+            end
+        end
+    else
+        return
+    end
+end
+
+local function SkidFling(TargetPlayer)
+    if not _G.FlingEnabled then return end
+
+    local Char = LocalPlayer.Character or Character
+    local Humanoid = Char and Char:FindFirstChildOfClass("Humanoid")
+    local RootPart = Humanoid and Humanoid.RootPart
+
+    local TCharacter = TargetPlayer.Character
+    local THumanoid
+    local TRootPart
+    local THead
+    local Accessory
+    local Handle
+
+    if TCharacter:FindFirstChildOfClass("Humanoid") then
+        THumanoid = TCharacter:FindFirstChildOfClass("Humanoid")
+    end
+    if THumanoid and THumanoid.RootPart then
+        TRootPart = THumanoid.RootPart
+    end
+    if TCharacter:FindFirstChild("Head") then
+        THead = TCharacter.Head
+    end
+    if TCharacter:FindFirstChildOfClass("Accessory") then
+        Accessory = TCharacter:FindFirstChildOfClass("Accessory")
+    end
+    if Accessory and Accessory:FindFirstChild("Handle") then
+        Handle = Accessory.Handle
+    end
+
+    if Char and Humanoid and RootPart then
+        if RootPart.Velocity.Magnitude < 50 then
+            getgenv().OldPos = RootPart.CFrame
+        end
+        if THumanoid and THumanoid.Sit and not AllBool then
+            return Message("Error Occurred", "Targeting is sitting", 5)
+        end
+        
+        if not TCharacter:FindFirstChildWhichIsA("BasePart") then
+            return
+        end
+        
+        local FPos = function(BasePart, Pos, Ang)
+            RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
+            Char:SetPrimaryPartCFrame(CFrame.new(BasePart.Position) * Pos * Ang)
+            RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
+            RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
+        end
+        
+        local SFBasePart = function(BasePart)
+            local TimeToWait = 2
+            local Time = tick()
+            local Angle = 0
+
+            repeat
+                if not _G.FlingEnabled then break end 
+
+                if RootPart and THumanoid then
+                    Angle = Angle + 100
+                    FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection, CFrame.Angles(math.rad(Angle),0 ,0))
+                    task.wait()
+                    FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection, CFrame.Angles(math.rad(Angle), 0, 0))
+                    task.wait()
+                else
+                    break
+                end
+            until BasePart.Velocity.Magnitude > 500 or BasePart.Parent ~= TargetPlayer.Character or TargetPlayer.Parent ~= Players or not TargetPlayer.Character == TCharacter or THumanoid.Sit or Humanoid.Health <= 0 or tick() > Time + TimeToWait
+        end
+        
+        workspace.FallenPartsDestroyHeight = 0/0
+        
+        local BV = Instance.new("BodyVelocity")
+        BV.Name = "EpixVel"
+        BV.Parent = RootPart
+        BV.Velocity = Vector3.new(9e8, 9e8, 9e8)
+        BV.MaxForce = Vector3.new(1/0, 1/0, 1/0)
+        
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+        
+        if TRootPart and THead then
+            if (TRootPart.CFrame.p - THead.CFrame.p).Magnitude > 5 then
+                SFBasePart(THead)
+            else
+                SFBasePart(TRootPart)
+            end
+        elseif TRootPart and not THead then
+            SFBasePart(TRootPart)
+        elseif not TRootPart and THead then
+            SFBasePart(THead)
+        elseif not TRootPart and not THead and Accessory and Handle then
+            SFBasePart(Handle)
+        else
+            return Message("Error Occurred", "Target is missing everything", 5)
+        end
+        
+        BV:Destroy()
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+        
+        repeat
+            RootPart.CFrame = getgenv().OldPos * CFrame.new(0, .5, 0)
+            Char:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0, .5, 0))
+            Humanoid:ChangeState("GettingUp")
+            table.foreach(Char:GetChildren(), function(_, x)
+                if x:IsA("BasePart") then
+                    x.Velocity, x.RotVelocity = Vector3.new(), Vector3.new()
+                end
+            end)
+            task.wait()
+        until (RootPart.Position - getgenv().OldPos.p).Magnitude < 25
+    else
+        return Message("Error Ocurrido", "El Script A Fallado", 5)
+    end
+end
+
+local function FlingLoop()
+    AllBool = true 
+    
+    for _,x in next, Players:GetPlayers() do
+        if not _G.FlingEnabled then return end
+        
+        if x ~= LocalPlayer and x.Character and x.Character:FindFirstChildOfClass("Humanoid") and x.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
+             SkidFling(x)
+        end
+    end
+end
+
+-- ===============================================
+-- 🎨 إعدادات الـGUI - (إدارة واجهة المستخدم)
+-- ===============================================
+
+local ScreenGui = Instance.new("ScreenGui")
+local main = Instance.new("Frame")
+local label = Instance.new("TextLabel")
+local Hitbox_Enable = Instance.new("TextButton")
+local Hitbox_Disable = Instance.new("TextButton")
+local Discord_Button = Instance.new("TextButton")
+local Fling_Toggle = Instance.new("TextButton")
+local Noclip_Toggle = Instance.new("TextButton") 
+local CloseButton = Instance.new("TextButton")
+
+ScreenGui.Parent = game.CoreGui 
+ScreenGui.Name = "Main_Menu_GUI"
 
 -- 💡 دالة لحساب عمر الحساب بالسنوات والأشهر والأيام
 local function GetAccountAgeString(accountAgeInDays)
