@@ -248,6 +248,7 @@ local Hitbox_Disable = Instance.new("TextButton")
 local Discord_Button = Instance.new("TextButton")
 local Fling_Toggle = Instance.new("TextButton")
 local Noclip_Toggle = Instance.new("TextButton") 
+local Rejoin_Button = Instance.new("TextButton") -- الزر الجديد
 local CloseButton = Instance.new("TextButton")
 
 ScreenGui.Parent = game.CoreGui 
@@ -282,6 +283,7 @@ main.Size = UDim2.new(0, 280, 0, NEW_HEIGHT)
 main.Active = true
 main.Draggable = true
 main.ZIndex = 10 
+main.Visible = false -- جعله غير مرئي في البداية حتى يظهر إشعار التحميل
 
 -- ===============================================
 -- 👤 معلومات المستخدم (دمج في إطار main) - 🚫 تم حذف الصورة واسم الماب
@@ -534,7 +536,7 @@ end)
 
 Fling_Toggle.Name = "فلنق_الكل"
 Fling_Toggle.Parent = main
-Fling_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR -- تم استخدام لون Noclip
+Fling_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR -- اللون الرمادي (حالة الإيقاف)
 Fling_Toggle.Position = UDim2.new(0.5, 0, START_POS + 0.12, 0) 
 Fling_Toggle.Size = UDim2.new(0, 136, 0, 30)
 Fling_Toggle.Text = " فلنق الكل (Off) "
@@ -546,7 +548,7 @@ Fling_Toggle.MouseButton1Down:connect(function()
 
     if _G.FlingEnabled then
         Fling_Toggle.Text = " فلنق الكل (On) "
-        Fling_Toggle.BackgroundColor3 = NC_ACTIVE_COLOR -- تم استخدام لون Noclip
+        Fling_Toggle.BackgroundColor3 = NC_ACTIVE_COLOR 
         
         coroutine.wrap(function()
             while _G.FlingEnabled do
@@ -557,20 +559,33 @@ Fling_Toggle.MouseButton1Down:connect(function()
         end)()
     else
         Fling_Toggle.Text = " فلنق الكل (OFF) "
-        Fling_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR -- تم استخدام لون Noclip
+        Fling_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR 
     end
 end)
 
--- 6. Placeholder Button
-local Placeholder = Instance.new("TextButton")
-Placeholder.Name = "Placeholder_Button"
-Placeholder.Parent = main
-Placeholder.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Placeholder.Position = UDim2.new(0.5, 0, START_POS + 0.24, 0) 
-Placeholder.Size = UDim2.new(0, 136, 0, 30)
-Placeholder.Text = " " 
-Placeholder.TextColor3 = Color3.fromRGB(255, 255, 255)
-Placeholder.TextScaled = true
+-- 6. زر الخروج وإعادة الدخول (Rejoin)
+Rejoin_Button.Name = "Rejoin_Server"
+Rejoin_Button.Parent = main
+Rejoin_Button.BackgroundColor3 = NC_INACTIVE_COLOR 
+Rejoin_Button.Position = UDim2.new(0.5, 0, START_POS + 0.24, 0) 
+Rejoin_Button.Size = UDim2.new(0, 136, 0, 30)
+Rejoin_Button.Text = " Rejoin / اعاده دخول للسيرفر " 
+Rejoin_Button.TextColor3 = Color3.fromRGB(255, 255, 255) 
+Rejoin_Button.TextScaled = true
+
+-- دالة إعادة الدخول إلى سيرفر جديد (تعديل حسب طلبك)
+local function rejoinServer()
+    local teleportService = game:GetService("TeleportService")
+    -- نقل اللاعب إلى سيرفر عشوائي جديد لنفس المكان (PlaceId)
+    teleportService:Teleport(game.PlaceId, LocalPlayer)
+end
+
+Rejoin_Button.MouseButton1Down:connect(function()
+    Message("Nw Team", "جاري إعادة الدخول إلى سيرفر جديد...", 3)
+    task.wait(1.5) -- انتظار قصير قبل عملية النقل
+    
+    pcall(rejoinServer)
+end)
 
 
 -- ===============================================
@@ -598,5 +613,13 @@ end)
 -- ===============================================
 -- 🚀 تأكيد حالة الـGUI عند التحميل 
 -- ===============================================
+
+-- 1. إضافة إشعار عند بدء تشغيل السكريبت
+Message("Nw Team", "جار تحميل السكربت..", 2) -- يظهر الإشعار لمدة ثانيتين
+
+-- 2. الانتظار لانتهاء مدة الإشعار
+task.wait(2) 
+
+-- 3. تفعيل الـGUI الرئيسي
 main.Visible = true    
 OpenGUI.Visible = false
