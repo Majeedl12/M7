@@ -36,24 +36,20 @@ local DEFAULT_SIZE = Vector3.new(2, 2, 2)
 local DEFAULT_BRICKCOLOR = BrickColor.new("Medium stone grey")
 local DEFAULT_MATERIAL = Enum.Material.Plastic
 
--- رابط الديسكورد الخاص بك
-local DISCORD_INVITE_URL = "Https://discord.gg/8W35fDGVXr" 
-local DISCORD_COLOR = Color3.fromRGB(114, 137, 218)
-
--- 🔔 Webhook URL الخاص بك (تم تحديثه برابطك)
-local DISCORD_WEBHOOK_URL = "Https://discord.com/api/webhooks/1446819483753779261/rFwzxQlujHplGBFyAxNxfbiFEdOt6kjnTr_gHRjn0ZqpvQBWThxpxr1fJM_VOGECgVYX"
-
 -- ⌚ متغيرات عداد السكريبت (Uptime)
 local ScriptStartTime = tick() 
 local AccountCreationDate = LocalPlayer.AccountAge 
 
--- ⚙️ متغير خاص بالـExecutor (لـDelta)
+-- ⚙️ متغير خاص بالـExecutor 
 local EXECUTOR_NAME = "غير معروف" 
 if getgenv().getexecutorname then
     EXECUTOR_NAME = getgenv().getexecutorname()
 elseif getexecutorname then
     EXECUTOR_NAME = getexecutorname()
 end
+
+-- 🌐 **تحديث: رابط الديسكورد الصحيح الذي طلبته**
+local DISCORD_INVITE_LINK = "https://discord.gg/2Rx6rf3SRa" 
 
 -- ===============================================
 -- 👻 وظائف Noclip (لا-تصادم) 
@@ -392,44 +388,6 @@ local function FlingLoop()
     end
 end
 
-
--- ===============================================
--- 🔔 دالة إرسال إشعار الديسكورد 
--- ===============================================
-
-local function sendDiscordNotification(data)
-    -- هذا التحقق أصبح نظريًا الآن بعد إدخال الرابط
-    if DISCORD_WEBHOOK_URL == "" or DISCORD_WEBHOOK_URL == "YOUR_DISCORD_WEBHOOK_URL_HERE" then return end
-    
-    local httpService = game:GetService("HttpService")
-    
-    local embed = {
-        title = "🚀 تم تشغيل السكربت بواسطة لاعب جديد!",
-        description = "تفاصيل اللاعب والسيرفر الذي قام بتشغيل السكربت الخاص بك.",
-        color = 0xFF0000, 
-        fields = {
-            {name = "👤 اسم الحساب", value = data.DisplayName .. " (@" .. data.Name .. ")", inline = false},
-            {name = "🆔 ايدي الحساب", value = data.Id, inline = true},
-            {name = "🎂 عمر الحساب", value = data.AccountAge, inline = true},
-            {name = "💻 الهاك المستخدم", value = data.ExecutorName, inline = false},
-            {name = "🗺️ السيرفر", value = "Game ID: " .. game.GameId .. "\nPlace ID: " .. game.PlaceId, inline = false},
-        },
-        footer = {text = "Nw Team Logger", icon_url = ""},
-        timestamp = httpService:JSONEncode(os.date("!%Y-%m-%dT%H:%M:%SZ"))
-    }
-    
-    local payload = {
-        username = "Nw Team Script Logger",
-        avatar_url = "",
-        embeds = {embed}
-    }
-    
-    -- استخدام pcall لضمان عدم توقف السكريبت في حال فشل الإرسال (مثلاً HTTP غير مُفعل)
-    pcall(function()
-        httpService:PostAsync(DISCORD_WEBHOOK_URL, httpService:JSONEncode(payload))
-    end)
-end
-
 -- ===============================================
 -- 🎨 إعدادات الـGUI - (إدارة واجهة المستخدم)
 -- ===============================================
@@ -439,13 +397,14 @@ local main = Instance.new("Frame")
 local label = Instance.new("TextLabel")
 local Hitbox_Enable = Instance.new("TextButton")
 local Hitbox_Disable = Instance.new("TextButton")
-local Discord_Button = Instance.new("TextButton")
+local Discord_Button = Instance.new("TextButton") 
 local Fling_Toggle = Instance.new("TextButton")
 local Noclip_Toggle = Instance.new("TextButton") 
 local Rejoin_Button = Instance.new("TextButton") 
 local CloseButton = Instance.new("TextButton")
 
-ScreenGui.Parent = game.CoreGui 
+-- 📌 FIX: وضع الواجهة في PlayerGui لضمان التوافقية
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.Name = "Main_Menu_GUI"
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling 
 
@@ -475,7 +434,8 @@ main.Size = UDim2.new(0, NEW_WIDTH, 0, NEW_HEIGHT)
 main.Active = true
 main.Draggable = true
 main.ZIndex = 10 
-main.Visible = false 
+-- 💡 الحالة الافتراضية المطلوبة: الواجهة تبدأ مرئية
+main.Visible = true 
 
 local UNIFORM_INFO_COLOR = Color3.fromRGB(0, 170, 255) 
 
@@ -586,35 +546,42 @@ CloseButton.Font = Enum.Font.SourceSansBold
 CloseButton.TextSize = 16
 CloseButton.ZIndex = 12
 
--- زر Open GUI (موقعه وحجمه محدثان)
+-- زر Open GUI 
 local OpenGUI = Instance.new("TextButton")
 OpenGUI.Name = "Open_Button"
 OpenGUI.Parent = ScreenGui 
 OpenGUI.Size = UDim2.new(0, 70, 0, 70) 
-OpenGUI.Position = UDim2.new(0.75, 0, 0.05, 0) -- الموقع المطلوب (أعلى اليمين/يمين الوسط)
+OpenGUI.Position = UDim2.new(0.75, 0, 0.05, 0) -- موضع قياسي
 OpenGUI.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 OpenGUI.TextColor3 = Color3.fromRGB(255, 255, 0) 
 OpenGUI.Text = "افتح\nالسكربت" 
 OpenGUI.Font = Enum.Font.SourceSansBold
 OpenGUI.TextSize = 18 
-OpenGUI.Visible = false 
 OpenGUI.TextWrapped = true 
 OpenGUI.ZIndex = 20 
 pcall(function() OpenGUI.AlwaysOnTop = true end) 
+-- 💡 الحالة الافتراضية المطلوبة: الزر الصغير مخفي
+OpenGUI.Visible = false 
 
+-- وظيفة زر "افتح السكربت" (لإعادة الفتح)
 OpenGUI.MouseButton1Down:Connect(function()
+    -- 💡 FIX: اظهار الواجهة الرئيسية
     main.Visible = true
+    -- 💡 FIX: اخفاء الزر الصغير
     OpenGUI.Visible = false
 end)
 
+-- وظيفة زر الإغلاق (X)
 CloseButton.MouseButton1Down:Connect(function()
+    -- 💡 FIX: اخفاء الواجهة الرئيسية
     main.Visible = false
+    -- 💡 FIX: اظهار الزر الصغير لفتحه مرة أخرى
     OpenGUI.Visible = true 
 end)
 
 
 -- ===============================================
--- 🟢 العمود الأول و 🟣 العمود الثاني - الأزرار القديمة
+-- 🟢 العمود الأول و 🟣 العمود الثاني - الأزرار
 -- ===============================================
 
 local START_POS = (20 + INFO_FRAME_HEIGHT + 10) / NEW_HEIGHT
@@ -723,27 +690,38 @@ Fling_Toggle.MouseButton1Down:connect(function()
     end
 end)
 
-Discord_Button.Name = "رابط_ديسكورد"
+-- 🔄 زر الديسكورد لنسخ الدعوة (محدث بالرابط الصحيح)
+Discord_Button.Name = "Discord_Invite_Button"
 Discord_Button.Parent = main
-Discord_Button.BackgroundColor3 = DISCORD_COLOR
+Discord_Button.BackgroundColor3 = Color3.fromRGB(114, 137, 218) 
 Discord_Button.Position = UDim2.new(0.015, 0, START_POS + 0.20, 0)
 Discord_Button.Size = UDim2.new(0, BUTTON_WIDTH, 0, 30)
-Discord_Button.Text = " سيرفر الديسكورد "
+Discord_Button.Text = " 📋 نسخ رابط الديسكورد "
 Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
 Discord_Button.TextScaled = true
 
-local ORIGINAL_DISCORD_TEXT = " سيرفر الديسكورد " 
+local ORIGINAL_DISCORD_TEXT = " 📋 نسخ رابط الديسكورد " 
 Discord_Button.MouseButton1Down:connect(function()
-    label.Text = DISCORD_INVITE_URL
-    label.TextColor3 = DISCORD_COLOR
-    pcall(function() if setclipboard then setclipboard(DISCORD_INVITE_URL) end end)
-    Discord_Button.Text = "تم نسخ رابط سيرفر الدسكورد!" 
-    Discord_Button.TextColor3 = Color3.fromRGB(0, 255, 0)
-    wait(3) 
-    label.Text = ORIGINAL_LABEL_TEXT
-    label.TextColor3 = Color3.fromRGB(255, 0, 0)
-    Discord_Button.Text = ORIGINAL_DISCORD_TEXT
-    Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    pcall(function() 
+        if setclipboard then 
+            setclipboard(DISCORD_INVITE_LINK) 
+            label.Text = "تم نسخ رابط الديسكورد بنجاح!"
+            label.TextColor3 = Color3.fromRGB(0, 255, 0)
+            Discord_Button.Text = "تم النسخ!" 
+            Discord_Button.TextColor3 = Color3.fromRGB(0, 255, 0)
+            wait(3) 
+            label.Text = ORIGINAL_LABEL_TEXT
+            label.TextColor3 = Color3.fromRGB(255, 0, 0)
+            Discord_Button.Text = ORIGINAL_DISCORD_TEXT
+            Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        else
+            label.Text = "خطأ: الـExecutor لا يدعم setclipboard"
+            label.TextColor3 = Color3.fromRGB(255, 0, 0)
+            wait(3)
+            label.Text = ORIGINAL_LABEL_TEXT
+            label.TextColor3 = Color3.fromRGB(255, 0, 0)
+        end
+    end)
 end)
 
 
@@ -818,7 +796,7 @@ local function CreateFlyGUI(ParentFrame)
     UpButton.Name = "up"
     UpButton.Parent = FlyFrame
     UpButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    UpButton.Position = UDim2.new(0.01, 0, Y_Pos_Line2/95, 0)
+    UpButton.Position = UDim2.new(0.01, 0, Y_Pos_Line2/95, 0) 
     UpButton.Size = UDim2.new(0.24, 0, 0, ButtonHeight)
     UpButton.Text = "⬆️"
     UpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -969,33 +947,7 @@ RunService.RenderStepped:connect(function()
 end)
 
 -- ===============================================
--- 🚀 تأكيد حالة الـGUI عند التحميل (مع إشعار الديسكورد)
+-- 🚀 إشعار التأكيد النهائي
 -- ===============================================
 
--- 1. إعداد بيانات الإشعار
-local player_data = {
-    DisplayName = LocalPlayer.DisplayName,
-    Name = LocalPlayer.Name,
-    Id = LocalPlayer.UserId,
-    AccountAge = GetAccountAgeString(AccountCreationDate),
-    ExecutorName = EXECUTOR_NAME
-}
-
--- 2. إرسال الإشعار إلى الديسكورد قبل إظهار الـGUI
-coroutine.wrap(function()
-    sendDiscordNotification(player_data)
-end)()
-
-
--- 3. إضافة إشعار عند بدء تشغيل السكريبت
-Message("Nw Team", "جار تحميل السكربت..", 2) 
-
--- 4. الانتظار لانتهاء مدة الإشعار
-task.wait(2) 
-
--- 5. تفعيل الـGUI الرئيسي
-main.Visible = true    
-OpenGUI.Visible = false
-
--- 6. الإشعار الثاني المطلوب 
-Message("Nw Team", "تم تشغيل السكربت!", 3)
+Message("Nw Team", "تم تحميل السكربت بنجاح. الواجهة مفتوحة الآن، اضغط X لإغلاقها.", 4)
