@@ -9,14 +9,27 @@ local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Targets = {"All"}
 
 -- تهيئة المتغيرات العامة
-_G.Disabled = false          -- حالة الـHitbox
+_G.Disabled = false          
 _G.HeadSize = 20
-_G.FlingEnabled = false      -- حالة زر الفلنج (Toggle)
-local AllBool = false        -- متغير لكود Fling
+_G.FlingEnabled = false     
+local AllBool = false        
 
 -- **متغيرات خاصة بـ Noclip Toggle**
 local NoclipEnabled = false
-local NoclipConnection = nil -- لتخزين Connection الخاصة بحلقة التشغيل
+local NoclipConnection = nil 
+
+-- **متغيرات خاصة بـ Fly (جديدة)**
+_G.FlyEnabled = false
+local speeds = 1             
+local nowe = false           
+local FlyGUI = nil           
+local FlyConnection = nil
+local ctrl = {f = 0, b = 0, l = 0, r = 0} 
+local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+local maxspeed = speeds * 50 
+local speed = 0
+local FlyBG = nil
+local FlySpeedBV = nil
 
 -- القيم الافتراضية لأجزاء الـHitbox
 local DEFAULT_SIZE = Vector3.new(2, 2, 2)
@@ -27,16 +40,26 @@ local DEFAULT_MATERIAL = Enum.Material.Plastic
 local DISCORD_INVITE_URL = "Https://discord.gg/8W35fDGVXr" 
 local DISCORD_COLOR = Color3.fromRGB(114, 137, 218)
 
+-- 🔔 Webhook URL الخاص بك (تم تحديثه برابطك)
+local DISCORD_WEBHOOK_URL = "Https://discord.com/api/webhooks/1446819483753779261/rFwzxQlujHplGBFyAxNxfbiFEdOt6kjnTr_gHRjn0ZqpvQBWThxpxr1fJM_VOGECgVYX"
+
 -- ⌚ متغيرات عداد السكريبت (Uptime)
-local ScriptStartTime = tick() -- وقت بدء السكريبت
-local AccountCreationDate = LocalPlayer.AccountAge -- عمر الحساب باليوم (من Roblox)
+local ScriptStartTime = tick() 
+local AccountCreationDate = LocalPlayer.AccountAge 
+
+-- ⚙️ متغير خاص بالـExecutor (لـDelta)
+local EXECUTOR_NAME = "غير معروف" 
+if getgenv().getexecutorname then
+    EXECUTOR_NAME = getgenv().getexecutorname()
+elseif getexecutorname then
+    EXECUTOR_NAME = getexecutorname()
+end
 
 -- ===============================================
 -- 👻 وظائف Noclip (لا-تصادم) 
 -- ===============================================
 
 local function NoclipLoop()
-    -- تفعيل Noclip: تعطيل التصادم لجميع أجزاء الشخصية
     if LocalPlayer.Character then
         local connection
         connection = RunService.Stepped:Connect(function()
@@ -58,16 +81,14 @@ end
 local function toggleNoclip(Value)
     NoclipEnabled = Value
     if Value then
-        -- التأكد من إعادة تفعيل النوكليب عند إعادة تحميل الشخصية
         LocalPlayer.CharacterAdded:Once(function()
              if NoclipEnabled then
-                task.wait(0.5) -- الانتظار حتى يتم تحميل الأجزاء
+                task.wait(0.5) 
                 NoclipLoop()
              end
         end)
         NoclipLoop()
     else
-        -- تعطيل Noclip: إعادة تفعيل التصادم
         if NoclipConnection then
             NoclipConnection:Disconnect()
             NoclipConnection = nil
@@ -75,10 +96,145 @@ local function toggleNoclip(Value)
         if LocalPlayer.Character then
              for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
                 if part:IsA("BasePart") then
-                    part.CanCollide = true -- لإعادة تفعيل التصادم
+                    part.CanCollide = true 
                 end
             end
         end
+    end
+end
+
+-- ===============================================
+-- 🚁 وظائف الطيران (Fly Functions)
+-- ===============================================
+
+local isGoingUpConnection = nil
+local isGoingDownConnection = nil
+
+local function toggleFly(Value)
+    _G.FlyEnabled = Value
+    nowe = Value
+    local speaker = LocalPlayer
+    local Char = speaker.Character
+    local Humanoid = Char and Char:FindFirstChildOfClass("Humanoid")
+    local RootPart = Char and Char:FindFirstChild("HumanoidRootPart")
+
+    if not Char or not Humanoid or not RootPart then return end
+    
+    if _G.FlingEnabled then _G.FlingEnabled = false end 
+    if NoclipEnabled then toggleNoclip(false) end 
+
+    if FlyConnection then
+        FlyConnection:Disconnect()
+        FlyConnection = nil
+    end
+
+    if not Value then
+        pcall(function() Char.Animate.Disabled = false end)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,true)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,true)
+        Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
+        
+        if isGoingUpConnection then isGoingUpConnection:Disconnect() isGoingUpConnection = nil end
+        if isGoingDownConnection then isGoingDownConnection:Disconnect() isGoingDownConnection = nil end
+
+        if FlyBG then FlyBG:Destroy() FlyBG = nil end
+        if FlySpeedBV then FlySpeedBV:Destroy() FlySpeedBV = nil end
+        Humanoid.PlatformStand = false
+        
+    else 
+        pcall(function() Char.Animate.Disabled = true end)
+        for i,v in next, Humanoid:GetPlayingAnimationTracks() do
+            v:AdjustSpeed(0)
+        end
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,false)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,false)
+        Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
+
+        local FlyPart = (Humanoid.RigType == Enum.HumanoidRigType.R6) and Char:FindFirstChild("Torso") or Char:FindFirstChild("UpperTorso")
+
+        if FlyPart then
+            FlyBG = Instance.new("BodyGyro", FlyPart)
+            FlyBG.P = 9e4
+            FlyBG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            FlyBG.CFrame = FlyPart.CFrame
+            
+            FlySpeedBV = Instance.new("BodyVelocity", FlyPart)
+            FlySpeedBV.velocity = Vector3.new(0,0.1,0)
+            FlySpeedBV.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            
+            Humanoid.PlatformStand = true
+
+            FlyConnection = RunService.RenderStepped:Connect(function()
+                if not _G.FlyEnabled or Humanoid.Health <= 0 then
+                    toggleFly(false)
+                    return
+                end
+                
+                maxspeed = speeds * 50
+
+                if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+                    speed = speed+.5+(speed/maxspeed)
+                    if speed > maxspeed then
+                        speed = maxspeed
+                    end
+                elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
+                    speed = speed-1
+                    if speed < 0 then
+                        speed = 0
+                    end
+                end
+                
+                if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+                    FlySpeedBV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - workspace.CurrentCamera.CoordinateFrame.p))*speed
+                    lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+                elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
+                    FlySpeedBV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - workspace.CurrentCamera.CoordinateFrame.p))*speed
+                else
+                    FlySpeedBV.velocity = Vector3.new(0,0,0)
+                end
+
+                FlyBG.CFrame = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
+            end)
+        end
+        
+        local tpwalking = true
+        coroutine.wrap(function()
+            local hb = game:GetService("RunService").Heartbeat    
+            while tpwalking and _G.FlyEnabled and Char and Humanoid and Humanoid.Parent do
+                if Humanoid.MoveDirection.Magnitude > 0 then
+                    for i = 1, speeds do
+                        Char:TranslateBy(Humanoid.MoveDirection * 0.5) 
+                    end
+                end
+                hb:Wait()
+            end
+        end)()
     end
 end
 
@@ -236,6 +392,44 @@ local function FlingLoop()
     end
 end
 
+
+-- ===============================================
+-- 🔔 دالة إرسال إشعار الديسكورد 
+-- ===============================================
+
+local function sendDiscordNotification(data)
+    -- هذا التحقق أصبح نظريًا الآن بعد إدخال الرابط
+    if DISCORD_WEBHOOK_URL == "" or DISCORD_WEBHOOK_URL == "YOUR_DISCORD_WEBHOOK_URL_HERE" then return end
+    
+    local httpService = game:GetService("HttpService")
+    
+    local embed = {
+        title = "🚀 تم تشغيل السكربت بواسطة لاعب جديد!",
+        description = "تفاصيل اللاعب والسيرفر الذي قام بتشغيل السكربت الخاص بك.",
+        color = 0xFF0000, 
+        fields = {
+            {name = "👤 اسم الحساب", value = data.DisplayName .. " (@" .. data.Name .. ")", inline = false},
+            {name = "🆔 ايدي الحساب", value = data.Id, inline = true},
+            {name = "🎂 عمر الحساب", value = data.AccountAge, inline = true},
+            {name = "💻 الهاك المستخدم", value = data.ExecutorName, inline = false},
+            {name = "🗺️ السيرفر", value = "Game ID: " .. game.GameId .. "\nPlace ID: " .. game.PlaceId, inline = false},
+        },
+        footer = {text = "Nw Team Logger", icon_url = ""},
+        timestamp = httpService:JSONEncode(os.date("!%Y-%m-%dT%H:%M:%SZ"))
+    }
+    
+    local payload = {
+        username = "Nw Team Script Logger",
+        avatar_url = "",
+        embeds = {embed}
+    }
+    
+    -- استخدام pcall لضمان عدم توقف السكريبت في حال فشل الإرسال (مثلاً HTTP غير مُفعل)
+    pcall(function()
+        httpService:PostAsync(DISCORD_WEBHOOK_URL, httpService:JSONEncode(payload))
+    end)
+end
+
 -- ===============================================
 -- 🎨 إعدادات الـGUI - (إدارة واجهة المستخدم)
 -- ===============================================
@@ -248,24 +442,22 @@ local Hitbox_Disable = Instance.new("TextButton")
 local Discord_Button = Instance.new("TextButton")
 local Fling_Toggle = Instance.new("TextButton")
 local Noclip_Toggle = Instance.new("TextButton") 
-local Rejoin_Button = Instance.new("TextButton") -- الزر الجديد
+local Rejoin_Button = Instance.new("TextButton") 
 local CloseButton = Instance.new("TextButton")
 
 ScreenGui.Parent = game.CoreGui 
 ScreenGui.Name = "Main_Menu_GUI"
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling 
 
--- 💡 دالة لحساب عمر الحساب بالسنوات والأشهر والأيام
 local function GetAccountAgeString(accountAgeInDays)
-    local years = math.floor(accountAgeInDays / 365.25) -- تقريبي
+    local years = math.floor(accountAgeInDays / 365.25) 
     local daysLeft = accountAgeInDays % 365.25
-    local months = math.floor(daysLeft / 30.44) -- تقريبي
+    local months = math.floor(daysLeft / 30.44) 
     local days = math.floor(daysLeft % 30.44)
     
     return string.format("%d سنة، %d شهر، %d يوم", years, months, days)
 end
 
--- 💡 دالة لتحويل الثواني إلى H:M:S
 local function GetUptimeString(seconds)
     local hours = math.floor(seconds / 3600)
     local minutes = math.floor((seconds % 3600) / 60)
@@ -273,20 +465,22 @@ local function GetUptimeString(seconds)
     return string.format("%02d:%02d:%02d", hours, minutes, secs)
 end
 
--- إعدادات main Frame
-local NEW_HEIGHT = 280 
+local NEW_WIDTH = 300 
+local NEW_HEIGHT = 380 
 main.Name = "main"
 main.Parent = ScreenGui
 main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 main.Position = UDim2.new(0.35, 0, 0.3, 0) 
-main.Size = UDim2.new(0, 280, 0, NEW_HEIGHT) 
+main.Size = UDim2.new(0, NEW_WIDTH, 0, NEW_HEIGHT)
 main.Active = true
 main.Draggable = true
 main.ZIndex = 10 
-main.Visible = false -- جعله غير مرئي في البداية حتى يظهر إشعار التحميل
+main.Visible = false 
+
+local UNIFORM_INFO_COLOR = Color3.fromRGB(0, 170, 255) 
 
 -- ===============================================
--- 👤 معلومات المستخدم (دمج في إطار main) - 🚫 تم حذف الصورة واسم الماب
+-- 👤 معلومات المستخدم
 -- ===============================================
 
 local UserInfoBackground = Instance.new("Frame")
@@ -294,72 +488,74 @@ UserInfoBackground.Name = "User_Info_Background"
 UserInfoBackground.Parent = main
 UserInfoBackground.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 UserInfoBackground.Position = UDim2.new(0, 0, 0.07, 0) 
-local INFO_FRAME_HEIGHT = 100 -- ارتفاع مناسب لـ 5 أسطر
+local INFO_FRAME_HEIGHT = 120 
 UserInfoBackground.Size = UDim2.new(1, 0, 0, INFO_FRAME_HEIGHT) 
 
--- 📝 المعلومات النصية (المعربة)
-local LineHeight = 1/5 -- 5 أسطر معلومات الآن
-local InfoOffset = 0.02 -- بدء النصوص من أقصى اليسار
+local LineHeight = 1/6 
+local InfoOffset = 0.02 
 local InfoWidth = 0.96 
 
--- 1. اللقب/اسم العرض (السطر الأول)
 local DisplayNameLabel = Instance.new("TextLabel")
 DisplayNameLabel.Parent = UserInfoBackground
 DisplayNameLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 DisplayNameLabel.Position = UDim2.new(InfoOffset, 0, 0, 0)
 DisplayNameLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0) 
 DisplayNameLabel.Text = "اللقب: " .. LocalPlayer.DisplayName
-DisplayNameLabel.TextColor3 = Color3.fromRGB(255, 255, 0) 
+DisplayNameLabel.TextColor3 = UNIFORM_INFO_COLOR
 DisplayNameLabel.TextXAlignment = Enum.TextXAlignment.Right
 DisplayNameLabel.TextSize = 13 
 
--- 2. اسم المستخدم (@الاسم) (السطر الثاني)
 local NameLabel = Instance.new("TextLabel")
 NameLabel.Parent = UserInfoBackground
 NameLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 NameLabel.Position = UDim2.new(InfoOffset, 0, LineHeight, 0)
 NameLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0) 
 NameLabel.Text = "الاسم: @" .. LocalPlayer.Name
-NameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+NameLabel.TextColor3 = UNIFORM_INFO_COLOR 
 NameLabel.TextXAlignment = Enum.TextXAlignment.Right
 NameLabel.TextSize = 13 
 
--- 3. عمر الحساب (السطر الثالث)
 local AgeLabel = Instance.new("TextLabel")
 AgeLabel.Parent = UserInfoBackground
 AgeLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 AgeLabel.Position = UDim2.new(InfoOffset, 0, LineHeight * 2, 0)
 AgeLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0)
 AgeLabel.Text = "عمر الحساب: " .. GetAccountAgeString(AccountCreationDate)
-AgeLabel.TextColor3 = Color3.fromRGB(150, 255, 150)
+AgeLabel.TextColor3 = UNIFORM_INFO_COLOR 
 AgeLabel.TextXAlignment = Enum.TextXAlignment.Right
 AgeLabel.TextSize = 13 
 
--- 4. الحساب ID (السطر الرابع)
 local IDLabel = Instance.new("TextLabel")
 IDLabel.Parent = UserInfoBackground
 IDLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 IDLabel.Position = UDim2.new(InfoOffset, 0, LineHeight * 3, 0)
 IDLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0)
-IDLabel.Text = "الحساب ID: " .. LocalPlayer.UserId
-IDLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+IDLabel.Text = "ايدي الحساب: " .. LocalPlayer.UserId 
+IDLabel.TextColor3 = UNIFORM_INFO_COLOR 
 IDLabel.TextXAlignment = Enum.TextXAlignment.Right
 IDLabel.TextSize = 13
 
--- 5. عداد تشغيل السكريبت (Uptime) (السطر الخامس) - يتم تحديثه
+local ExecutorLabel = Instance.new("TextLabel")
+ExecutorLabel.Parent = UserInfoBackground
+ExecutorLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ExecutorLabel.Position = UDim2.new(InfoOffset, 0, LineHeight * 4, 0)
+ExecutorLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0)
+ExecutorLabel.Text = "اسم الهاك: " .. EXECUTOR_NAME
+ExecutorLabel.TextColor3 = UNIFORM_INFO_COLOR 
+ExecutorLabel.TextXAlignment = Enum.TextXAlignment.Right
+ExecutorLabel.TextSize = 13 
+
 local UptimeLabel = Instance.new("TextLabel")
 UptimeLabel.Name = "Uptime_Counter"
 UptimeLabel.Parent = UserInfoBackground
 UptimeLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-UptimeLabel.Position = UDim2.new(InfoOffset, 0, LineHeight * 4, 0)
+UptimeLabel.Position = UDim2.new(InfoOffset, 0, LineHeight * 5, 0)
 UptimeLabel.Size = UDim2.new(InfoWidth, 0, LineHeight, 0)
 UptimeLabel.Text = "السكربت شغال له: 00:00:00"
-UptimeLabel.TextColor3 = Color3.fromRGB(255, 165, 0)
+UptimeLabel.TextColor3 = UNIFORM_INFO_COLOR 
 UptimeLabel.TextXAlignment = Enum.TextXAlignment.Right
 UptimeLabel.TextSize = 13 
 
-
--- حلقة لتحديث عداد التشغيل كل ثانية
 coroutine.wrap(function()
     while task.wait(1) do
         if main.Visible then
@@ -369,7 +565,6 @@ coroutine.wrap(function()
     end
 end)()
 
--- إعدادات label (شريط العنوان - بقي مكانه في الأعلى 0,0)
 label.Name = "label"
 label.Parent = main
 label.BackgroundColor3 = Color3.fromRGB(0,0,0)
@@ -380,7 +575,6 @@ label.TextColor3 = Color3.fromRGB(255, 0, 0)
 label.TextScaled = true
 label.ZIndex = 11
 
--- زر إغلاق (X) في الزاوية
 CloseButton.Name = "Close_Button"
 CloseButton.Parent = main
 CloseButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -392,18 +586,17 @@ CloseButton.Font = Enum.Font.SourceSansBold
 CloseButton.TextSize = 16
 CloseButton.ZIndex = 12
 
--- زر Open الصغير لفتح الـGUI
+-- زر Open GUI (موقعه وحجمه محدثان)
 local OpenGUI = Instance.new("TextButton")
 OpenGUI.Name = "Open_Button"
 OpenGUI.Parent = ScreenGui 
-OpenGUI.Size = UDim2.new(0, 50, 0, 50) 
--- الموقع في الزاوية العلوية اليسرى وبعيداً قليلاً عن الحافة (3% أفقيًا، 5% عموديًا)
-OpenGUI.Position = UDim2.new(0.03, 0, 0.05, 0) 
+OpenGUI.Size = UDim2.new(0, 70, 0, 70) 
+OpenGUI.Position = UDim2.new(0.75, 0, 0.05, 0) -- الموقع المطلوب (أعلى اليمين/يمين الوسط)
 OpenGUI.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-OpenGUI.TextColor3 = Color3.fromRGB(255, 0, 0)
+OpenGUI.TextColor3 = Color3.fromRGB(255, 255, 0) 
 OpenGUI.Text = "افتح\nالسكربت" 
 OpenGUI.Font = Enum.Font.SourceSansBold
-OpenGUI.TextSize = 14
+OpenGUI.TextSize = 18 
 OpenGUI.Visible = false 
 OpenGUI.TextWrapped = true 
 OpenGUI.ZIndex = 20 
@@ -421,17 +614,20 @@ end)
 
 
 -- ===============================================
--- 🟢 العمود الأول (اليمين) - Hitbox و Discord
+-- 🟢 العمود الأول و 🟣 العمود الثاني - الأزرار القديمة
 -- ===============================================
 
-local START_POS = (20 + INFO_FRAME_HEIGHT + 10) / NEW_HEIGHT -- تحديد نقطة البداية أسفل لوحة المعلومات
+local START_POS = (20 + INFO_FRAME_HEIGHT + 10) / NEW_HEIGHT
+local NC_ACTIVE_COLOR = Color3.fromRGB(0, 170, 255) 
+local NC_INACTIVE_COLOR = Color3.fromRGB(50, 50, 50) 
 
--- 1. Hitbox - تفعيل
+local BUTTON_WIDTH = (NEW_WIDTH - 30) / 2 
+
 Hitbox_Enable.Name = "تفعيل محسن الايم"
 Hitbox_Enable.Parent = main
 Hitbox_Enable.BackgroundColor3 = Color3.fromRGB(0, 255, 0) 
 Hitbox_Enable.Position = UDim2.new(0.015, 0, START_POS, 0)
-Hitbox_Enable.Size = UDim2.new(0, 136, 0, 30)
+Hitbox_Enable.Size = UDim2.new(0, BUTTON_WIDTH, 0, 30) 
 Hitbox_Enable.Text = " تفعيل Hitbox "
 Hitbox_Enable.TextColor3 = Color3.fromRGB(0, 0, 0)
 Hitbox_Enable.TextScaled = true
@@ -442,75 +638,11 @@ Hitbox_Enable.MouseButton1Down:connect(function()
 	Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 end)
 
--- 2. Hitbox - تعطيل
-Hitbox_Disable.Name = "تعطيل محسن الايم"
-Hitbox_Disable.Parent = main
-Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-Hitbox_Disable.Position = UDim2.new(0.015, 0, START_POS + 0.12, 0) 
-Hitbox_Disable.Size = UDim2.new(0, 136, 0, 30)
-Hitbox_Disable.Text = " تعطيل Hitbox "
-Hitbox_Disable.TextColor3 = Color3.fromRGB(0, 0, 0)
-Hitbox_Disable.TextScaled = true
-
-Hitbox_Disable.MouseButton1Down:connect(function()
-	_G.Disabled = false 
-    for _, v in next, Players:GetPlayers() do
-        if v.Name ~= LocalPlayer.Name and v.Character then
-            -- 🛠️ الإصلاح: نتحقق من وجود الجزء (hrp) قبل محاولة تغيير الخصائص
-            local hrp = v.Character:FindFirstChild("HumanoidRootPart")
-            if hrp then 
-                pcall(function()
-                    hrp.Size = DEFAULT_SIZE
-                    hrp.Transparency = 0
-                    hrp.BrickColor = DEFAULT_BRICKCOLOR
-                    hrp.Material = DEFAULT_MATERIAL
-                    hrp.CanCollide = true
-                end)
-            end
-        end
-    end
-
-	Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-	Hitbox_Enable.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-end)
-
--- 3. Discord - نسخ الرابط
-Discord_Button.Name = "رابط_ديسكورد"
-Discord_Button.Parent = main
-Discord_Button.BackgroundColor3 = DISCORD_COLOR
-Discord_Button.Position = UDim2.new(0.015, 0, START_POS + 0.24, 0) 
-Discord_Button.Size = UDim2.new(0, 136, 0, 30)
-Discord_Button.Text = " سيرفر الديسكورد "
-Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-Discord_Button.TextScaled = true
-
-local ORIGINAL_DISCORD_TEXT = " سيرفر الديسكورد " 
-Discord_Button.MouseButton1Down:connect(function()
-    label.Text = DISCORD_INVITE_URL
-    label.TextColor3 = DISCORD_COLOR
-    pcall(function() if setclipboard then setclipboard(DISCORD_INVITE_URL) end end)
-    Discord_Button.Text = "تم نسخ رابط سيرفر الدسكورد!" 
-    Discord_Button.TextColor3 = Color3.fromRGB(0, 255, 0)
-    wait(3) 
-    label.Text = ORIGINAL_LABEL_TEXT
-    label.TextColor3 = Color3.fromRGB(255, 0, 0)
-    Discord_Button.Text = ORIGINAL_DISCORD_TEXT
-    Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-end)
-
--- ===============================================
--- 🟣 العمود الثاني (اليسار) - Noclip و Fling All 
--- ===============================================
-
-local NC_ACTIVE_COLOR = Color3.fromRGB(0, 170, 255) -- أزرق سماوي للتفعيل
-local NC_INACTIVE_COLOR = Color3.fromRGB(50, 50, 50) -- رمادي للتعطيل
-
--- 4. Noclip - زر التوغل 
 Noclip_Toggle.Name = "Noclip_Toggle"
 Noclip_Toggle.Parent = main
 Noclip_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR
 Noclip_Toggle.Position = UDim2.new(0.5, 0, START_POS, 0) 
-Noclip_Toggle.Size = UDim2.new(0, 136, 0, 30)
+Noclip_Toggle.Size = UDim2.new(0, BUTTON_WIDTH, 0, 30) 
 Noclip_Toggle.Text = " اختراق الجدران (Off) "
 Noclip_Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 Noclip_Toggle.TextScaled = true
@@ -531,21 +663,49 @@ Noclip_Toggle.MouseButton1Down:connect(function()
     end
 end)
 
+Hitbox_Disable.Name = "تعطيل محسن الايم"
+Hitbox_Disable.Parent = main
+Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+Hitbox_Disable.Position = UDim2.new(0.015, 0, START_POS + 0.10, 0)
+Hitbox_Disable.Size = UDim2.new(0, BUTTON_WIDTH, 0, 30) 
+Hitbox_Disable.Text = " تعطيل Hitbox "
+Hitbox_Disable.TextColor3 = Color3.fromRGB(0, 0, 0)
+Hitbox_Disable.TextScaled = true
 
--- 5. Fling All - زر التوغل 
+Hitbox_Disable.MouseButton1Down:connect(function()
+	_G.Disabled = false 
+    for _, v in next, Players:GetPlayers() do
+        if v.Name ~= LocalPlayer.Name and v.Character then
+            local hrp = v.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then 
+                pcall(function()
+                    hrp.Size = DEFAULT_SIZE
+                    hrp.Transparency = 0
+                    hrp.BrickColor = DEFAULT_BRICKCOLOR
+                    hrp.Material = DEFAULT_MATERIAL
+                    hrp.CanCollide = true
+                end)
+            end
+        end
+    end
+
+	Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+	Hitbox_Enable.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+end)
 
 Fling_Toggle.Name = "فلنق_الكل"
 Fling_Toggle.Parent = main
-Fling_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR -- اللون الرمادي (حالة الإيقاف)
-Fling_Toggle.Position = UDim2.new(0.5, 0, START_POS + 0.12, 0) 
-Fling_Toggle.Size = UDim2.new(0, 136, 0, 30)
+Fling_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR 
+Fling_Toggle.Position = UDim2.new(0.5, 0, START_POS + 0.10, 0) 
+Fling_Toggle.Size = UDim2.new(0, BUTTON_WIDTH, 0, 30) 
 Fling_Toggle.Text = " فلنق الكل (Off) "
 Fling_Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 Fling_Toggle.TextScaled = true
 
 Fling_Toggle.MouseButton1Down:connect(function()
     _G.FlingEnabled = not _G.FlingEnabled
-
+    if _G.FlyEnabled then toggleFly(false) end 
+    
     if _G.FlingEnabled then
         Fling_Toggle.Text = " فلنق الكل (On) "
         Fling_Toggle.BackgroundColor3 = NC_ACTIVE_COLOR 
@@ -563,28 +723,227 @@ Fling_Toggle.MouseButton1Down:connect(function()
     end
 end)
 
--- 6. زر الخروج وإعادة الدخول (Rejoin)
+Discord_Button.Name = "رابط_ديسكورد"
+Discord_Button.Parent = main
+Discord_Button.BackgroundColor3 = DISCORD_COLOR
+Discord_Button.Position = UDim2.new(0.015, 0, START_POS + 0.20, 0)
+Discord_Button.Size = UDim2.new(0, BUTTON_WIDTH, 0, 30)
+Discord_Button.Text = " سيرفر الديسكورد "
+Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Discord_Button.TextScaled = true
+
+local ORIGINAL_DISCORD_TEXT = " سيرفر الديسكورد " 
+Discord_Button.MouseButton1Down:connect(function()
+    label.Text = DISCORD_INVITE_URL
+    label.TextColor3 = DISCORD_COLOR
+    pcall(function() if setclipboard then setclipboard(DISCORD_INVITE_URL) end end)
+    Discord_Button.Text = "تم نسخ رابط سيرفر الدسكورد!" 
+    Discord_Button.TextColor3 = Color3.fromRGB(0, 255, 0)
+    wait(3) 
+    label.Text = ORIGINAL_LABEL_TEXT
+    label.TextColor3 = Color3.fromRGB(255, 0, 0)
+    Discord_Button.Text = ORIGINAL_DISCORD_TEXT
+    Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+end)
+
+
 Rejoin_Button.Name = "Rejoin_Server"
 Rejoin_Button.Parent = main
 Rejoin_Button.BackgroundColor3 = NC_INACTIVE_COLOR 
-Rejoin_Button.Position = UDim2.new(0.5, 0, START_POS + 0.24, 0) 
-Rejoin_Button.Size = UDim2.new(0, 136, 0, 30)
+Rejoin_Button.Position = UDim2.new(0.5, 0, START_POS + 0.20, 0) 
+Rejoin_Button.Size = UDim2.new(0, BUTTON_WIDTH, 0, 30) 
 Rejoin_Button.Text = " Rejoin / اعاده دخول للسيرفر " 
 Rejoin_Button.TextColor3 = Color3.fromRGB(255, 255, 255) 
 Rejoin_Button.TextScaled = true
 
--- دالة إعادة الدخول إلى سيرفر جديد (تعديل حسب طلبك)
 local function rejoinServer()
     local teleportService = game:GetService("TeleportService")
-    -- نقل اللاعب إلى سيرفر عشوائي جديد لنفس المكان (PlaceId)
     teleportService:Teleport(game.PlaceId, LocalPlayer)
 end
 
 Rejoin_Button.MouseButton1Down:connect(function()
     Message("Nw Team", "جاري إعادة الدخول إلى سيرفر جديد...", 3)
-    task.wait(1.5) -- انتظار قصير قبل عملية النقل
+    task.wait(1.5) 
     
     pcall(rejoinServer)
+end)
+
+
+-- ===============================================
+-- ✈️ واجهة تحكم Fly 
+-- ===============================================
+
+local function CreateFlyGUI(ParentFrame)
+    local FlyFrame = Instance.new("Frame")
+    FlyFrame.Name = "Fly_Control_Frame"
+    FlyFrame.Parent = ParentFrame
+    FlyFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) 
+    FlyFrame.Position = UDim2.new(0.015, 0, START_POS + 0.30, 0) 
+    FlyFrame.Size = UDim2.new(0.97, 0, 0, 95) 
+    
+    local FlyTitle = Instance.new("TextLabel")
+    FlyTitle.Parent = FlyFrame
+    FlyTitle.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    FlyTitle.Position = UDim2.new(0, 0, 0, 0)
+    FlyTitle.Size = UDim2.new(1, 0, 0, 20)
+    FlyTitle.Text = "✈️ Fly Control - التحكم بالطيران"
+    FlyTitle.TextColor3 = Color3.fromRGB(255, 255, 0)
+    FlyTitle.TextScaled = true
+    
+    local ButtonHeight = 25
+    local Y_Pos_Line1 = 20 
+    local Y_Pos_Line2 = Y_Pos_Line1 + ButtonHeight + 5 
+    
+    local FlyToggleBtn = Instance.new("TextButton")
+    FlyToggleBtn.Name = "Fly_Toggle"
+    FlyToggleBtn.Parent = FlyFrame
+    FlyToggleBtn.BackgroundColor3 = NC_INACTIVE_COLOR
+    FlyToggleBtn.Position = UDim2.new(0.01, 0, Y_Pos_Line1/95, 0) 
+    FlyToggleBtn.Size = UDim2.new(0.48, 0, 0, ButtonHeight)
+    FlyToggleBtn.Text = "تفعيل الطيران (Off)"
+    FlyToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    FlyToggleBtn.TextScaled = true
+    
+    local FlySpeedLabel = Instance.new("TextLabel")
+    FlySpeedLabel.Name = "Fly_Speed_Indicator"
+    FlySpeedLabel.Parent = FlyFrame
+    FlySpeedLabel.BackgroundColor3 = Color3.fromRGB(0, 100, 150)
+    FlySpeedLabel.Position = UDim2.new(0.51, 0, Y_Pos_Line1/95, 0)
+    FlySpeedLabel.Size = UDim2.new(0.48, 0, 0, ButtonHeight)
+    FlySpeedLabel.Text = "السرعة: x" .. speeds
+    FlySpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    FlySpeedLabel.TextScaled = true
+    
+    local UpButton = Instance.new("TextButton")
+    UpButton.Name = "up"
+    UpButton.Parent = FlyFrame
+    UpButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    UpButton.Position = UDim2.new(0.01, 0, Y_Pos_Line2/95, 0)
+    UpButton.Size = UDim2.new(0.24, 0, 0, ButtonHeight)
+    UpButton.Text = "⬆️"
+    UpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    UpButton.TextScaled = true
+    
+    local DownButton = Instance.new("TextButton")
+    DownButton.Name = "down"
+    DownButton.Parent = FlyFrame
+    DownButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    DownButton.Position = UDim2.new(0.26, 0, Y_Pos_Line2/95, 0) 
+    DownButton.Size = UDim2.new(0.23, 0, 0, ButtonHeight)
+    DownButton.Text = "⬇️"
+    DownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    DownButton.TextScaled = true
+
+    local PlusButton = Instance.new("TextButton")
+    PlusButton.Name = "Plus_Speed"
+    PlusButton.Parent = FlyFrame
+    PlusButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+    PlusButton.Position = UDim2.new(0.51, 0, Y_Pos_Line2/95, 0)
+    PlusButton.Size = UDim2.new(0.24, 0, 0, ButtonHeight)
+    PlusButton.Text = "+ السرعة"
+    PlusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    PlusButton.TextScaled = true
+    
+    local MinusButton = Instance.new("TextButton")
+    MinusButton.Name = "Minus_Speed"
+    MinusButton.Parent = FlyFrame
+    MinusButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+    MinusButton.Position = UDim2.new(0.76, 0, Y_Pos_Line2/95, 0)
+    MinusButton.Size = UDim2.new(0.23, 0, 0, ButtonHeight)
+    MinusButton.Text = "- السرعة"
+    MinusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MinusButton.TextScaled = true
+    
+    return {
+        Frame = FlyFrame,
+        Toggle = FlyToggleBtn,
+        SpeedLabel = FlySpeedLabel,
+        Plus = PlusButton,
+        Minus = MinusButton,
+        up = UpButton,
+        down = DownButton
+    }
+end
+
+FlyGUI = CreateFlyGUI(main)
+
+FlyGUI.Toggle.MouseButton1Down:Connect(function()
+    local newState = not _G.FlyEnabled
+    toggleFly(newState)
+
+    if newState then
+        if _G.FlingEnabled then _G.FlingEnabled = false Fling_Toggle.Text = " فلنق الكل (OFF) " Fling_Toggle.BackgroundColor3 = NC_INACTIVE_COLOR end
+        
+        FlyGUI.Toggle.Text = "تفعيل الطيران (On)"
+        FlyGUI.Toggle.BackgroundColor3 = NC_ACTIVE_COLOR
+    else
+        FlyGUI.Toggle.Text = "تفعيل الطيران (Off)"
+        FlyGUI.Toggle.BackgroundColor3 = NC_INACTIVE_COLOR
+    end
+end)
+
+FlyGUI.Plus.MouseButton1Down:Connect(function()
+    speeds = speeds + 1
+    FlyGUI.SpeedLabel.Text = "السرعة: x" .. speeds
+end)
+
+FlyGUI.Minus.MouseButton1Down:Connect(function()
+    if speeds > 1 then
+        speeds = speeds - 1
+        FlyGUI.SpeedLabel.Text = "السرعة: x" .. speeds
+    else
+        FlyGUI.SpeedLabel.Text = "لا يمكن أن تقل عن x1"
+        task.wait(1)
+        FlyGUI.SpeedLabel.Text = "السرعة: x" .. speeds
+    end
+end)
+
+FlyGUI.up.MouseButton1Down:Connect(function()
+    local Char = LocalPlayer.Character
+    local RootPart = Char and Char:FindFirstChild("HumanoidRootPart")
+    if RootPart and _G.FlyEnabled then
+        if isGoingUpConnection then isGoingUpConnection:Disconnect() end
+        isGoingUpConnection = RunService.Heartbeat:Connect(function()
+             RootPart.CFrame = RootPart.CFrame * CFrame.new(0, 1 * speeds, 0) 
+        end)
+    end
+end)
+FlyGUI.up.MouseButton1Up:Connect(function()
+    if isGoingUpConnection then isGoingUpConnection:Disconnect() isGoingUpConnection = nil end
+end)
+
+FlyGUI.down.MouseButton1Down:Connect(function()
+    local Char = LocalPlayer.Character
+    local RootPart = Char and Char:FindFirstChild("HumanoidRootPart")
+    if RootPart and _G.FlyEnabled then
+        if isGoingDownConnection then isGoingDownConnection:Disconnect() end
+        isGoingDownConnection = RunService.Heartbeat:Connect(function()
+             RootPart.CFrame = RootPart.CFrame * CFrame.new(0, -1 * speeds, 0)
+        end)
+    end
+end)
+FlyGUI.down.MouseButton1Up:Connect(function()
+    if isGoingDownConnection then isGoingDownConnection:Disconnect() isGoingDownConnection = nil end
+end)
+
+-- ===============================================
+-- ⌨️ ربط مدخلات اللاعب
+-- ===============================================
+
+game:GetService("UserInputService").InputBegan:connect(function(input)
+    if not _G.FlyEnabled then return end
+    if input.KeyCode == Enum.KeyCode.W then ctrl.f = 1 end
+    if input.KeyCode == Enum.KeyCode.S then ctrl.b = -1 end
+    if input.KeyCode == Enum.KeyCode.A then ctrl.l = -1 end
+    if input.KeyCode == Enum.KeyCode.D then ctrl.r = 1 end
+end)
+
+game:GetService("UserInputService").InputEnded:connect(function(input)
+    if not _G.FlyEnabled then return end
+    if input.KeyCode == Enum.KeyCode.W then ctrl.f = 0 end
+    if input.KeyCode == Enum.KeyCode.S then ctrl.b = 0 end
+    if input.KeyCode == Enum.KeyCode.A then ctrl.l = 0 end
+    if input.KeyCode == Enum.KeyCode.D then ctrl.r = 0 end
 end)
 
 
@@ -595,7 +954,6 @@ end)
 RunService.RenderStepped:connect(function()
 	if _G.Disabled then
 		for _, v in next, Players:GetPlayers() do
-            -- 🛠️ إصلاح إضافي: تحقق دائمًا من وجود HumanoidRootPart قبل تغيير الخصائص
             local hrp = v.Character and v.Character:FindFirstChild("HumanoidRootPart")
 			if v.Name ~= LocalPlayer.Name and hrp then
 				pcall(function()
@@ -611,15 +969,33 @@ RunService.RenderStepped:connect(function()
 end)
 
 -- ===============================================
--- 🚀 تأكيد حالة الـGUI عند التحميل 
+-- 🚀 تأكيد حالة الـGUI عند التحميل (مع إشعار الديسكورد)
 -- ===============================================
 
--- 1. إضافة إشعار عند بدء تشغيل السكريبت
-Message("Nw Team", "جار تحميل السكربت..", 2) -- يظهر الإشعار لمدة ثانيتين
+-- 1. إعداد بيانات الإشعار
+local player_data = {
+    DisplayName = LocalPlayer.DisplayName,
+    Name = LocalPlayer.Name,
+    Id = LocalPlayer.UserId,
+    AccountAge = GetAccountAgeString(AccountCreationDate),
+    ExecutorName = EXECUTOR_NAME
+}
 
--- 2. الانتظار لانتهاء مدة الإشعار
+-- 2. إرسال الإشعار إلى الديسكورد قبل إظهار الـGUI
+coroutine.wrap(function()
+    sendDiscordNotification(player_data)
+end)()
+
+
+-- 3. إضافة إشعار عند بدء تشغيل السكريبت
+Message("Nw Team", "جار تحميل السكربت..", 2) 
+
+-- 4. الانتظار لانتهاء مدة الإشعار
 task.wait(2) 
 
--- 3. تفعيل الـGUI الرئيسي
+-- 5. تفعيل الـGUI الرئيسي
 main.Visible = true    
 OpenGUI.Visible = false
+
+-- 6. الإشعار الثاني المطلوب 
+Message("Nw Team", "تم تشغيل السكربت!", 3)
