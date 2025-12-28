@@ -197,7 +197,7 @@ local v34 = BrickColor.new("Medium stone grey");
 local v35 = Enum.Material.Plastic;
 local v36 = tick();
 local v37 = v18.AccountAge;
-local v38 = "https://discord.gg/2Rx6rf3SRa";
+local v38 = "https://discord.gg/cJUqwf2SFs";
 local function v39()
 	if v18.Character then
 		local v311;
